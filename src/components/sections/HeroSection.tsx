@@ -42,7 +42,7 @@ export default function HeroSection() {
           variants={fadeUp}
           initial="hidden"
           animate="visible"
-          className="font-bold uppercase tracking-widest text-white mb-4 text-[20px] sm:text-[34px] lg:text-[52px] xl:text-[64px] whitespace-nowrap"
+          className="font-bold uppercase tracking-wider text-white mb-4 text-[22px] sm:text-[34px] lg:text-[52px] xl:text-[64px]"
         >
           Маркетинговый заезд
         </motion.p>
@@ -70,7 +70,7 @@ export default function HeroSection() {
           variants={fadeUp}
           initial="hidden"
           animate="visible"
-          className="font-bold leading-tight text-white mb-6 text-[16px] sm:text-[30px] lg:text-[48px] xl:text-[60px]"
+          className="font-bold leading-tight text-white mb-6 text-[18px] sm:text-[30px] lg:text-[48px] xl:text-[60px]"
         >
           Узнайте, сколько денег теряет ваш бизнес прямо сейчас
         </motion.h1>
@@ -80,7 +80,7 @@ export default function HeroSection() {
           variants={fadeUp}
           initial="hidden"
           animate="visible"
-          className="mx-auto max-w-2xl text-base text-white/80 lg:text-lg mb-8 leading-relaxed"
+          className="mx-auto max-w-2xl text-sm sm:text-base text-white/80 lg:text-lg mb-8 leading-relaxed px-2"
         >
           Бизнес-игра &laquo;Маркетинговый заезд&raquo; по технологии системного продвижения
           Ии Имшинецкой. 90&nbsp;минут и&nbsp;вы получите точную диагностику маркетинга
@@ -92,7 +92,7 @@ export default function HeroSection() {
           variants={fadeUp}
           initial="hidden"
           animate="visible"
-          className="text-sm text-gold font-semibold mb-10"
+          className="text-xs sm:text-sm text-gold font-semibold mb-10"
         >
           286 предпринимателей уже сыграли офлайн. Запускаем онлайн-формат
         </motion.p>
@@ -115,7 +115,7 @@ export default function HeroSection() {
           variants={fadeUp}
           initial="hidden"
           animate="visible"
-          className="mt-16"
+          className="mt-8 sm:mt-16"
         >
           <button
             onClick={() =>

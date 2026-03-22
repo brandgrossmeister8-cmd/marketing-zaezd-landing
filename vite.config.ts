@@ -4,7 +4,7 @@ import tailwindcss from '@tailwindcss/vite'
 import path from 'path'
 
 export default defineConfig({
-  base: '/marketing-zaezd-landing/',
+  base: process.env.GITHUB_PAGES ? '/marketing-zaezd-landing/' : '/',
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
