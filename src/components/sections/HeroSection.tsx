@@ -24,7 +24,7 @@ export default function HeroSection() {
 
   return (
     <section
-      className="relative overflow-hidden py-20 px-4 lg:py-32"
+      className="relative overflow-hidden py-12 px-4 sm:py-20 lg:py-32"
       style={{
         background: 'linear-gradient(135deg, #6838CE 0%, #2A168F 100%)',
       }}
@@ -42,7 +42,7 @@ export default function HeroSection() {
           variants={fadeUp}
           initial="hidden"
           animate="visible"
-          className="font-bold uppercase tracking-widest text-white mb-4 text-[34px] lg:text-[52px] xl:text-[64px]"
+          className="font-bold uppercase tracking-widest text-white mb-4 text-[24px] sm:text-[34px] lg:text-[52px] xl:text-[64px]"
         >
           Маркетинговый заезд
         </motion.p>
@@ -55,7 +55,7 @@ export default function HeroSection() {
           className="mb-6"
         >
           <span
-            className="inline-block text-6xl lg:text-8xl"
+            className="inline-block text-4xl sm:text-6xl lg:text-8xl"
             style={{
               filter: 'sepia(1) saturate(5) hue-rotate(10deg) brightness(1.1)',
               animation: 'carDrive 4s ease-in-out infinite',
@@ -70,7 +70,7 @@ export default function HeroSection() {
           variants={fadeUp}
           initial="hidden"
           animate="visible"
-          className="text-3xl font-bold leading-tight text-white lg:text-5xl xl:text-6xl mb-6"
+          className="text-2xl font-bold leading-tight text-white sm:text-3xl lg:text-5xl xl:text-6xl mb-6"
         >
           Узнайте, сколько денег теряет ваш бизнес прямо сейчас
         </motion.h1>
@@ -105,7 +105,7 @@ export default function HeroSection() {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.97 }}
           onClick={handleCTA}
-          className="rounded-full bg-gold px-10 py-4 text-lg font-bold text-dashboard-bg hover:brightness-110 transition-all cursor-pointer border-none shadow-lg shadow-gold/30"
+          className="rounded-full bg-gold px-8 py-3 text-base sm:px-10 sm:py-4 sm:text-lg font-bold text-dashboard-bg hover:brightness-110 transition-all cursor-pointer border-none shadow-lg shadow-gold/30 w-full sm:w-auto"
         >
           Хочу в игру
         </motion.button>

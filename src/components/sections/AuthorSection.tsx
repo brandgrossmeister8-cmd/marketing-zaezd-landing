@@ -2,7 +2,7 @@ import { motion } from 'framer-motion'
 
 export default function AuthorSection() {
   return (
-    <section className="py-20 px-4 lg:py-28">
+    <section className="py-12 px-4 sm:py-20 lg:py-28">
       <div className="mx-auto max-w-4xl">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
@@ -24,7 +24,7 @@ export default function AuthorSection() {
           style={{ borderColor: '#A977FA', background: '#FAF5FF' }}
         >
           <img
-            src="/author.png"
+            src={`${import.meta.env.BASE_URL}author.png`}
             alt="Ия Имшинецкая"
             className="w-full"
             style={{ maxHeight: '400px', objectFit: 'contain', objectPosition: 'center top', background: '#FAF5FF' }}

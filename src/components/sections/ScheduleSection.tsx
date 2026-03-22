@@ -77,7 +77,7 @@ export default function ScheduleSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1, duration: 0.4 }}
-              className="flex items-center justify-between rounded-2xl bg-white p-5 shadow-sm hover:shadow-md transition-shadow"
+              className="flex flex-col sm:flex-row sm:items-center sm:justify-between rounded-2xl bg-white p-4 sm:p-5 shadow-sm hover:shadow-md transition-shadow gap-4"
               style={{ border: '1px solid #A977FA' }}
             >
               <div className="flex items-center gap-4">
@@ -92,13 +92,13 @@ export default function ScheduleSection() {
                   </div>
                 </div>
               </div>
-              <div className="text-right">
-                <p className="text-xs mb-2" style={{ color: '#A977FA' }}>
+              <div className="sm:text-right flex sm:flex-col items-center sm:items-end gap-2">
+                <p className="text-xs" style={{ color: '#A977FA' }}>
                   {slot.spots > 0 ? `${slot.spots} мест` : 'Мест нет'}
                 </p>
                 <a
                   href="https://t.me/SystemPromoBot?start=c1774180920281-ds" target="_blank" rel="noopener noreferrer"
-                  className="inline-block rounded-full px-5 py-2 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+                  className="inline-block rounded-full px-5 py-2 text-sm font-semibold text-white transition-opacity hover:opacity-90 text-center w-full sm:w-auto"
                   style={{ background: slot.spots > 0 ? '#6838CE' : '#A977FA', pointerEvents: slot.spots > 0 ? 'auto' : 'none' }}
                 >
                   {slot.spots > 0 ? 'Записаться' : 'В лист ожидания'}

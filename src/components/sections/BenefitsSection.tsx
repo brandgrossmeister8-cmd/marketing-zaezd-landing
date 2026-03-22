@@ -33,7 +33,7 @@ const benefits: Benefit[] = [
 
 export default function BenefitsSection() {
   return (
-    <section className="py-20 px-4 lg:py-28">
+    <section className="py-12 px-4 sm:py-20 lg:py-28">
       <div className="mx-auto max-w-6xl">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}

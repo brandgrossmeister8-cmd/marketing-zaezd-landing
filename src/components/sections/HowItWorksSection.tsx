@@ -50,7 +50,7 @@ const stages: Stage[] = [
 
 export default function HowItWorksSection() {
   return (
-    <section id="how-it-works" className="py-20 px-4 lg:py-28" style={{ background: 'linear-gradient(135deg, #6838CE, #2A168F)' }}>
+    <section id="how-it-works" className="py-12 px-4 sm:py-20 lg:py-28" style={{ background: 'linear-gradient(135deg, #6838CE, #2A168F)' }}>
       <div className="mx-auto max-w-5xl">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}

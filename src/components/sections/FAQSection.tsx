@@ -125,7 +125,7 @@ export default function FAQSection() {
   const [openIndex, setOpenIndex] = useState<number | null>(null)
 
   return (
-    <section id="faq" className="py-20 px-4 lg:py-28">
+    <section id="faq" className="py-12 px-4 sm:py-20 lg:py-28">
       <div className="mx-auto max-w-3xl">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
@@ -143,7 +143,7 @@ export default function FAQSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: 0.2, duration: 0.5 }}
-          className="rounded-2xl bg-white px-6"
+          className="rounded-2xl bg-white px-4 sm:px-6"
           style={{ border: '1px solid #A977FA' }}
         >
           {faqs.map((faq, i) => (

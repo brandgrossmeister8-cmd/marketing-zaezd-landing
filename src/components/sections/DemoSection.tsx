@@ -3,7 +3,7 @@ import { Gauge, Flag, Trophy } from 'lucide-react'
 
 export default function DemoSection() {
   return (
-    <section className="py-20 px-4 lg:py-28" style={{ background: 'linear-gradient(135deg, #2A168F, #6838CE)' }}>
+    <section className="py-12 px-4 sm:py-20 lg:py-28" style={{ background: 'linear-gradient(135deg, #2A168F, #6838CE)' }}>
       <div className="mx-auto max-w-6xl">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
@@ -31,13 +31,13 @@ export default function DemoSection() {
             className="w-full"
             style={{ aspectRatio: '16/9', background: '#1E0F6E' }}
           >
-            <source src="/demo.mp4" type="video/mp4" />
+            <source src={`${import.meta.env.BASE_URL}demo.mp4`} type="video/mp4" />
             Ваш браузер не поддерживает видео
           </video>
         </motion.div>
 
         {/* Game UI mockups */}
-        <div className="grid gap-5 md:grid-cols-3">
+        <div className="grid gap-5 sm:grid-cols-1 md:grid-cols-3">
           {/* Speedometer card */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}

@@ -67,7 +67,7 @@ const testimonials: Testimonial[] = [
 
 export default function TestimonialsSection() {
   return (
-    <section id="testimonials" className="py-20 px-4 lg:py-28">
+    <section id="testimonials" className="py-12 px-4 sm:py-20 lg:py-28">
       <div className="mx-auto max-w-6xl">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
