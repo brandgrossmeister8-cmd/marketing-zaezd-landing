@@ -1,0 +1,53 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #4338DF;
+  --color-primary-dark: #2A168F;
+  --color-primary-medium: #6838CE;
+  --color-primary-light: #A977FA;
+  --color-primary-lighter: #B8ACFF;
+  --color-gold: #FFD700;
+  --color-dashboard-bg: #1E0F6E;
+  --color-track: #2A168F;
+  --color-track-line: hsl(45 100% 60%);
+  --font-sans: Tahoma, Geneva, Verdana, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: #FAF5FF;
+  color: #2A168F;
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  min-height: 100svh;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #1E0F6E;
+}
+::-webkit-scrollbar-thumb {
+  background: hsl(259 61% 51% / 0.5);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(259 61% 51% / 0.8);
+}
+
+@keyframes carDrive {
+  0% { transform: translateX(-100px) scaleX(-1); }
+  45% { transform: translateX(100px) scaleX(-1); }
+  50% { transform: translateX(100px) scaleX(1); }
+  95% { transform: translateX(-100px) scaleX(1); }
+  100% { transform: translateX(-100px) scaleX(-1); }
+}
