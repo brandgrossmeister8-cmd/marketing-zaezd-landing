@@ -78,10 +78,10 @@ export default function ScheduleSection() {
           style={{ background: '#F3E8FF', border: '1px solid #A977FA' }}
         >
           <p className="font-bold" style={{ color: '#2A168F' }}>
-            9 апреля участие в играх бесплатное!
+            9 апреля участие в игре всего 499 рублей
           </p>
           <p className="text-sm mt-1" style={{ color: '#6838CE' }}>
-            Далее участие в игре платное
+            Полная стоимость участия 3000 рублей
           </p>
         </motion.div>
 
