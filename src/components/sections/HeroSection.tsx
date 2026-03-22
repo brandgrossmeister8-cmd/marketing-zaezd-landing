@@ -42,7 +42,7 @@ export default function HeroSection() {
           variants={fadeUp}
           initial="hidden"
           animate="visible"
-          className="font-bold uppercase tracking-widest text-white mb-4 text-[24px] sm:text-[34px] lg:text-[52px] xl:text-[64px]"
+          className="font-bold uppercase tracking-widest text-white mb-4 text-[20px] sm:text-[34px] lg:text-[52px] xl:text-[64px] whitespace-nowrap"
         >
           Маркетинговый заезд
         </motion.p>
@@ -70,7 +70,7 @@ export default function HeroSection() {
           variants={fadeUp}
           initial="hidden"
           animate="visible"
-          className="text-2xl font-bold leading-tight text-white sm:text-3xl lg:text-5xl xl:text-6xl mb-6"
+          className="font-bold leading-tight text-white mb-6 text-[16px] sm:text-[30px] lg:text-[48px] xl:text-[60px]"
         >
           Узнайте, сколько денег теряет ваш бизнес прямо сейчас
         </motion.h1>
