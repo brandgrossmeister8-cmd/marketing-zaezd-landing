@@ -1,6 +1,5 @@
 import { motion } from 'framer-motion'
 import confetti from 'canvas-confetti'
-import { Send } from 'lucide-react'
 
 export default function CTASection() {
   const handleCTA = () => {
@@ -58,7 +57,6 @@ export default function CTASection() {
           onClick={handleCTA}
           className="inline-flex items-center justify-center gap-3 rounded-full bg-gold px-8 py-3 text-base sm:px-10 sm:py-4 sm:text-lg font-bold text-dashboard-bg hover:brightness-110 transition-all cursor-pointer border-none shadow-lg shadow-gold/30 w-full sm:w-auto"
         >
-          <Send size={20} />
           Записаться на игру
         </motion.button>
 
