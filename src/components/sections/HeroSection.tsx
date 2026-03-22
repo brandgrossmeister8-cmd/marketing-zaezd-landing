@@ -106,7 +106,7 @@ export default function HeroSection() {
           whileTap={{ scale: 0.97 }}
           onClick={handleCTA}
           className="rounded-full bg-gold px-8 py-3 text-base sm:px-10 sm:py-4 sm:text-lg font-bold hover:brightness-110 transition-all cursor-pointer border-none shadow-lg shadow-gold/30 w-full sm:w-auto"
-          style={{ color: '#2A168F' }}
+          style={{ color: '#6838CE' }}
         >
           Хочу в игру
         </motion.button>

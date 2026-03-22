@@ -38,7 +38,7 @@ export default function Header() {
           <button
             onClick={() => window.open('https://t.me/SystemPromoBot?start=c1774180920281-ds', '_blank')}
             className="ml-2 rounded-full px-5 py-2 text-sm font-bold hover:opacity-90 transition-colors cursor-pointer border-none"
-            style={{ background: '#FFD700', color: '#2A168F' }}
+            style={{ background: '#FFD700', color: '#6838CE' }}
           >
             Записаться на игру
           </button>
@@ -69,7 +69,7 @@ export default function Header() {
           <button
             onClick={() => window.open('https://t.me/SystemPromoBot?start=c1774180920281-ds', '_blank')}
             className="mt-2 w-full rounded-full px-5 py-3 text-sm font-bold hover:opacity-90 transition-colors cursor-pointer border-none"
-            style={{ background: '#FFD700', color: '#2A168F' }}
+            style={{ background: '#FFD700', color: '#6838CE' }}
           >
             Записаться на игру
           </button>

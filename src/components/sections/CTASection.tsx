@@ -17,7 +17,7 @@ export default function CTASection() {
       id="cta"
       className="relative py-12 px-4 sm:py-20 lg:py-28 overflow-hidden"
       style={{
-        background: 'linear-gradient(135deg, #2A168F 0%, #4338DF 50%, #2A168F 100%)',
+        background: 'linear-gradient(135deg, #6838CE 0%, #A977FA 50%, #6838CE 100%)',
       }}
     >
       {/* Decorative elements */}
@@ -56,7 +56,7 @@ export default function CTASection() {
           whileTap={{ scale: 0.97 }}
           onClick={handleCTA}
           className="inline-flex items-center justify-center gap-3 rounded-full bg-gold px-8 py-3 text-base sm:px-10 sm:py-4 sm:text-lg font-bold hover:brightness-110 transition-all cursor-pointer border-none shadow-lg shadow-gold/30 w-full sm:w-auto"
-          style={{ color: '#2A168F' }}
+          style={{ color: '#6838CE' }}
         >
           Записаться на игру
         </motion.button>
