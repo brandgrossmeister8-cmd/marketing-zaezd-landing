@@ -69,6 +69,22 @@ export default function ScheduleSection() {
           Выберите удобную дату и запишитесь
         </motion.p>
 
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.3, duration: 0.5 }}
+          className="text-center mb-6 rounded-xl p-4"
+          style={{ background: '#F3E8FF', border: '1px solid #A977FA' }}
+        >
+          <p className="font-bold" style={{ color: '#2A168F' }}>
+            9 апреля участие в играх бесплатное!
+          </p>
+          <p className="text-sm mt-1" style={{ color: '#6838CE' }}>
+            Далее участие в игре платное
+          </p>
+        </motion.div>
+
         <div className="space-y-4">
           {slots.map((slot, i) => (
             <motion.div
