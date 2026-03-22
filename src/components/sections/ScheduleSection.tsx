@@ -115,7 +115,7 @@ export default function ScheduleSection() {
                 <a
                   href="https://t.me/SystemPromoBot?start=c1774180920281-ds" target="_blank" rel="noopener noreferrer"
                   className="inline-block rounded-full px-5 py-2 text-sm font-semibold text-white transition-opacity hover:opacity-90 text-center w-full sm:w-auto"
-                  style={{ background: slot.spots > 0 ? '#6838CE' : '#A977FA', pointerEvents: slot.spots > 0 ? 'auto' : 'none' }}
+                  style={{ background: '#FFD700', color: '#2A168F', pointerEvents: slot.spots > 0 ? 'auto' : 'none', opacity: slot.spots > 0 ? 1 : 0.5 }}
                 >
                   {slot.spots > 0 ? 'Записаться' : 'В лист ожидания'}
                 </a>
@@ -140,7 +140,7 @@ export default function ScheduleSection() {
             target="_blank"
             rel="noopener noreferrer"
             className="inline-block rounded-full px-6 py-2.5 text-sm font-semibold transition-opacity hover:opacity-90"
-            style={{ background: '#A977FA', color: 'white' }}
+            style={{ background: '#FFD700', color: '#2A168F' }}
           >
             Предзапись на игру
           </a>
