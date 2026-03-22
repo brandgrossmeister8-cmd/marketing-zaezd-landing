@@ -55,8 +55,8 @@ export default function CTASection() {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.97 }}
           onClick={handleCTA}
-          className="inline-flex items-center justify-center gap-3 rounded-full bg-gold px-8 py-3 text-base sm:px-10 sm:py-4 sm:text-lg font-bold hover:brightness-110 transition-all cursor-pointer border-none shadow-lg shadow-gold/30 w-full sm:w-auto"
-          style={{ color: '#6838CE' }}
+          className="inline-flex items-center justify-center gap-3 rounded-full bg-[#FF8C00] px-8 py-3 text-base sm:px-10 sm:py-4 sm:text-lg font-bold hover:brightness-110 transition-all cursor-pointer border-none shadow-lg shadow-[#FF8C00]/30 w-full sm:w-auto"
+          style={{ color: 'white' }}
         >
           Записаться на игру
         </motion.button>

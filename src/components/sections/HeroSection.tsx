@@ -31,9 +31,9 @@ export default function HeroSection() {
     >
       {/* Decorative racing lines */}
       <div className="absolute inset-0 opacity-10">
-        <div className="absolute top-1/4 left-0 right-0 h-px bg-gold" />
-        <div className="absolute top-1/2 left-0 right-0 h-px bg-gold" />
-        <div className="absolute top-3/4 left-0 right-0 h-px bg-gold" />
+        <div className="absolute top-1/4 left-0 right-0 h-px bg-[#FF8C00]" />
+        <div className="absolute top-1/2 left-0 right-0 h-px bg-[#FF8C00]" />
+        <div className="absolute top-3/4 left-0 right-0 h-px bg-[#FF8C00]" />
       </div>
 
       <div className="relative mx-auto max-w-4xl text-center">
@@ -105,8 +105,8 @@ export default function HeroSection() {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.97 }}
           onClick={handleCTA}
-          className="rounded-full bg-gold px-8 py-3 text-base sm:px-10 sm:py-4 sm:text-lg font-bold hover:brightness-110 transition-all cursor-pointer border-none shadow-lg shadow-gold/30 w-full sm:w-auto"
-          style={{ color: '#6838CE' }}
+          className="rounded-full bg-[#FF8C00] px-8 py-3 text-base sm:px-10 sm:py-4 sm:text-lg font-bold hover:brightness-110 transition-all cursor-pointer border-none shadow-lg shadow-[#FF8C00]/30 w-full sm:w-auto"
+          style={{ color: 'white' }}
         >
           Хочу в игру
         </motion.button>

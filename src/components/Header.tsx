@@ -18,7 +18,7 @@ export default function Header() {
   }
 
   return (
-    <header className="sticky top-0 z-50 backdrop-blur-xl" style={{ background: 'rgba(42,22,143,0.95)', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+    <header className="sticky top-0 z-50 backdrop-blur-xl" style={{ background: 'rgba(104,56,206,0.95)', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
       <div className="mx-auto max-w-7xl flex items-center justify-between px-4 py-3 lg:px-8">
         <a href="/" className="text-sm font-bold tracking-wide text-white lg:text-base whitespace-nowrap">
           ИМШИНЕЦКАЯ И ПАРТНЕРЫ
@@ -38,7 +38,7 @@ export default function Header() {
           <button
             onClick={() => window.open('https://t.me/SystemPromoBot?start=c1774180920281-ds', '_blank')}
             className="ml-2 rounded-full px-5 py-2 text-sm font-bold hover:opacity-90 transition-colors cursor-pointer border-none"
-            style={{ background: '#FFD700', color: '#6838CE' }}
+            style={{ background: '#FF8C00', color: 'white' }}
           >
             Записаться на игру
           </button>
@@ -69,7 +69,7 @@ export default function Header() {
           <button
             onClick={() => window.open('https://t.me/SystemPromoBot?start=c1774180920281-ds', '_blank')}
             className="mt-2 w-full rounded-full px-5 py-3 text-sm font-bold hover:opacity-90 transition-colors cursor-pointer border-none"
-            style={{ background: '#FFD700', color: '#6838CE' }}
+            style={{ background: '#FF8C00', color: 'white' }}
           >
             Записаться на игру
           </button>
