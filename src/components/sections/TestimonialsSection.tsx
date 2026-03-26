@@ -77,8 +77,29 @@ export default function TestimonialsSection() {
           className="text-center text-2xl font-bold lg:text-4xl mb-4"
           style={{ color: '#2A168F' }}
         >
-          Что говорят наши участники
+          Что говорят участники
         </motion.h2>
+
+        {/* Stats highlight */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.15, duration: 0.5 }}
+          className="text-center mb-14"
+        >
+          <div className="inline-block rounded-2xl px-8 py-5" style={{ background: 'linear-gradient(135deg, #6838CE, #2A168F)' }}>
+            <p className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-2" style={{ color: '#FFD700' }}>
+              286
+            </p>
+            <p className="text-white text-sm sm:text-base font-semibold mb-1">
+              предпринимателей уже сыграли
+            </p>
+            <p className="text-sm" style={{ color: '#A977FA' }}>
+              200+ в офлайн формате. Запускаем онлайн формат
+            </p>
+          </div>
+        </motion.div>
 
         <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
           {testimonials.map((t, i) => (

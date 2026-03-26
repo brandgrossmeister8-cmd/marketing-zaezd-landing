@@ -78,10 +78,10 @@ export default function ScheduleSection() {
           style={{ background: '#F3E8FF', border: '1px solid #A977FA' }}
         >
           <p className="font-bold" style={{ color: '#2A168F' }}>
-            9 апреля премьера игры в онлайн формате. Для первых 12 игроков цена 499 рублей.
+            9 апреля 2 игры. Первые 12 зарегистрированных играют бесплатно!
           </p>
           <p className="text-sm mt-1" style={{ color: '#6838CE' }}>
-            Полная стоимость участия 3000 рублей
+            Далее стоимость игры 3000 рублей
           </p>
         </motion.div>
 

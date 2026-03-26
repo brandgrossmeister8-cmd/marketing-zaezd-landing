@@ -12,7 +12,7 @@ export default function AuthorSection() {
           className="text-center text-2xl font-bold lg:text-4xl mb-14"
           style={{ color: '#2A168F' }}
         >
-          Об авторе методологии
+          Об авторе
         </motion.h2>
 
         <motion.div

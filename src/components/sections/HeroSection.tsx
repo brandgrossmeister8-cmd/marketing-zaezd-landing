@@ -82,9 +82,8 @@ export default function HeroSection() {
           animate="visible"
           className="mx-auto max-w-2xl text-sm sm:text-base text-white/80 lg:text-lg mb-8 leading-relaxed px-2"
         >
-          Бизнес-игра &laquo;Маркетинговый заезд&raquo; по технологии системного продвижения
-          Ии Имшинецкой. 90&nbsp;минут и&nbsp;вы получите точную диагностику маркетинга
-          с&nbsp;цифрами
+          Бизнес-игра по технологии Ии Имшинецкой. За 90 минут вы получите
+          диагностику вашего маркетинга с конкретными цифрами
         </motion.p>
 
         <motion.p
@@ -92,9 +91,9 @@ export default function HeroSection() {
           variants={fadeUp}
           initial="hidden"
           animate="visible"
-          className="text-xs sm:text-sm text-gold font-semibold mb-10"
+          className="text-base sm:text-lg lg:text-xl text-gold font-bold mb-10"
         >
-          286 предпринимателей уже сыграли офлайн. Запускаем онлайн-формат
+          286 предпринимателей уже сыграли. А вы хотите?
         </motion.p>
 
         <motion.button
