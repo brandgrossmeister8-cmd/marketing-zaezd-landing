@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import { Calendar, Clock } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import confetti from 'canvas-confetti'
 
 interface GameSlot {
   id: string
@@ -12,8 +13,8 @@ interface GameSlot {
 const STORAGE_KEY = 'game-schedule'
 
 const defaultSlots: GameSlot[] = [
-  { id: '1', date: '2026-04-09', time: '12:00', spots: 6 },
-  { id: '2', date: '2026-04-09', time: '15:00', spots: 6 },
+  { id: '1', date: '2026-04-10', time: '12:00', spots: 6 },
+  { id: '2', date: '2026-04-10', time: '15:00', spots: 6 },
 ]
 
 export function getSchedule(): GameSlot[] {
@@ -43,6 +44,15 @@ export default function ScheduleSection() {
     setSlots(getSchedule())
   }, [])
 
+  const fireConfetti = () => {
+    confetti({
+      particleCount: 100,
+      spread: 80,
+      origin: { y: 0.6 },
+      colors: ['#4338DF', '#FFD700', '#A977FA', '#6838CE', '#B8ACFF'],
+    })
+  }
+
   if (slots.length === 0) return null
 
   return (
@@ -56,7 +66,7 @@ export default function ScheduleSection() {
           className="text-center text-2xl font-bold lg:text-4xl mb-4"
           style={{ color: '#2A168F' }}
         >
-          Ближайшие игры
+          Ближайшие заезды
         </motion.h2>
         <motion.p
           initial={{ opacity: 0 }}
@@ -78,10 +88,7 @@ export default function ScheduleSection() {
           style={{ background: '#F3E8FF', border: '1px solid #A977FA' }}
         >
           <p className="font-bold" style={{ color: '#2A168F' }}>
-            9 апреля 2 игры. Первые 12 зарегистрированных играют бесплатно!
-          </p>
-          <p className="text-sm mt-1" style={{ color: '#6838CE' }}>
-            Далее стоимость игры 3000 рублей
+            10 апреля 2 заезда
           </p>
         </motion.div>
 
@@ -114,6 +121,7 @@ export default function ScheduleSection() {
                 </p>
                 <a
                   href="https://t.me/SystemPromoBot?start=c1774180920281-ds" target="_blank" rel="noopener noreferrer"
+                  onClick={fireConfetti}
                   className="inline-block rounded-full px-5 py-2 text-sm font-semibold text-white transition-opacity hover:opacity-90 text-center w-full sm:w-auto"
                   style={{ background: '#FF8C00', color: 'white', pointerEvents: slot.spots > 0 ? 'auto' : 'none', opacity: slot.spots > 0 ? 1 : 0.5 }}
                 >
@@ -139,10 +147,11 @@ export default function ScheduleSection() {
             href="https://t.me/SystemPromoBot?start=c1774180920281-ds"
             target="_blank"
             rel="noopener noreferrer"
+            onClick={fireConfetti}
             className="inline-block rounded-full px-6 py-2.5 text-sm font-semibold transition-opacity hover:opacity-90"
             style={{ background: '#FF8C00', color: 'white' }}
           >
-            Предзапись на игру
+            Предзапись на заезд
           </a>
         </motion.div>
       </div>

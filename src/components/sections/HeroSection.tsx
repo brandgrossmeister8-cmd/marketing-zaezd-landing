@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import confetti from 'canvas-confetti'
 import { ChevronDown } from 'lucide-react'
+import { useState, useEffect } from 'react'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -9,6 +10,79 @@ const fadeUp = {
     y: 0,
     transition: { delay: i * 0.15, duration: 0.6, ease: 'easeOut' as const },
   }),
+}
+
+let sharedAudioCtx: AudioContext | null = null
+
+function getAudioCtx() {
+  if (!sharedAudioCtx) {
+    sharedAudioCtx = new (window.AudioContext || (window as any).webkitAudioContext)()
+  }
+  if (sharedAudioCtx.state === 'suspended') {
+    sharedAudioCtx.resume()
+  }
+  return sharedAudioCtx
+}
+
+// Разблокируем аудио при первом взаимодействии
+if (typeof window !== 'undefined') {
+  const unlock = () => {
+    getAudioCtx()
+    document.removeEventListener('click', unlock)
+    document.removeEventListener('touchstart', unlock)
+    document.removeEventListener('scroll', unlock)
+  }
+  document.addEventListener('click', unlock)
+  document.addEventListener('touchstart', unlock)
+  document.addEventListener('scroll', unlock)
+}
+
+function playTypeClick() {
+  try {
+    const ctx = getAudioCtx()
+    const buffer = ctx.createBuffer(1, Math.floor(ctx.sampleRate * 0.03), ctx.sampleRate)
+    const data = buffer.getChannelData(0)
+    for (let i = 0; i < data.length; i++) {
+      data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (ctx.sampleRate * 0.005))
+    }
+    const source = ctx.createBufferSource()
+    source.buffer = buffer
+    const gain = ctx.createGain()
+    gain.gain.value = 0.3
+    source.connect(gain)
+    gain.connect(ctx.destination)
+    source.start()
+  } catch {}
+}
+
+function Typewriter({ text, speed = 60, delay = 0 }: { text: string; speed?: number; delay?: number }) {
+  const [displayed, setDisplayed] = useState('')
+  const [started, setStarted] = useState(false)
+
+  useEffect(() => {
+    const timer = setTimeout(() => setStarted(true), delay)
+    return () => clearTimeout(timer)
+  }, [delay])
+
+  useEffect(() => {
+    if (!started) return
+    if (displayed.length >= text.length) return
+    const timer = setTimeout(() => {
+      const nextChar = text[displayed.length]
+      setDisplayed(text.slice(0, displayed.length + 1))
+      if (nextChar !== ' ') playTypeClick()
+    }, speed)
+    return () => clearTimeout(timer)
+  }, [displayed, started, text, speed])
+
+  return (
+    <>
+      {displayed}
+      {displayed.length < text.length && (
+        <span className="inline-block w-[2px] h-[1em] bg-white/70 ml-1 align-middle" style={{ animation: 'blink 0.7s step-end infinite' }} />
+      )}
+    </>
+  )
 }
 
 export default function HeroSection() {
@@ -29,72 +103,53 @@ export default function HeroSection() {
         background: 'linear-gradient(135deg, #6838CE 0%, #2A168F 100%)',
       }}
     >
-      {/* Decorative racing lines */}
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute top-1/4 left-0 right-0 h-px bg-[#FF8C00]" />
-        <div className="absolute top-1/2 left-0 right-0 h-px bg-[#FF8C00]" />
-        <div className="absolute top-3/4 left-0 right-0 h-px bg-[#FF8C00]" />
+      {/* Фото трассы на фоне */}
+      <div className="absolute inset-0">
+        <img src="/track.webp" alt="" className="w-full h-full object-cover opacity-20" />
       </div>
 
       <div className="relative mx-auto max-w-4xl text-center">
-        <motion.p
+        <motion.div
           custom={0}
           variants={fadeUp}
           initial="hidden"
           animate="visible"
-          className="font-bold uppercase tracking-wider text-white mb-4 text-[22px] sm:text-[34px] lg:text-[52px] xl:text-[64px]"
+          className="flex items-start justify-center gap-3 sm:gap-5 lg:gap-8 mb-4"
         >
-          Маркетинговый заезд
-        </motion.p>
-
-        <motion.div
-          custom={0.5}
-          variants={fadeUp}
-          initial="hidden"
-          animate="visible"
-          className="mb-6"
-        >
-          <span
-            className="inline-block text-4xl sm:text-6xl lg:text-8xl"
-            style={{
-              filter: 'sepia(1) saturate(5) hue-rotate(10deg) brightness(1.1)',
-              animation: 'carDrive 4s ease-in-out infinite',
-            }}
-          >
-            🏎️
-          </span>
+          <span className="text-4xl sm:text-6xl lg:text-8xl">🏁</span>
+          <p className="font-bold uppercase tracking-wider text-white text-[22px] sm:text-[34px] lg:text-[52px] xl:text-[64px]">
+            Маркетинговый заезд
+          </p>
+          <span className="text-4xl sm:text-6xl lg:text-8xl">🏁</span>
         </motion.div>
 
-        <motion.h1
+        <motion.div
           custom={1}
           variants={fadeUp}
           initial="hidden"
           animate="visible"
-          className="font-bold leading-tight text-white mb-6 text-[18px] sm:text-[30px] lg:text-[48px] xl:text-[60px]"
+          className="mx-auto max-w-3xl rounded-2xl px-6 py-8 sm:px-10 sm:py-10 mb-10 backdrop-blur-md"
+          style={{ background: 'rgba(255,255,255,0.04)' }}
         >
-          Узнайте, сколько денег теряет ваш бизнес прямо сейчас
-        </motion.h1>
+          <h1 className="font-bold leading-tight text-white mb-6 text-[16px] sm:text-[28px] lg:text-[46px] xl:text-[58px]" style={{ fontFamily: "'Courier New', Courier, monospace" }}>
+            <Typewriter text="Узнайте, сколько денег теряет ваш бизнес прямо сейчас" speed={50} delay={0} />
+          </h1>
+          <style>{`
+            @keyframes blink {
+              0%, 100% { opacity: 1; }
+              50% { opacity: 0; }
+            }
+          `}</style>
 
-        <motion.p
-          custom={2}
-          variants={fadeUp}
-          initial="hidden"
-          animate="visible"
-          className="mx-auto max-w-2xl text-sm sm:text-base text-white/80 lg:text-lg mb-8 leading-relaxed px-2"
-        >
-          Бизнес-игра по технологии Ии Имшинецкой. За 90 минут вы получите
-          диагностику вашего маркетинга с конкретными цифрами
-        </motion.p>
+          <p className="mx-auto max-w-2xl text-sm sm:text-base text-white/80 lg:text-lg mb-8 leading-relaxed">
+            Бизнес-заезд по технологии Ии Имшинецкой. За 90 минут вы получите
+            диагностику вашего маркетинга с конкретными цифрами
+          </p>
 
-        <motion.p
-          custom={3}
-          variants={fadeUp}
-          initial="hidden"
-          animate="visible"
-          className="text-base sm:text-lg lg:text-xl text-gold font-bold mb-10"
-        >
-          286 предпринимателей уже сыграли. А вы хотите?
-        </motion.p>
+          <p className="text-base sm:text-lg lg:text-xl text-gold font-bold">
+            286 предпринимателей уже узнали скорость своего бизнеса. А вы хотите? В одном заезде участвуют только 6 гонщиков
+          </p>
+        </motion.div>
 
         <motion.button
           custom={4}
@@ -107,7 +162,7 @@ export default function HeroSection() {
           className="rounded-full bg-[#FF8C00] px-8 py-3 text-base sm:px-10 sm:py-4 sm:text-lg font-bold hover:brightness-110 transition-all cursor-pointer border-none shadow-lg shadow-[#FF8C00]/30 w-full sm:w-auto"
           style={{ color: 'white' }}
         >
-          Хочу в игру
+          Участвую
         </motion.button>
 
         <motion.div

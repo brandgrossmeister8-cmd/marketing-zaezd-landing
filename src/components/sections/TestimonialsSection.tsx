@@ -37,7 +37,7 @@ const testimonials: Testimonial[] = [
     name: 'Марина Т.',
     role: 'консалтинг',
     city: 'Петербург',
-    text: 'Финишировала на 40 км/ч из 120. Неприятно, но конкретно. Три точки роста из шести оказались слабыми и тормозили весь бизнес. Работаю по дорожной карте из игры, за квартал закрыла две из трёх. Следующая цель 90 км/ч.',
+    text: 'Финишировала на 40 км/ч из 120. Неприятно, но конкретно. Три точки роста из шести оказались слабыми и тормозили весь бизнес. Работаю по дорожной карте из заезда, за квартал закрыла две из трёх. Следующая цель 90 км/ч.',
   },
   {
     name: 'Ольга Д.',
@@ -61,7 +61,7 @@ const testimonials: Testimonial[] = [
     name: 'Игорь К.',
     role: 'автосервис',
     city: 'Воронеж',
-    text: 'Играли втроём из одной компании. Каждый видел маркетинг по-своему. После игры впервые договорились, кто наш клиент и чем мы отличаемся от конкурентов.',
+    text: 'Играли втроём из одной компании. Каждый видел маркетинг по-своему. После заезда впервые договорились, кто наш клиент и чем мы отличаемся от конкурентов.',
   },
 ]
 
@@ -89,14 +89,14 @@ export default function TestimonialsSection() {
           className="text-center mb-14"
         >
           <div className="inline-block rounded-2xl px-8 py-5" style={{ background: 'linear-gradient(135deg, #6838CE, #2A168F)' }}>
-            <p className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-2" style={{ color: '#FFD700' }}>
+            <p className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-2" style={{ color: '#FF8C00' }}>
               286
             </p>
             <p className="text-white text-sm sm:text-base font-semibold mb-1">
               предпринимателей уже сыграли
             </p>
             <p className="text-sm" style={{ color: '#A977FA' }}>
-              200+ в офлайн формате. Запускаем онлайн формат
+              и узнали скорость своего бизнеса
             </p>
           </div>
         </motion.div>
@@ -109,7 +109,8 @@ export default function TestimonialsSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1, duration: 0.5 }}
-              className={`rounded-2xl bg-white p-6 hover:shadow-lg transition-all duration-300 ${
+              whileHover={{ scale: 1.03, y: -4 }}
+              className={`rounded-2xl bg-white p-6 hover:shadow-xl transition-shadow duration-300 cursor-default ${
                 i >= 3 ? 'lg:col-span-1 md:col-span-1' : ''
               }`}
               style={{ border: '1px solid #A977FA' }}

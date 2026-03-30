@@ -44,7 +44,7 @@ export default function CTASection() {
           transition={{ delay: 0.2, duration: 0.5 }}
           className="text-white/70 mb-10"
         >
-          Запишитесь на ближайшую онлайн-игру
+          Запишитесь на ближайший онлайн-заезд
         </motion.p>
 
         <motion.button
@@ -58,7 +58,7 @@ export default function CTASection() {
           className="inline-flex items-center justify-center gap-3 rounded-full bg-[#FF8C00] px-8 py-3 text-base sm:px-10 sm:py-4 sm:text-lg font-bold hover:brightness-110 transition-all cursor-pointer border-none shadow-lg shadow-[#FF8C00]/30 w-full sm:w-auto"
           style={{ color: 'white' }}
         >
-          Записаться на игру
+          Записаться на заезд
         </motion.button>
 
       </div>

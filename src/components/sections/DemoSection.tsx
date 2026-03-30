@@ -3,7 +3,7 @@ import { Gauge, Flag, Trophy } from 'lucide-react'
 
 export default function DemoSection() {
   return (
-    <section className="py-12 px-4 sm:py-20 lg:py-28" style={{ background: 'linear-gradient(135deg, #2A168F, #6838CE)' }}>
+    <section id="demo" className="py-12 px-4 sm:py-20 lg:py-28" style={{ background: 'linear-gradient(135deg, #2A168F, #6838CE)' }}>
       <div className="mx-auto max-w-6xl">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
@@ -12,7 +12,7 @@ export default function DemoSection() {
           transition={{ duration: 0.5 }}
           className="text-center text-2xl font-bold text-white lg:text-4xl mb-14"
         >
-          Как выглядит игра
+          Демо заезда
         </motion.h2>
 
         {/* Demo video */}

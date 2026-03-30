@@ -2,8 +2,9 @@ import { useState } from 'react'
 import { Menu, X } from 'lucide-react'
 
 const navLinks = [
-  { label: 'Как работает', href: '#how-it-works' },
-  { label: 'Результаты', href: '#testimonials' },
+  { label: 'Этапы заезда', href: '#how-it-works' },
+  { label: 'Демо', href: '#demo' },
+  { label: 'Расписание заездов', href: '#schedule' },
   { label: 'FAQ', href: '#faq' },
   { label: 'Отзывы', href: '#testimonials' },
 ]
@@ -40,7 +41,7 @@ export default function Header() {
             className="ml-2 rounded-full px-5 py-2 text-sm font-bold hover:opacity-90 transition-colors cursor-pointer border-none"
             style={{ background: '#FF8C00', color: 'white' }}
           >
-            Записаться на игру
+            Записаться на заезд
           </button>
         </nav>
 
@@ -71,7 +72,7 @@ export default function Header() {
             className="mt-2 w-full rounded-full px-5 py-3 text-sm font-bold hover:opacity-90 transition-colors cursor-pointer border-none"
             style={{ background: '#FF8C00', color: 'white' }}
           >
-            Записаться на игру
+            Записаться на заезд
           </button>
         </div>
       )}
