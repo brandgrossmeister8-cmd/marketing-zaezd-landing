@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Plus, Minus } from 'lucide-react'
+import { ChevronDown, HelpCircle, MessageCircle } from 'lucide-react'
 
 interface FAQItem {
   question: string
@@ -26,28 +26,36 @@ function FAQAccordionItem({ item, isOpen, onToggle, index }: { item: FAQItem; is
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ delay: index * 0.04, duration: 0.4 }}
-      className="group"
-      style={{ borderBottom: '1px solid rgba(169,119,250,0.08)' }}
+      className="mb-3"
     >
       <button
         onClick={onToggle}
-        className="flex w-full items-center justify-between py-5 text-left bg-transparent border-none cursor-pointer gap-4"
+        className="flex w-full items-center gap-4 rounded-xl px-5 py-4 text-left bg-transparent border cursor-pointer transition-all duration-300"
+        style={{
+          background: isOpen ? 'rgba(67,56,223,0.06)' : 'white',
+          border: isOpen ? '1px solid rgba(67,56,223,0.15)' : '1px solid rgba(169,119,250,0.1)',
+        }}
       >
         <span
-          className="text-[15px] font-semibold leading-snug transition-colors duration-300"
+          className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white"
+          style={{ background: '#6838CE' }}
+        >
+          {index + 1}
+        </span>
+        <span
+          className="text-[15px] font-semibold leading-snug flex-1 transition-colors duration-300"
           style={{ color: isOpen ? '#4338DF' : '#2A168F' }}
         >
           {item.question}
         </span>
-        <div
-          className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg transition-all duration-300"
+        <ChevronDown
+          size={18}
+          className="shrink-0 transition-transform duration-300"
           style={{
-            background: isOpen ? 'rgba(67,56,223,0.08)' : 'rgba(169,119,250,0.06)',
             color: isOpen ? '#4338DF' : '#B8ACFF',
+            transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
           }}
-        >
-          {isOpen ? <Minus size={14} strokeWidth={2} /> : <Plus size={14} strokeWidth={2} />}
-        </div>
+        />
       </button>
       <AnimatePresence>
         {isOpen && (
@@ -58,7 +66,7 @@ function FAQAccordionItem({ item, isOpen, onToggle, index }: { item: FAQItem; is
             transition={{ duration: 0.3, ease: 'easeInOut' }}
             className="overflow-hidden"
           >
-            <p className="pb-5 text-sm leading-[1.7] pr-12" style={{ color: '#8B7BAE' }}>
+            <p className="px-5 pt-3 pb-1 text-sm leading-[1.7] ml-11" style={{ color: '#8B7BAE' }}>
               {item.answer}
             </p>
           </motion.div>
@@ -72,45 +80,82 @@ export default function FAQSection() {
   const [openIndex, setOpenIndex] = useState<number | null>(null)
 
   return (
-    <section id="faq" className="py-24 px-5 sm:py-32">
-      <div className="mx-auto max-w-2xl">
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.7 }}
-          className="text-center mb-14"
-        >
-          <p
-            className="text-[11px] font-semibold uppercase tracking-[0.2em] mb-4"
-            style={{ color: '#A977FA' }}
-          >
-            FAQ
-          </p>
-          <h2
-            className="text-3xl font-bold sm:text-4xl lg:text-[2.75rem] leading-[1.15]"
-            style={{ color: '#2A168F' }}
-          >
-            Частые вопросы
-          </h2>
-        </motion.div>
+    <section id="faq" className="py-24 px-5 sm:py-32" style={{ background: '#FDFBFF' }}>
+      <div className="mx-auto max-w-6xl">
+        {/* Two-column layout */}
+        <div className="grid gap-10 lg:grid-cols-5">
+          {/* LEFT column */}
+          <div className="lg:col-span-2">
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7 }}
+            >
+              <div className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 mb-5" style={{ background: 'rgba(169,119,250,0.1)' }}>
+                <HelpCircle size={14} style={{ color: '#6838CE' }} />
+                <span className="text-[11px] font-semibold uppercase tracking-[0.2em]" style={{ color: '#6838CE' }}>
+                  FAQ
+                </span>
+              </div>
+              <h2
+                className="text-3xl font-bold sm:text-4xl leading-[1.15] mb-3"
+                style={{ color: '#2A168F' }}
+              >
+                FAQ
+              </h2>
+              <p className="text-sm leading-relaxed mb-8" style={{ color: '#8B7BAE' }}>
+                Ответы на самые частые вопросы о маркетинговом заезде
+              </p>
+            </motion.div>
 
-        <div
-          className="rounded-2xl bg-white px-6 sm:px-8"
-          style={{
-            border: '1px solid rgba(169,119,250,0.08)',
-            boxShadow: '0 4px 32px rgba(104,56,206,0.04)',
-          }}
-        >
-          {faqs.map((faq, i) => (
-            <FAQAccordionItem
-              key={i}
-              item={faq}
-              isOpen={openIndex === i}
-              onToggle={() => setOpenIndex(openIndex === i ? null : i)}
-              index={i}
-            />
-          ))}
+            {/* Contact card */}
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2, duration: 0.5 }}
+              className="rounded-2xl p-6"
+              style={{ background: 'white', border: '1px solid rgba(169,119,250,0.1)', boxShadow: '0 4px 24px rgba(104,56,206,0.04)' }}
+            >
+              <div className="flex items-center gap-3 mb-3">
+                <div
+                  className="flex h-10 w-10 items-center justify-center rounded-full"
+                  style={{ background: '#6838CE' }}
+                >
+                  <MessageCircle size={18} color="white" />
+                </div>
+                <p className="text-base font-bold" style={{ color: '#2A168F' }}>
+                  Не нашли ответ?
+                </p>
+              </div>
+              <p className="text-sm mb-5" style={{ color: '#8B7BAE' }}>
+                Напишите нам в Telegram — ответим лично
+              </p>
+              <a
+                href="https://t.me/brandgros"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-full px-6 py-2.5 text-sm font-bold text-white no-underline transition-all duration-300 hover:shadow-lg hover:shadow-[#6838CE]/20 hover:brightness-110"
+                style={{ background: '#6838CE' }}
+              >
+                Написать нам
+              </a>
+            </motion.div>
+          </div>
+
+          {/* RIGHT column - accordion */}
+          <div className="lg:col-span-3">
+            {faqs.map((faq, i) => (
+              <FAQAccordionItem
+                key={i}
+                item={faq}
+                isOpen={openIndex === i}
+                onToggle={() => setOpenIndex(openIndex === i ? null : i)}
+                index={i}
+              />
+            ))}
+          </div>
         </div>
       </div>
     </section>

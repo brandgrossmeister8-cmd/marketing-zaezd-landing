@@ -6,22 +6,24 @@ import {
   Megaphone,
   Users,
   Repeat,
+  Route,
+  Zap,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 
 interface Stage {
   icon: LucideIcon
   city: string
-  description: string
+  number: number
 }
 
 const stages: Stage[] = [
-  { icon: PackageSearch, city: 'Ассортиминск', description: 'Определите тип продукта и структуру ассортимента' },
-  { icon: Tag, city: 'Продукто-Брендск', description: 'Найдите баланс бренда и ассортимента' },
-  { icon: HelpCircle, city: 'Зачемград', description: 'Сформулируйте, зачем вы клиенту' },
-  { icon: Megaphone, city: 'Траффик-Сити', description: 'Выберите стратегию привлечения клиентов' },
-  { icon: Users, city: 'Цалово', description: 'Опишите целевую аудиторию по 5-7 параметрам' },
-  { icon: Repeat, city: 'Выборг', description: 'Системность или креативность — сделайте выбор' },
+  { icon: PackageSearch, city: 'Ассортиминск', number: 1 },
+  { icon: Tag, city: 'Продукто-Брендск', number: 2 },
+  { icon: HelpCircle, city: 'Зачемград', number: 3 },
+  { icon: Megaphone, city: 'Траффик-Сити', number: 4 },
+  { icon: Users, city: 'Цалово', number: 5 },
+  { icon: Repeat, city: 'Выборг', number: 6 },
 ]
 
 export default function HowItWorksSection() {
@@ -41,128 +43,168 @@ export default function HowItWorksSection() {
         style={{ background: '#A977FA' }}
       />
 
-      <div className="mx-auto max-w-5xl relative">
+      <div className="mx-auto max-w-6xl relative">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.7 }}
-          className="text-center mb-20"
+          className="mb-16"
         >
-          <p
-            className="text-[11px] font-semibold uppercase tracking-[0.2em] mb-4"
-            style={{ color: 'rgba(255,215,0,0.6)' }}
-          >
-            Маршрут
-          </p>
-          <h2 className="text-3xl font-bold text-white sm:text-4xl lg:text-[2.75rem] leading-[1.15] mb-4">
-            Как проходит заезд
-          </h2>
-          <p
-            className="max-w-md mx-auto text-[15px] leading-relaxed"
-            style={{ color: 'rgba(255,255,255,0.35)' }}
-          >
-            6 этапов — 6 городов на пути к эффективному маркетингу
-          </p>
-        </motion.div>
-
-        {/* Desktop: alternating timeline */}
-        <div className="relative">
-          {/* Center line */}
-          <div
-            className="absolute left-5 top-0 bottom-0 w-px lg:left-1/2 lg:-translate-x-px"
-            style={{ background: 'linear-gradient(to bottom, rgba(169,119,250,0.25) 0%, rgba(255,215,0,0.2) 100%)' }}
-          />
-
-          <div className="space-y-6 lg:space-y-10">
-            {stages.map((stage, i) => {
-              const Icon = stage.icon
-              const isLeft = i % 2 === 0
-              return (
-                <motion.div
-                  key={stage.city}
-                  initial={{ opacity: 0, x: isLeft ? -20 : 20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.08, duration: 0.5 }}
-                  className={`relative flex items-start gap-5 lg:gap-0 ${isLeft ? 'lg:flex-row' : 'lg:flex-row-reverse'}`}
-                >
-                  {/* Timeline dot */}
-                  <div
-                    className="absolute left-5 -translate-x-1/2 z-10 flex h-4 w-4 items-center justify-center rounded-full lg:left-1/2"
-                    style={{
-                      background: '#1E0F6E',
-                      border: '2px solid rgba(169,119,250,0.4)',
-                      boxShadow: '0 0 12px rgba(169,119,250,0.2)',
-                    }}
-                  >
-                    <div className="h-1.5 w-1.5 rounded-full" style={{ background: '#A977FA' }} />
-                  </div>
-
-                  {/* Spacer for mobile */}
-                  <div className="w-10 shrink-0 lg:hidden" />
-
-                  {/* Card */}
-                  <div className={`flex-1 lg:w-[calc(50%-2rem)] ${isLeft ? 'lg:pr-12 lg:text-right' : 'lg:pl-12 lg:text-left'}`}>
-                    <div
-                      className="group rounded-2xl px-6 py-5 transition-all duration-500 hover:bg-white/[0.06]"
-                      style={{
-                        background: 'rgba(255,255,255,0.03)',
-                        border: '1px solid rgba(255,255,255,0.06)',
-                      }}
-                    >
-                      <div className={`flex items-center gap-3.5 mb-2.5 ${isLeft ? 'lg:flex-row-reverse' : ''}`}>
-                        <div
-                          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-all duration-300 group-hover:scale-110"
-                          style={{ background: 'rgba(169,119,250,0.1)', color: '#A977FA' }}
-                        >
-                          <Icon size={18} strokeWidth={1.5} />
-                        </div>
-                        <div>
-                          <span
-                            className="text-[10px] font-bold uppercase tracking-[0.18em] block mb-0.5"
-                            style={{ color: 'rgba(255,215,0,0.5)' }}
-                          >
-                            Этап {i + 1}
-                          </span>
-                          <h3 className="text-[15px] font-bold text-white/90 leading-tight">
-                            {stage.city}
-                          </h3>
-                        </div>
-                      </div>
-                      <p className="text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.35)' }}>
-                        {stage.description}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Empty half */}
-                  <div className="hidden lg:block lg:w-[calc(50%-2rem)]" />
-                </motion.div>
-              )
-            })}
+          {/* Top row: label + badge */}
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+            <div className="inline-flex items-center gap-2 rounded-full px-4 py-1.5" style={{ background: 'rgba(255,215,0,0.1)' }}>
+              <Route size={14} style={{ color: '#FFD700' }} />
+              <span className="text-[11px] font-semibold uppercase tracking-[0.2em]" style={{ color: '#FFD700' }}>
+                Маршрут
+              </span>
+            </div>
+            <div className="rounded-2xl px-5 py-3" style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)' }}>
+              <div className="flex items-center gap-2 mb-1">
+                <Zap size={14} style={{ color: '#FFD700' }} />
+                <span className="text-sm font-bold text-white">Старт: 60 км/ч → Финиш: до 120 км/ч</span>
+              </div>
+              <p className="text-xs text-white/40">Каждый пит-стоп ±10 км/ч к вашей скорости</p>
+            </div>
           </div>
 
-          {/* Finish flag */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.4, duration: 0.4 }}
-            className="relative mt-10 flex justify-center"
-          >
-            <div
-              className="flex h-12 w-12 items-center justify-center rounded-full text-lg"
-              style={{
-                background: 'rgba(255,215,0,0.06)',
-                border: '1.5px solid rgba(255,215,0,0.2)',
-                boxShadow: '0 0 30px rgba(255,215,0,0.06)',
-              }}
-            >
-              🏁
-            </div>
-          </motion.div>
+          <h2 className="text-3xl font-bold text-white sm:text-4xl lg:text-[2.75rem] leading-[1.15]">
+            Как проходит заезд
+          </h2>
+        </motion.div>
+
+        {/* Horizontal race track timeline */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+          className="mb-12 hidden sm:block"
+        >
+          <div className="flex items-center justify-between px-4">
+            {stages.map((_, i) => (
+              <div key={i} className="flex items-center flex-1 last:flex-none">
+                <div
+                  className="h-4 w-4 rounded-full shrink-0 relative z-10"
+                  style={{
+                    background: i < 3 ? '#6838CE' : i < 5 ? '#FF8C00' : '#FFD700',
+                    boxShadow: `0 0 12px ${i < 3 ? 'rgba(104,56,206,0.4)' : i < 5 ? 'rgba(255,140,0,0.4)' : 'rgba(255,215,0,0.4)'}`,
+                  }}
+                />
+                {i < stages.length - 1 && (
+                  <div
+                    className="h-[2px] flex-1"
+                    style={{
+                      background: i < 2
+                        ? 'linear-gradient(90deg, #6838CE, #6838CE)'
+                        : i < 4
+                        ? 'linear-gradient(90deg, #FF8C00, #FF8C00)'
+                        : 'linear-gradient(90deg, #FFD700, #FFD700)',
+                      opacity: 0.5,
+                    }}
+                  />
+                )}
+              </div>
+            ))}
+            {/* Finish flag */}
+            <div className="ml-4 text-2xl">🏁</div>
+          </div>
+        </motion.div>
+
+        {/* 3x2 grid of cards */}
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {stages.map((stage, i) => {
+            const Icon = stage.icon
+            return (
+              <motion.div
+                key={stage.city}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.08, duration: 0.5 }}
+                className="group rounded-2xl p-5 transition-all duration-500 hover:bg-white/[0.08]"
+                style={{
+                  background: 'rgba(255,255,255,0.04)',
+                  border: '1px solid rgba(255,255,255,0.08)',
+                  backdropFilter: 'blur(12px)',
+                }}
+              >
+                <div className="flex items-start gap-4">
+                  {/* Number in purple circle */}
+                  <div
+                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-bold text-white"
+                    style={{ background: '#6838CE' }}
+                  >
+                    {stage.number}
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-[10px] font-bold uppercase tracking-[0.15em]" style={{ color: '#FFD700' }}>
+                        ПИТ-СТОП {stage.number}
+                      </span>
+                      <span
+                        className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
+                        style={{ background: 'rgba(134,239,172,0.15)', color: '#86efac' }}
+                      >
+                        +10 км/ч
+                      </span>
+                    </div>
+                    {/* Icon in purple square */}
+                    <div
+                      className="inline-flex h-8 w-8 items-center justify-center rounded-lg mb-2 transition-transform duration-300 group-hover:scale-110"
+                      style={{ background: 'rgba(169,119,250,0.15)' }}
+                    >
+                      <Icon size={16} strokeWidth={1.5} style={{ color: '#A977FA' }} />
+                    </div>
+                    <h3 className="text-[15px] font-bold text-white/90 leading-tight">
+                      {stage.city}
+                    </h3>
+                  </div>
+                </div>
+              </motion.div>
+            )
+          })}
         </div>
+
+        {/* Bottom bar: Finish */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.3, duration: 0.5 }}
+          className="mt-10 rounded-2xl p-6"
+          style={{
+            background: 'rgba(255,255,255,0.04)',
+            border: '1px solid rgba(255,255,255,0.08)',
+            backdropFilter: 'blur(12px)',
+          }}
+        >
+          <div className="flex flex-col sm:flex-row items-center gap-5">
+            <div className="flex items-center gap-3 flex-1">
+              <span className="text-2xl">🏁</span>
+              <div>
+                <p className="text-base font-bold text-white">Финиш: ваша персональная скорость</p>
+                <p className="text-sm text-white/40">Калькулятор упущенной выгоды + дорожная карта роста</p>
+              </div>
+            </div>
+            {/* Speed scale */}
+            <div className="flex items-center gap-1">
+              {[0, 30, 60, 90, 120].map((speed) => (
+                <div
+                  key={speed}
+                  className="px-3 py-1.5 rounded-lg text-xs font-bold"
+                  style={{
+                    background: speed >= 90 ? 'rgba(255,215,0,0.15)' : 'rgba(255,255,255,0.05)',
+                    color: speed >= 90 ? '#FFD700' : 'rgba(255,255,255,0.3)',
+                    border: speed >= 90 ? '1px solid rgba(255,215,0,0.3)' : '1px solid rgba(255,255,255,0.05)',
+                  }}
+                >
+                  {speed} км/ч
+                </div>
+              ))}
+            </div>
+          </div>
+        </motion.div>
       </div>
     </section>
   )

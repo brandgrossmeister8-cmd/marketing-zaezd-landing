@@ -3,13 +3,13 @@ import { Link } from 'react-router-dom'
 export default function Footer() {
   return (
     <footer
-      className="py-12 px-5"
-      style={{ background: '#1E0F6E', borderTop: '1px solid rgba(169,119,250,0.1)' }}
+      className="py-10 px-5"
+      style={{ background: '#2A168F', borderTop: '1px solid rgba(169,119,250,0.1)' }}
     >
       <div className="mx-auto max-w-5xl">
-        <div className="flex flex-col items-center gap-6 text-center">
+        <div className="flex flex-col items-center gap-4 text-center">
           <p className="text-sm font-bold tracking-[0.08em] text-white/70">
-            ИМШИНЕЦКАЯ И ПАРТНЕРЫ
+            &copy; 2026 ИМШИНЕЦКАЯ И ПАРТНЕРЫ
           </p>
           <p className="text-xs text-white/30 leading-relaxed">
             ИП Архипов Владимир Владимирович &middot; ИНН 590301045341 &middot; ОГРН 307590422600013
@@ -38,9 +38,6 @@ export default function Footer() {
               Политика cookies
             </Link>
           </div>
-          <p className="text-[11px] text-white/20">
-            &copy; 2026 Все права защищены
-          </p>
         </div>
       </div>
     </footer>

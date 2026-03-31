@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion'
 import confetti from 'canvas-confetti'
-import { ChevronDown } from 'lucide-react'
+import { ChevronDown, Clock, Car, Trophy } from 'lucide-react'
 import { useState, useEffect } from 'react'
 
 const fadeUp = {
@@ -24,7 +24,6 @@ function getAudioCtx() {
   return sharedAudioCtx
 }
 
-// Разблокируем аудио при первом взаимодействии
 if (typeof window !== 'undefined') {
   const unlock = () => {
     getAudioCtx()
@@ -98,23 +97,48 @@ export default function HeroSection() {
 
   return (
     <section
-      className="relative overflow-hidden py-12 px-4 sm:py-20 lg:py-32"
+      className="relative overflow-hidden py-12 px-4 sm:py-16 lg:py-24"
       style={{
         background: 'linear-gradient(135deg, #6838CE 0%, #2A168F 100%)',
       }}
     >
-      {/* Фото трассы на фоне */}
+      <style>{`
+        @keyframes blink {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0; }
+        }
+      `}</style>
+
+      {/* Track photo background */}
       <div className="absolute inset-0">
         <img src="/track.webp" alt="" className="w-full h-full object-cover opacity-20" />
       </div>
 
       <div className="relative mx-auto max-w-4xl text-center">
+        {/* Announcement badge */}
         <motion.div
           custom={0}
           variants={fadeUp}
           initial="hidden"
           animate="visible"
-          className="flex items-start justify-center gap-3 sm:gap-5 lg:gap-8 mb-4"
+          className="mb-6"
+        >
+          <span
+            className="inline-flex items-center gap-2 rounded-full px-5 py-2 text-sm text-white/90"
+            style={{ background: 'rgba(255,255,255,0.1)', backdropFilter: 'blur(8px)' }}
+          >
+            <span className="h-2 w-2 rounded-full bg-[#FFD700]" />
+            Ближайший заезд — набор открыт
+          </span>
+        </motion.div>
+
+        {/* Title with flags */}
+        <motion.div
+          custom={1}
+          variants={fadeUp}
+          initial="hidden"
+          animate="visible"
+          className="flex items-start justify-center gap-3 sm:gap-5 lg:gap-8 mb-6"
         >
           <span className="text-4xl sm:text-6xl lg:text-8xl">🏁</span>
           <p className="font-bold uppercase tracking-wider text-white text-[22px] sm:text-[34px] lg:text-[52px] xl:text-[64px]">
@@ -123,60 +147,99 @@ export default function HeroSection() {
           <span className="text-4xl sm:text-6xl lg:text-8xl">🏁</span>
         </motion.div>
 
+        {/* Glass card with typewriter */}
         <motion.div
-          custom={1}
+          custom={2}
           variants={fadeUp}
           initial="hidden"
           animate="visible"
-          className="mx-auto max-w-3xl rounded-2xl px-6 py-8 sm:px-10 sm:py-10 mb-10 backdrop-blur-md"
-          style={{ background: 'rgba(255,255,255,0.04)' }}
+          className="mx-auto max-w-2xl rounded-2xl px-6 py-7 sm:px-10 sm:py-9 mb-6"
+          style={{
+            background: 'rgba(104,56,206,0.4)',
+            backdropFilter: 'blur(16px)',
+            border: '1px solid rgba(255,255,255,0.1)',
+          }}
         >
-          <h1 className="font-bold leading-tight text-white mb-6 text-[16px] sm:text-[28px] lg:text-[46px] xl:text-[58px]" style={{ fontFamily: "'Courier New', Courier, monospace" }}>
-            <Typewriter text="Узнайте, сколько денег теряет ваш бизнес прямо сейчас" speed={50} delay={0} />
+          <h1
+            className="font-bold leading-tight text-white mb-5 text-[16px] sm:text-[26px] lg:text-[38px]"
+            style={{ fontFamily: "'Courier New', Courier, monospace" }}
+          >
+            <Typewriter text="Узнайте, сколько денег теряет ваш бизнес прямо сейчас" speed={50} delay={300} />
           </h1>
-          <style>{`
-            @keyframes blink {
-              0%, 100% { opacity: 1; }
-              50% { opacity: 0; }
-            }
-          `}</style>
 
-          <p className="mx-auto max-w-2xl text-sm sm:text-base text-white/80 lg:text-lg mb-8 leading-relaxed">
-            Бизнес-заезд по технологии Ии Имшинецкой. За 90 минут вы получите
-            диагностику вашего маркетинга с конкретными цифрами
+          <p className="text-sm sm:text-base text-white/70 mb-5 leading-relaxed">
+            За 90 минут вы получите диагностику маркетинга с конкретными цифрами
           </p>
 
+          <p
+            className="text-xs sm:text-sm font-bold uppercase tracking-[0.15em]"
+            style={{ color: '#FFD700' }}
+          >
+            Игра для предпринимателей и самозанятых
+          </p>
         </motion.div>
 
+        {/* Info pills */}
+        <motion.div
+          custom={3}
+          variants={fadeUp}
+          initial="hidden"
+          animate="visible"
+          className="flex flex-wrap justify-center gap-3 mb-8"
+        >
+          {[
+            { icon: Clock, value: '90', label: 'минут' },
+            { icon: Car, value: '6', label: 'гонщиков' },
+            { icon: Trophy, value: '6', label: 'пит-стопов' },
+          ].map((item) => {
+            const Icon = item.icon
+            return (
+              <div
+                key={item.label}
+                className="flex items-center gap-2.5 rounded-xl px-4 py-2.5"
+                style={{ background: 'rgba(255,255,255,0.08)', backdropFilter: 'blur(8px)' }}
+              >
+                <Icon size={16} style={{ color: '#FFD700' }} strokeWidth={1.8} />
+                <div className="text-left">
+                  <span className="text-white font-bold text-sm block leading-tight">{item.value}</span>
+                  <span className="text-white/50 text-[11px]">{item.label}</span>
+                </div>
+              </div>
+            )
+          })}
+        </motion.div>
+
+        {/* CTA button */}
         <motion.button
           custom={4}
           variants={fadeUp}
           initial="hidden"
           animate="visible"
-          whileHover={{ scale: 1.05 }}
+          whileHover={{ scale: 1.05, boxShadow: '0 12px 40px rgba(255,140,0,0.35)' }}
           whileTap={{ scale: 0.97 }}
           onClick={handleCTA}
-          className="rounded-full bg-[#FF8C00] px-8 py-3 text-base sm:px-10 sm:py-4 sm:text-lg font-bold hover:brightness-110 transition-all cursor-pointer border-none shadow-lg shadow-[#FF8C00]/30 w-full sm:w-auto"
+          className="rounded-full bg-[#FF8C00] px-10 py-3.5 text-base sm:px-14 sm:py-4 sm:text-lg font-bold transition-all cursor-pointer border-none shadow-lg shadow-[#FF8C00]/30 w-full sm:w-auto"
           style={{ color: 'white' }}
         >
-          Участвую
+          Хочу узнать
         </motion.button>
 
+        {/* Scroll down */}
         <motion.div
           custom={5}
           variants={fadeUp}
           initial="hidden"
           animate="visible"
-          className="mt-8 sm:mt-16"
+          className="mt-8 sm:mt-12"
         >
           <button
             onClick={() =>
               document.querySelector('#problems')?.scrollIntoView({ behavior: 'smooth' })
             }
-            className="text-white/50 hover:text-white transition-colors bg-transparent border-none cursor-pointer"
+            className="text-white/30 hover:text-white/60 transition-colors bg-transparent border-none cursor-pointer"
             aria-label="Scroll down"
           >
-            <ChevronDown size={32} className="animate-bounce" />
+            <ChevronDown size={28} className="animate-bounce" />
           </button>
         </motion.div>
       </div>

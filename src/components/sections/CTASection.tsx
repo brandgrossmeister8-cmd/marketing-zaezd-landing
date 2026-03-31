@@ -1,6 +1,13 @@
 import { motion } from 'framer-motion'
-import { ArrowRight } from 'lucide-react'
+import { Flag, Clock, Users, Video, Gift } from 'lucide-react'
 import confetti from 'canvas-confetti'
+
+const infoPills = [
+  { icon: Clock, label: '90 минут' },
+  { icon: Users, label: '6 участников' },
+  { icon: Video, label: 'Онлайн в Zoom' },
+  { icon: Gift, label: 'Безоплатно' },
+]
 
 export default function CTASection() {
   const handleCTA = () => {
@@ -28,62 +35,75 @@ export default function CTASection() {
         style={{ background: 'radial-gradient(ellipse at 50% 80%, rgba(169,119,250,0.08) 0%, transparent 60%)' }}
       />
 
-      <div className="relative mx-auto max-w-xl text-center">
+      <div className="relative mx-auto max-w-2xl">
+        {/* Glass card */}
         <motion.div
-          initial={{ opacity: 0, y: 16 }}
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.7 }}
+          className="rounded-3xl p-8 sm:p-12 text-center"
+          style={{
+            background: 'rgba(255,255,255,0.04)',
+            border: '1px solid rgba(255,255,255,0.1)',
+            backdropFilter: 'blur(16px)',
+          }}
         >
-          <p
-            className="text-[11px] font-semibold uppercase tracking-[0.2em] mb-5"
-            style={{ color: 'rgba(255,215,0,0.5)' }}
-          >
-            Начните сейчас
-          </p>
+          {/* Badge */}
+          <div className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 mb-8" style={{ background: 'rgba(255,215,0,0.12)', border: '1px solid rgba(255,215,0,0.2)' }}>
+            <span className="text-lg">🏁</span>
+            <span className="text-xs font-semibold" style={{ color: '#FFD700' }}>Финишная прямая</span>
+          </div>
+
+          {/* Title */}
           <h2 className="text-3xl font-bold text-white sm:text-4xl lg:text-[2.75rem] leading-[1.15] mb-5">
-            Готовы узнать скорость
+            Готовы узнать реальную скорость
             <br />
             <span style={{ color: '#FFD700' }}>вашего бизнеса?</span>
           </h2>
-          <p
-            className="mb-10 text-[15px] leading-relaxed max-w-md mx-auto"
-            style={{ color: 'rgba(255,255,255,0.4)' }}
-          >
-            90 минут — и вы получите полную картину вашего маркетинга с конкретным планом действий
-          </p>
-        </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.2, duration: 0.5 }}
-          className="flex flex-col sm:flex-row items-center justify-center gap-4"
-        >
+          {/* Subtitle */}
+          <p
+            className="mb-8 text-[15px] leading-relaxed max-w-lg mx-auto"
+            style={{ color: 'rgba(255,255,255,0.45)' }}
+          >
+            Запишитесь на ближайший онлайн-заезд и получите диагностику маркетинга с конкретными цифрами
+          </p>
+
+          {/* Info pills */}
+          <div className="flex flex-wrap justify-center gap-3 mb-8">
+            {infoPills.map((pill) => {
+              const Icon = pill.icon
+              return (
+                <div
+                  key={pill.label}
+                  className="inline-flex items-center gap-2 rounded-full px-4 py-2"
+                  style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)' }}
+                >
+                  <Icon size={14} style={{ color: '#B8ACFF' }} />
+                  <span className="text-sm text-white/70">{pill.label}</span>
+                </div>
+              )
+            })}
+          </div>
+
+          {/* CTA button */}
           <motion.button
             whileHover={{ scale: 1.03, boxShadow: '0 16px 48px rgba(255,140,0,0.35)' }}
             whileTap={{ scale: 0.97 }}
             onClick={handleCTA}
-            className="inline-flex items-center gap-2 rounded-full bg-[#FF8C00] px-8 py-3.5 text-base sm:px-10 sm:py-4 sm:text-lg font-bold transition-all duration-300 cursor-pointer border-none shadow-lg shadow-[#FF8C00]/20 w-full sm:w-auto justify-center"
+            className="inline-flex items-center gap-2.5 rounded-full bg-[#FF8C00] px-10 py-4 text-lg font-bold transition-all duration-300 cursor-pointer border-none shadow-lg shadow-[#FF8C00]/25 w-full sm:w-auto justify-center"
             style={{ color: 'white' }}
           >
+            <Flag size={18} />
             Записаться на заезд
-            <ArrowRight size={18} strokeWidth={2} />
           </motion.button>
-        </motion.div>
 
-        {/* Trust line */}
-        <motion.p
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.4, duration: 0.5 }}
-          className="mt-8 text-xs"
-          style={{ color: 'rgba(255,255,255,0.2)' }}
-        >
-          Безоплатно на время обкатки трассы
-        </motion.p>
+          {/* Trust line */}
+          <p className="mt-5 text-xs" style={{ color: 'rgba(255,255,255,0.25)' }}>
+            Запись через Telegram-бот — ответ за 30 секунд
+          </p>
+        </motion.div>
       </div>
     </section>
   )

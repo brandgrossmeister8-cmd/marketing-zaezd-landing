@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { Calendar, Clock, ArrowRight } from 'lucide-react'
+import { Calendar, Clock, Flag, Video, Timer, Gift, CalendarPlus } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import confetti from 'canvas-confetti'
 
@@ -30,11 +30,20 @@ export function saveSchedule(slots: GameSlot[]) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(slots))
 }
 
-function formatDate(dateStr: string): string {
-  const months = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря']
-  const days = ['воскресенье', 'понедельник', 'вторник', 'среда', 'четверг', 'пятница', 'суббота']
+function getMonthShort(dateStr: string): string {
+  const months = ['ЯНВ', 'ФЕВ', 'МАР', 'АПР', 'МАЙ', 'ИЮН', 'ИЮЛ', 'АВГ', 'СЕН', 'ОКТ', 'НОЯ', 'ДЕК']
   const d = new Date(dateStr + 'T00:00:00')
-  return `${d.getDate()} ${months[d.getMonth()]}, ${days[d.getDay()]}`
+  return months[d.getMonth()]
+}
+
+function getDayNumber(dateStr: string): number {
+  return new Date(dateStr + 'T00:00:00').getDate()
+}
+
+function getWeekdayShort(dateStr: string): string {
+  const days = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб']
+  const d = new Date(dateStr + 'T00:00:00')
+  return days[d.getDay()]
 }
 
 export default function ScheduleSection() {
@@ -50,121 +59,186 @@ export default function ScheduleSection() {
 
   if (slots.length === 0) return null
 
+  const firstSlot = slots[0]
+
   return (
     <section
       id="schedule"
       className="py-24 px-5 sm:py-32 relative overflow-hidden"
-      style={{ background: 'linear-gradient(180deg, #FDFBFF 0%, #F5F0FF 50%, #EDE5FF 100%)' }}
+      style={{ background: 'linear-gradient(170deg, #160B52 0%, #1E0F6E 40%, #2A168F 100%)' }}
     >
-      {/* Decorative orb */}
+      {/* Decorative orbs */}
       <div
-        className="absolute top-20 left-0 w-[350px] h-[350px] rounded-full blur-[100px] opacity-20"
-        style={{ background: 'radial-gradient(circle, #B8ACFF, transparent 70%)' }}
+        className="absolute top-20 left-0 w-[400px] h-[400px] rounded-full blur-[120px] opacity-15"
+        style={{ background: '#4338DF' }}
+      />
+      <div
+        className="absolute bottom-20 right-0 w-[300px] h-[300px] rounded-full blur-[100px] opacity-10"
+        style={{ background: '#A977FA' }}
       />
 
-      <div className="mx-auto max-w-2xl relative">
+      <div className="mx-auto max-w-6xl relative">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.7 }}
-          className="text-center mb-14"
+          className="mb-12"
         >
-          <p
-            className="text-[11px] font-semibold uppercase tracking-[0.2em] mb-4"
-            style={{ color: '#A977FA' }}
-          >
-            Расписание
-          </p>
-          <h2
-            className="text-3xl font-bold sm:text-4xl lg:text-[2.75rem] leading-[1.15] mb-4"
-            style={{ color: '#2A168F' }}
-          >
-            Ближайшие заезды
+          {/* Top row: label + badges */}
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+            <div className="inline-flex items-center gap-2 rounded-full px-4 py-1.5" style={{ background: 'rgba(255,215,0,0.1)' }}>
+              <Calendar size={14} style={{ color: '#FFD700' }} />
+              <span className="text-[11px] font-semibold uppercase tracking-[0.2em]" style={{ color: '#FFD700' }}>
+                Расписание
+              </span>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <span className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold" style={{ background: 'rgba(255,255,255,0.08)', color: 'white' }}>
+                <Video size={12} /> Онлайн / Zoom
+              </span>
+              <span className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold" style={{ background: 'rgba(255,255,255,0.08)', color: 'white' }}>
+                <Timer size={12} /> 90 минут
+              </span>
+              <span className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold" style={{ background: 'rgba(255,255,255,0.08)', color: 'white' }}>
+                <Gift size={12} /> Безоплатно
+              </span>
+            </div>
+          </div>
+
+          <h2 className="text-3xl font-bold text-white sm:text-4xl lg:text-[2.75rem] leading-[1.15]">
+            Календарь заездов
           </h2>
-          <p className="text-[15px]" style={{ color: '#8B7BAE' }}>
-            Выберите удобную дату и запишитесь
-          </p>
         </motion.div>
 
-        <div className="space-y-4">
-          {slots.map((slot, i) => (
+        {/* Layout: date card LEFT, time slots RIGHT */}
+        <div className="grid gap-6 lg:grid-cols-5">
+          {/* Large date card */}
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="lg:col-span-2 rounded-2xl p-8 flex flex-col items-center justify-center text-center"
+            style={{
+              background: 'rgba(255,255,255,0.06)',
+              border: '1px solid rgba(255,255,255,0.1)',
+              backdropFilter: 'blur(12px)',
+            }}
+          >
+            <p className="text-sm font-bold uppercase tracking-[0.2em] mb-2" style={{ color: '#FFD700' }}>
+              {getMonthShort(firstSlot.date)}
+            </p>
+            <p className="text-7xl sm:text-8xl font-bold text-white leading-none mb-2">
+              {getDayNumber(firstSlot.date)}
+            </p>
+            <p className="text-lg font-semibold text-white/60">
+              {getWeekdayShort(firstSlot.date)}
+            </p>
+          </motion.div>
+
+          {/* Time slots */}
+          <div className="lg:col-span-3 flex flex-col gap-4">
+            {slots.map((slot, i) => {
+              const totalSpots = 6
+              const filled = totalSpots - slot.spots
+              const fillPercent = (filled / totalSpots) * 100
+              return (
+                <motion.div
+                  key={slot.id}
+                  initial={{ opacity: 0, y: 16 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.08, duration: 0.4 }}
+                  className="rounded-2xl p-5"
+                  style={{
+                    background: 'rgba(255,255,255,0.04)',
+                    border: '1px solid rgba(255,255,255,0.08)',
+                    backdropFilter: 'blur(12px)',
+                  }}
+                >
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div className="flex items-center gap-4">
+                      <div className="flex items-center gap-2">
+                        <Clock size={16} style={{ color: '#B8ACFF' }} />
+                        <span className="text-lg font-bold text-white">{slot.time}</span>
+                        <span className="text-sm text-white/40">МСК</span>
+                      </div>
+                      <span
+                        className="text-xs font-semibold px-3 py-1 rounded-full"
+                        style={{ background: 'rgba(169,119,250,0.15)', color: '#B8ACFF' }}
+                      >
+                        {slot.spots} из {totalSpots}
+                      </span>
+                    </div>
+                    <a
+                      href="https://t.me/SystemPromoBot?start=c1774180920281-ds"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={fireConfetti}
+                      className="inline-flex items-center gap-2 rounded-full px-6 py-2.5 text-sm font-bold transition-all duration-300 hover:shadow-lg hover:shadow-[#FF8C00]/30 hover:brightness-105 no-underline shrink-0"
+                      style={{
+                        background: '#FF8C00',
+                        color: 'white',
+                        pointerEvents: slot.spots > 0 ? 'auto' : 'none',
+                        opacity: slot.spots > 0 ? 1 : 0.4,
+                      }}
+                    >
+                      <Flag size={14} />
+                      {slot.spots > 0 ? 'Записаться' : 'В лист ожидания'}
+                    </a>
+                  </div>
+                  {/* Progress bar */}
+                  <div className="mt-3">
+                    <div className="relative h-1.5 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.06)' }}>
+                      <div
+                        className="absolute inset-y-0 left-0 rounded-full transition-all duration-500"
+                        style={{ width: `${fillPercent}%`, background: 'linear-gradient(90deg, #4338DF, #A977FA)' }}
+                      />
+                    </div>
+                    <div className="flex justify-between mt-1 text-[10px] text-white/20">
+                      <span>свободно</span>
+                      <span>заполнено</span>
+                    </div>
+                  </div>
+                </motion.div>
+              )
+            })}
+
+            {/* Pre-registration card */}
             <motion.div
-              key={slot.id}
               initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: i * 0.08, duration: 0.4 }}
-              className="flex flex-col sm:flex-row sm:items-center sm:justify-between rounded-2xl bg-white p-5 sm:p-6 transition-all duration-500 hover:shadow-[0_8px_40px_rgba(104,56,206,0.08)] hover:-translate-y-0.5 gap-4"
-              style={{ border: '1px solid rgba(169,119,250,0.08)' }}
+              transition={{ delay: 0.15, duration: 0.4 }}
+              className="rounded-2xl p-5 flex flex-col sm:flex-row items-center gap-4"
+              style={{
+                background: 'rgba(255,255,255,0.04)',
+                border: '1px dashed rgba(255,255,255,0.12)',
+              }}
             >
-              <div className="flex items-center gap-4">
-                <div
-                  className="flex h-12 w-12 items-center justify-center rounded-2xl shrink-0"
-                  style={{ background: 'linear-gradient(135deg, rgba(104,56,206,0.06), rgba(169,119,250,0.1))', color: '#6838CE' }}
-                >
-                  <Calendar size={20} strokeWidth={1.5} />
+              <div className="flex items-center gap-3 flex-1">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full shrink-0" style={{ background: 'rgba(255,215,0,0.15)' }}>
+                  <CalendarPlus size={18} style={{ color: '#FFD700' }} />
                 </div>
                 <div>
-                  <p className="text-[15px] font-bold" style={{ color: '#2A168F' }}>
-                    {formatDate(slot.date)}
-                  </p>
-                  <div className="flex items-center gap-2 mt-1">
-                    <Clock size={13} style={{ color: '#B8ACFF' }} strokeWidth={2} />
-                    <span className="text-sm" style={{ color: '#8B7BAE' }}>{slot.time} (МСК)</span>
-                  </div>
+                  <p className="text-sm font-bold text-white">Нет подходящей даты?</p>
+                  <p className="text-xs text-white/40">Запишитесь заранее — узнаете о новых заездах первыми</p>
                 </div>
               </div>
-
-              <div className="flex items-center gap-4 sm:flex-col sm:items-end sm:gap-2">
-                <p className="text-xs font-medium" style={{ color: '#B8ACFF' }}>
-                  {slot.spots > 0 ? `${slot.spots} мест` : 'Мест нет'}
-                </p>
-                <a
-                  href="https://t.me/SystemPromoBot?start=c1774180920281-ds"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={fireConfetti}
-                  className="inline-flex items-center gap-2 rounded-full px-6 py-2.5 text-sm font-bold transition-all duration-300 hover:shadow-lg hover:shadow-[#FF8C00]/20 hover:brightness-105"
-                  style={{
-                    background: '#FF8C00',
-                    color: 'white',
-                    pointerEvents: slot.spots > 0 ? 'auto' : 'none',
-                    opacity: slot.spots > 0 ? 1 : 0.4,
-                  }}
-                >
-                  {slot.spots > 0 ? 'Записаться' : 'В лист ожидания'}
-                  <ArrowRight size={14} strokeWidth={2} />
-                </a>
-              </div>
+              <a
+                href="https://t.me/SystemPromoBot?start=c1774180920281-ds"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={fireConfetti}
+                className="inline-flex items-center gap-2 rounded-full px-6 py-2.5 text-sm font-bold transition-all duration-300 hover:shadow-lg no-underline shrink-0"
+                style={{ background: 'white', color: '#2A168F' }}
+              >
+                Предзапись на заезд
+              </a>
             </motion.div>
-          ))}
+          </div>
         </div>
-
-        {/* Pre-registration card */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.15, duration: 0.4 }}
-          className="mt-5 text-center rounded-2xl bg-white/70 backdrop-blur-sm p-6"
-          style={{ border: '1px dashed rgba(169,119,250,0.15)' }}
-        >
-          <p className="text-sm mb-4" style={{ color: '#8B7BAE' }}>
-            Нет подходящей даты? Запишитесь заранее
-          </p>
-          <a
-            href="https://t.me/SystemPromoBot?start=c1774180920281-ds"
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={fireConfetti}
-            className="inline-flex items-center gap-2 rounded-full px-7 py-2.5 text-sm font-bold transition-all duration-300 hover:shadow-lg hover:shadow-[#FF8C00]/20 hover:brightness-105"
-            style={{ background: '#FF8C00', color: 'white' }}
-          >
-            Предзапись на заезд
-            <ArrowRight size={14} strokeWidth={2} />
-          </a>
-        </motion.div>
       </div>
     </section>
   )
