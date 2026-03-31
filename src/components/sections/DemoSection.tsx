@@ -3,126 +3,107 @@ import { Gauge, Flag, Trophy } from 'lucide-react'
 
 export default function DemoSection() {
   return (
-    <section id="demo" className="py-12 px-4 sm:py-20 lg:py-28" style={{ background: 'linear-gradient(135deg, #2A168F, #6838CE)' }}>
-      <div className="mx-auto max-w-6xl">
+    <section id="demo" className="py-16 px-4 sm:py-24" style={{ background: 'linear-gradient(180deg, #160B52 0%, #1E0F6E 50%, #160B52 100%)' }}>
+      <div className="mx-auto max-w-4xl">
         <motion.h2
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 12 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="text-center text-2xl font-bold text-white lg:text-4xl mb-14"
+          transition={{ duration: 0.6 }}
+          className="text-center text-2xl font-bold text-white sm:text-3xl lg:text-[2.5rem] mb-12 leading-tight"
         >
           Демо заезда
         </motion.h2>
 
-        {/* Demo video */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          whileInView={{ opacity: 1, scale: 1 }}
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="relative mx-auto max-w-3xl rounded-2xl overflow-hidden mb-16 shadow-lg"
-          style={{ border: '1px solid rgba(255,255,255,0.2)' }}
+          className="relative mx-auto max-w-2xl rounded-2xl overflow-hidden mb-14"
+          style={{ boxShadow: '0 32px 64px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.05)' }}
         >
           <video
             controls
             preload="metadata"
-            poster=""
             className="w-full"
-            style={{ aspectRatio: '16/9', background: '#1E0F6E' }}
+            style={{ aspectRatio: '16/9', background: '#0D0740' }}
           >
             <source src={`${import.meta.env.BASE_URL}demo.mp4`} type="video/mp4" />
             Ваш браузер не поддерживает видео
           </video>
         </motion.div>
 
-        {/* Game UI mockups */}
-        <div className="grid gap-5 sm:grid-cols-1 md:grid-cols-3">
-          {/* Speedometer card */}
+        <div className="grid gap-4 md:grid-cols-3">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1, duration: 0.5 }}
-            className="rounded-2xl p-6 text-center"
-            style={{ background: 'rgba(42,22,143,0.5)', border: '1px solid rgba(255,255,255,0.2)' }}
+            className="group rounded-2xl p-5 text-center transition-all duration-500 hover:bg-white/[0.04]"
+            style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)' }}
           >
-            <Gauge size={40} className="mx-auto mb-4" style={{ color: '#A977FA' }} />
-            <p className="text-3xl font-bold mb-1" style={{ color: '#FFD700' }}>90 км/ч</p>
-            <p className="text-xs text-white/50 uppercase tracking-wider mb-4">Текущая скорость</p>
-            <div className="relative h-3 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.1)' }}>
-              <div
-                className="absolute inset-y-0 left-0 rounded-full"
-                style={{
-                  width: '75%',
-                  background: 'linear-gradient(90deg, #6838CE, #A977FA)',
-                }}
-              />
+            <Gauge size={28} className="mx-auto mb-4 transition-transform duration-300 group-hover:scale-110" style={{ color: '#A977FA' }} strokeWidth={1.4} />
+            <p className="text-2xl font-bold mb-0.5 tracking-tight" style={{ color: '#FFD700' }}>90 <span className="text-base font-normal text-white/25">км/ч</span></p>
+            <p className="text-[9px] text-white/30 uppercase tracking-[0.15em] mb-4">Текущая скорость</p>
+            <div className="relative h-1.5 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.04)' }}>
+              <div className="absolute inset-y-0 left-0 rounded-full" style={{ width: '75%', background: 'linear-gradient(90deg, #4338DF, #A977FA)' }} />
             </div>
-            <div className="flex justify-between mt-1 text-xs text-white/30">
+            <div className="flex justify-between mt-1.5 text-[9px] text-white/15">
               <span>0</span>
-              <span>120 км/ч</span>
+              <span>120</span>
             </div>
           </motion.div>
 
-          {/* Race track card */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ delay: 0.2, duration: 0.5 }}
-            className="rounded-2xl p-6"
-            style={{ background: 'rgba(42,22,143,0.5)', border: '1px solid rgba(255,255,255,0.2)' }}
+            transition={{ delay: 0.15, duration: 0.5 }}
+            className="group rounded-2xl p-5 transition-all duration-500 hover:bg-white/[0.04]"
+            style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)' }}
           >
-            <Flag size={40} className="mx-auto mb-4" style={{ color: '#FFD700' }} />
-            <p className="text-sm font-semibold text-white mb-4 text-center">Маршрут заезда</p>
-            <div className="space-y-3">
+            <Flag size={28} className="mx-auto mb-4 transition-transform duration-300 group-hover:scale-110" style={{ color: '#FFD700' }} strokeWidth={1.4} />
+            <p className="text-sm font-semibold text-white/80 mb-4 text-center">Маршрут</p>
+            <div className="space-y-2.5">
               {['Ассортиминск', 'Продукто-Брендск', 'Зачемград', 'Траффик-Сити', 'Цалово', 'Выборг'].map(
                 (city, i) => (
-                  <div key={city} className="flex items-center gap-3">
-                    <div
-                      className={`h-3 w-3 rounded-full`}
-                      style={{ background: i < 4 ? '#A977FA' : 'rgba(255,255,255,0.2)' }}
-                    />
-                    <span className={`text-xs ${i < 4 ? 'text-white/80' : 'text-white/40'}`}>
-                      {city}
-                    </span>
-                    {i < 4 && (
-                      <span className="ml-auto text-xs" style={{ color: '#A977FA' }}>+10</span>
-                    )}
+                  <div key={city} className="flex items-center gap-2.5">
+                    <div className="h-1.5 w-1.5 rounded-full transition-colors" style={{ background: i < 4 ? '#A977FA' : 'rgba(255,255,255,0.08)' }} />
+                    <span className={`text-xs ${i < 4 ? 'text-white/55' : 'text-white/20'}`}>{city}</span>
+                    {i < 4 && <span className="ml-auto text-[11px] font-medium" style={{ color: 'rgba(169,119,250,0.4)' }}>+10</span>}
                   </div>
                 )
               )}
             </div>
           </motion.div>
 
-          {/* Player card */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ delay: 0.3, duration: 0.5 }}
-            className="rounded-2xl p-6 text-center"
-            style={{ background: 'rgba(42,22,143,0.5)', border: '1px solid rgba(255,255,255,0.2)' }}
+            transition={{ delay: 0.2, duration: 0.5 }}
+            className="group rounded-2xl p-5 text-center transition-all duration-500 hover:bg-white/[0.04]"
+            style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)' }}
           >
-            <Trophy size={40} className="mx-auto mb-4" style={{ color: '#FFD700' }} />
-            <p className="text-sm font-semibold text-white mb-4">Результат игрока</p>
-            <div className="rounded-xl p-4 mb-4" style={{ border: '1px solid rgba(255,215,0,0.3)', background: 'rgba(255,215,0,0.05)' }}>
-              <p className="text-2xl font-bold" style={{ color: '#FFD700' }}>90 км/ч</p>
-              <p className="text-xs text-white/50 mt-1">Хорошая система</p>
+            <Trophy size={28} className="mx-auto mb-4 transition-transform duration-300 group-hover:scale-110" style={{ color: '#FFD700' }} strokeWidth={1.4} />
+            <p className="text-sm font-semibold text-white/80 mb-4">Результат</p>
+            <div className="rounded-xl p-3.5 mb-4" style={{ background: 'rgba(255,215,0,0.03)', border: '1px solid rgba(255,215,0,0.08)' }}>
+              <p className="text-xl font-bold tracking-tight" style={{ color: '#FFD700' }}>90 <span className="text-xs font-normal text-white/25">км/ч</span></p>
+              <p className="text-[9px] text-white/25 mt-0.5">Хорошая система</p>
             </div>
             <div className="space-y-2 text-left">
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-white/60">Сильные точки</span>
-                <span className="font-semibold" style={{ color: '#A977FA' }}>4 из 6</span>
+              <div className="flex justify-between text-xs">
+                <span className="text-white/30">Сильные</span>
+                <span className="font-medium" style={{ color: '#A977FA' }}>4/6</span>
               </div>
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-white/60">Слабые точки</span>
-                <span className="text-red-400 font-semibold">2 из 6</span>
+              <div className="flex justify-between text-xs">
+                <span className="text-white/30">Слабые</span>
+                <span className="font-medium text-rose-400/50">2/6</span>
               </div>
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-white/60">Упущенная выгода</span>
-                <span className="font-semibold" style={{ color: '#FFD700' }}>~34%</span>
+              <div className="flex justify-between text-xs">
+                <span className="text-white/30">Потери</span>
+                <span className="font-medium" style={{ color: 'rgba(255,215,0,0.5)' }}>~34%</span>
               </div>
             </div>
           </motion.div>

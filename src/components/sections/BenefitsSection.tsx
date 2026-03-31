@@ -9,71 +9,47 @@ interface Benefit {
 }
 
 const benefits: Benefit[] = [
-  {
-    icon: Stethoscope,
-    title: 'Диагностику маркетинга',
-    description: 'Узнаете свои сильные и слабые точки по 6 ключевым параметрам',
-  },
-  {
-    icon: Calculator,
-    title: 'Калькулятор упущенной выгоды',
-    description: 'Увидите конкретные цифры потерь в рублях и процентах',
-  },
-  {
-    icon: Map,
-    title: 'Персональную дорожную карту',
-    description: 'Пошаговый план роста с приоритетами и рекомендациями',
-  },
-  {
-    icon: UsersRound,
-    title: 'Командную синхронизацию',
-    description: 'Вся команда на одной волне, единое понимание маркетинга',
-  },
+  { icon: Stethoscope, title: 'Диагностика маркетинга', description: 'Сильные и слабые точки по 6 ключевым параметрам' },
+  { icon: Calculator, title: 'Калькулятор потерь', description: 'Конкретные цифры упущенной выгоды в рублях' },
+  { icon: Map, title: 'Дорожная карта', description: 'Пошаговый план роста с приоритетами' },
+  { icon: UsersRound, title: 'Синхронизация команды', description: 'Единое понимание маркетинга для всей команды' },
 ]
 
 export default function BenefitsSection() {
   return (
-    <section className="py-12 px-4 sm:py-20 lg:py-28">
-      <div className="mx-auto max-w-6xl">
+    <section className="py-16 px-4 sm:py-24" style={{ background: 'linear-gradient(180deg, #F9F7FF 0%, #F3EEFF 100%)' }}>
+      <div className="mx-auto max-w-4xl">
         <motion.h2
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 12 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="text-center text-2xl font-bold lg:text-4xl mb-4"
+          transition={{ duration: 0.6 }}
+          className="text-center text-2xl font-bold sm:text-3xl lg:text-[2.5rem] mb-12 leading-tight"
           style={{ color: '#2A168F' }}
         >
           Что вы получите за 90 минут
         </motion.h2>
-        <motion.p
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.2, duration: 0.5 }}
-          className="text-center mb-14 max-w-lg mx-auto"
-          style={{ color: '#6838CE' }}
-        >
-          Конкретные инструменты для вашего бизнеса
-        </motion.p>
 
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2">
           {benefits.map((b, i) => {
             const Icon = b.icon
             return (
               <motion.div
                 key={b.title}
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.12, duration: 0.5 }}
-                className="rounded-2xl bg-white p-6 text-center hover:shadow-lg transition-all duration-300"
-                style={{ border: '1px solid #A977FA' }}
+                transition={{ delay: i * 0.1, duration: 0.5 }}
+                className="group flex items-start gap-4 rounded-2xl bg-white/80 backdrop-blur-sm p-5 transition-all duration-500 hover:bg-white hover:shadow-2xl hover:shadow-[#6838CE]/8"
+                style={{ border: '1px solid rgba(169,119,250,0.06)' }}
               >
-                <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl text-white shadow-lg" style={{ background: 'linear-gradient(135deg, #6838CE, #A977FA)' }}>
-                  <Icon size={28} />
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl transition-all duration-300 group-hover:scale-105" style={{ background: 'linear-gradient(135deg, rgba(104,56,206,0.08), rgba(169,119,250,0.12))', color: '#6838CE' }}>
+                  <Icon size={20} strokeWidth={1.6} />
                 </div>
-                <h3 className="text-base font-bold mb-2" style={{ color: '#2A168F' }}>{b.title}</h3>
-                <p className="text-sm leading-relaxed" style={{ color: '#6838CE' }}>{b.description}</p>
+                <div>
+                  <h3 className="text-sm font-bold mb-1" style={{ color: '#2A168F' }}>{b.title}</h3>
+                  <p className="text-[13px] leading-relaxed" style={{ color: '#8B7BAE' }}>{b.description}</p>
+                </div>
               </motion.div>
             )
           })}

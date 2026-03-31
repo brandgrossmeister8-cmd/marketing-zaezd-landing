@@ -5,9 +5,9 @@ import confetti from 'canvas-confetti'
 
 interface GameSlot {
   id: string
-  date: string // "2026-04-09"
-  time: string // "12:00"
-  spots: number // свободных мест
+  date: string
+  time: string
+  spots: number
 }
 
 const STORAGE_KEY = 'game-schedule'
@@ -45,25 +45,20 @@ export default function ScheduleSection() {
   }, [])
 
   const fireConfetti = () => {
-    confetti({
-      particleCount: 100,
-      spread: 80,
-      origin: { y: 0.6 },
-      colors: ['#4338DF', '#FFD700', '#A977FA', '#6838CE', '#B8ACFF'],
-    })
+    confetti({ particleCount: 100, spread: 80, origin: { y: 0.6 }, colors: ['#4338DF', '#FFD700', '#A977FA', '#6838CE', '#B8ACFF'] })
   }
 
   if (slots.length === 0) return null
 
   return (
-    <section id="schedule" className="py-16 px-4 lg:py-20">
-      <div className="mx-auto max-w-3xl">
+    <section id="schedule" className="py-16 px-4 sm:py-24" style={{ background: 'linear-gradient(180deg, #F9F7FF 0%, #F3EEFF 100%)' }}>
+      <div className="mx-auto max-w-2xl">
         <motion.h2
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 12 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="text-center text-2xl font-bold lg:text-4xl mb-4"
+          transition={{ duration: 0.6 }}
+          className="text-center text-2xl font-bold sm:text-3xl lg:text-[2.5rem] mb-3 leading-tight"
           style={{ color: '#2A168F' }}
         >
           Ближайшие заезды
@@ -72,58 +67,43 @@ export default function ScheduleSection() {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          transition={{ delay: 0.2, duration: 0.5 }}
-          className="text-center mb-10"
-          style={{ color: '#6838CE' }}
+          transition={{ delay: 0.1, duration: 0.5 }}
+          className="text-center mb-10 text-sm"
+          style={{ color: '#8B7BAE' }}
         >
           Выберите удобную дату и запишитесь
         </motion.p>
 
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.3, duration: 0.5 }}
-          className="text-center mb-6 rounded-xl p-4"
-          style={{ background: '#F3E8FF', border: '1px solid #A977FA' }}
-        >
-          <p className="font-bold" style={{ color: '#2A168F' }}>
-            10 апреля 2 заезда
-          </p>
-        </motion.div>
-
-        <div className="space-y-4">
+        <div className="space-y-3">
           {slots.map((slot, i) => (
             <motion.div
               key={slot.id}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 12 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: i * 0.1, duration: 0.4 }}
-              className="flex flex-col sm:flex-row sm:items-center sm:justify-between rounded-2xl bg-white p-4 sm:p-5 shadow-sm hover:shadow-md transition-shadow gap-4"
-              style={{ border: '1px solid #A977FA' }}
+              transition={{ delay: i * 0.08, duration: 0.4 }}
+              className="flex flex-col sm:flex-row sm:items-center sm:justify-between rounded-2xl bg-white p-4 sm:p-5 transition-all duration-500 hover:shadow-xl hover:shadow-[#6838CE]/6 gap-3"
+              style={{ border: '1px solid rgba(169,119,250,0.06)' }}
             >
-              <div className="flex items-center gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl text-white" style={{ background: 'linear-gradient(135deg, #6838CE, #A977FA)' }}>
-                  <Calendar size={22} />
+              <div className="flex items-center gap-3.5">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl" style={{ background: 'linear-gradient(135deg, rgba(104,56,206,0.06), rgba(169,119,250,0.1))', color: '#6838CE' }}>
+                  <Calendar size={18} strokeWidth={1.6} />
                 </div>
                 <div>
-                  <p className="font-bold" style={{ color: '#2A168F' }}>{formatDate(slot.date)}</p>
-                  <div className="flex items-center gap-2 mt-1">
-                    <Clock size={14} style={{ color: '#A977FA' }} />
-                    <span className="text-sm" style={{ color: '#6838CE' }}>{slot.time} (МСК)</span>
+                  <p className="text-sm font-bold" style={{ color: '#2A168F' }}>{formatDate(slot.date)}</p>
+                  <div className="flex items-center gap-1.5 mt-0.5">
+                    <Clock size={12} style={{ color: '#B8ACFF' }} strokeWidth={2} />
+                    <span className="text-xs" style={{ color: '#8B7BAE' }}>{slot.time} (МСК)</span>
                   </div>
                 </div>
               </div>
-              <div className="sm:text-right flex sm:flex-col items-center sm:items-end gap-2">
-                <p className="text-xs" style={{ color: '#A977FA' }}>
-                  {slot.spots > 0 ? `${slot.spots} мест` : 'Мест нет'}
-                </p>
+              <div className="flex items-center gap-3 sm:flex-col sm:items-end sm:gap-1.5">
+                <p className="text-[11px]" style={{ color: '#B8ACFF' }}>{slot.spots > 0 ? `${slot.spots} мест` : 'Мест нет'}</p>
                 <a
                   href="https://t.me/SystemPromoBot?start=c1774180920281-ds" target="_blank" rel="noopener noreferrer"
                   onClick={fireConfetti}
-                  className="inline-block rounded-full px-5 py-2 text-sm font-semibold text-white transition-opacity hover:opacity-90 text-center w-full sm:w-auto"
-                  style={{ background: '#FF8C00', color: 'white', pointerEvents: slot.spots > 0 ? 'auto' : 'none', opacity: slot.spots > 0 ? 1 : 0.5 }}
+                  className="inline-block rounded-full px-5 py-1.5 text-sm font-semibold transition-all duration-300 hover:shadow-lg hover:shadow-[#FF8C00]/20 text-center"
+                  style={{ background: '#FF8C00', color: 'white', pointerEvents: slot.spots > 0 ? 'auto' : 'none', opacity: slot.spots > 0 ? 1 : 0.4 }}
                 >
                   {slot.spots > 0 ? 'Записаться' : 'В лист ожидания'}
                 </a>
@@ -133,22 +113,18 @@ export default function ScheduleSection() {
         </div>
 
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 12 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ delay: 0.3, duration: 0.4 }}
-          className="mt-6 text-center rounded-2xl bg-white p-6"
-          style={{ border: '1px dashed #A977FA' }}
+          transition={{ delay: 0.15, duration: 0.4 }}
+          className="mt-4 text-center rounded-2xl bg-white/60 backdrop-blur-sm p-5"
+          style={{ border: '1px dashed rgba(169,119,250,0.12)' }}
         >
-          <p className="text-sm mb-3" style={{ color: '#6838CE' }}>
-            Нет подходящей даты? Запишитесь заранее. Вы узнаете о новых датах первыми
-          </p>
+          <p className="text-sm mb-3" style={{ color: '#8B7BAE' }}>Нет подходящей даты? Запишитесь заранее</p>
           <a
-            href="https://t.me/SystemPromoBot?start=c1774180920281-ds"
-            target="_blank"
-            rel="noopener noreferrer"
+            href="https://t.me/SystemPromoBot?start=c1774180920281-ds" target="_blank" rel="noopener noreferrer"
             onClick={fireConfetti}
-            className="inline-block rounded-full px-6 py-2.5 text-sm font-semibold transition-opacity hover:opacity-90"
+            className="inline-block rounded-full px-6 py-2 text-sm font-semibold transition-all duration-300 hover:shadow-lg hover:shadow-[#FF8C00]/20"
             style={{ background: '#FF8C00', color: 'white' }}
           >
             Предзапись на заезд

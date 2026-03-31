@@ -146,9 +146,6 @@ export default function HeroSection() {
             диагностику вашего маркетинга с конкретными цифрами
           </p>
 
-          <p className="text-base sm:text-lg lg:text-xl text-gold font-bold">
-            286 предпринимателей уже узнали скорость своего бизнеса. А вы хотите? В одном заезде участвуют только 6 гонщиков
-          </p>
         </motion.div>
 
         <motion.button
