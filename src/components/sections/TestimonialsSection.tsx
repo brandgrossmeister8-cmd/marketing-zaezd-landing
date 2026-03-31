@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion'
+import { Quote } from 'lucide-react'
 
 interface Testimonial {
   name: string
@@ -21,48 +22,73 @@ const testimonials: Testimonial[] = [
 
 export default function TestimonialsSection() {
   return (
-    <section id="testimonials" className="py-16 px-4 sm:py-24">
-      <div className="mx-auto max-w-4xl">
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
-          <motion.h2
-            initial={{ opacity: 0, y: 12 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-2xl font-bold sm:text-3xl lg:text-[2.5rem] leading-tight"
-            style={{ color: '#2A168F' }}
-          >
-            Что говорят участники
-          </motion.h2>
-          <motion.span
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1, duration: 0.4 }}
-            className="inline-flex items-baseline gap-1.5 rounded-full px-4 py-1.5"
-            style={{ background: 'linear-gradient(135deg, rgba(104,56,206,0.06), rgba(169,119,250,0.08))' }}
-          >
-            <span className="text-2xl font-bold" style={{ color: '#FF8C00' }}>286</span>
-            <span className="text-xs" style={{ color: '#8B7BAE' }}>участников</span>
-          </motion.span>
-        </div>
+    <section id="testimonials" className="py-24 px-5 sm:py-32 relative overflow-hidden">
+      {/* Decorative orb */}
+      <div
+        className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full blur-[120px] opacity-20"
+        style={{ background: 'radial-gradient(circle, #B8ACFF, transparent 70%)' }}
+      />
 
-        <div className="columns-1 gap-4 md:columns-2 lg:columns-3 [&>*]:mb-4 [&>*]:break-inside-avoid">
+      <div className="mx-auto max-w-6xl relative">
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7 }}
+          className="text-center mb-16"
+        >
+          <p
+            className="text-[11px] font-semibold uppercase tracking-[0.2em] mb-4"
+            style={{ color: '#A977FA' }}
+          >
+            Отзывы
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-5">
+            <h2
+              className="text-3xl font-bold sm:text-4xl lg:text-[2.75rem] leading-[1.15]"
+              style={{ color: '#2A168F' }}
+            >
+              Что говорят участники
+            </h2>
+            <div
+              className="inline-flex items-baseline gap-2 rounded-full px-5 py-2"
+              style={{ background: 'linear-gradient(135deg, rgba(255,140,0,0.08), rgba(255,140,0,0.04))' }}
+            >
+              <span className="text-2xl font-bold" style={{ color: '#FF8C00' }}>286</span>
+              <span className="text-sm" style={{ color: '#8B7BAE' }}>участников</span>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Masonry layout */}
+        <div className="columns-1 gap-5 md:columns-2 lg:columns-3 [&>*]:mb-5 [&>*]:break-inside-avoid">
           {testimonials.map((t, i) => (
             <motion.div
               key={t.name}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.04, duration: 0.5 }}
-              className="group rounded-2xl bg-white p-5 transition-all duration-500 hover:shadow-2xl hover:shadow-[#6838CE]/8"
-              style={{ border: '1px solid rgba(169,119,250,0.06)' }}
+              className="group relative rounded-2xl bg-white p-6 transition-all duration-500 hover:shadow-[0_8px_40px_rgba(104,56,206,0.08)] hover:-translate-y-0.5"
+              style={{ border: '1px solid rgba(169,119,250,0.08)' }}
             >
-              <div className="h-px mb-4 w-8 rounded-full" style={{ background: 'linear-gradient(90deg, #A977FA, transparent)' }} />
-              <p className="text-[13px] leading-[1.7] mb-4" style={{ color: '#3D2B6B' }}>{t.text}</p>
-              <div>
-                <p className="text-sm font-semibold" style={{ color: '#2A168F' }}>{t.name}</p>
-                <p className="text-[11px]" style={{ color: '#A977FA' }}>{t.role}, {t.city}</p>
+              <Quote
+                size={20}
+                className="mb-4 opacity-20"
+                style={{ color: '#A977FA' }}
+                strokeWidth={1.5}
+              />
+              <p className="text-sm leading-[1.75] mb-5" style={{ color: '#3D2B6B' }}>
+                {t.text}
+              </p>
+              <div
+                className="pt-4"
+                style={{ borderTop: '1px solid rgba(169,119,250,0.06)' }}
+              >
+                <p className="text-sm font-bold" style={{ color: '#2A168F' }}>{t.name}</p>
+                <p className="text-[12px] mt-0.5" style={{ color: '#A977FA' }}>
+                  {t.role}, {t.city}
+                </p>
               </div>
             </motion.div>
           ))}

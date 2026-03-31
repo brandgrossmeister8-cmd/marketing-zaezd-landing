@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { Calendar, Clock } from 'lucide-react'
+import { Calendar, Clock, ArrowRight } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import confetti from 'canvas-confetti'
 
@@ -51,83 +51,118 @@ export default function ScheduleSection() {
   if (slots.length === 0) return null
 
   return (
-    <section id="schedule" className="py-16 px-4 sm:py-24" style={{ background: 'linear-gradient(180deg, #F9F7FF 0%, #F3EEFF 100%)' }}>
-      <div className="mx-auto max-w-2xl">
-        <motion.h2
-          initial={{ opacity: 0, y: 12 }}
+    <section
+      id="schedule"
+      className="py-24 px-5 sm:py-32 relative overflow-hidden"
+      style={{ background: 'linear-gradient(180deg, #FDFBFF 0%, #F5F0FF 50%, #EDE5FF 100%)' }}
+    >
+      {/* Decorative orb */}
+      <div
+        className="absolute top-20 left-0 w-[350px] h-[350px] rounded-full blur-[100px] opacity-20"
+        style={{ background: 'radial-gradient(circle, #B8ACFF, transparent 70%)' }}
+      />
+
+      <div className="mx-auto max-w-2xl relative">
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center text-2xl font-bold sm:text-3xl lg:text-[2.5rem] mb-3 leading-tight"
-          style={{ color: '#2A168F' }}
+          transition={{ duration: 0.7 }}
+          className="text-center mb-14"
         >
-          Ближайшие заезды
-        </motion.h2>
-        <motion.p
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.1, duration: 0.5 }}
-          className="text-center mb-10 text-sm"
-          style={{ color: '#8B7BAE' }}
-        >
-          Выберите удобную дату и запишитесь
-        </motion.p>
+          <p
+            className="text-[11px] font-semibold uppercase tracking-[0.2em] mb-4"
+            style={{ color: '#A977FA' }}
+          >
+            Расписание
+          </p>
+          <h2
+            className="text-3xl font-bold sm:text-4xl lg:text-[2.75rem] leading-[1.15] mb-4"
+            style={{ color: '#2A168F' }}
+          >
+            Ближайшие заезды
+          </h2>
+          <p className="text-[15px]" style={{ color: '#8B7BAE' }}>
+            Выберите удобную дату и запишитесь
+          </p>
+        </motion.div>
 
-        <div className="space-y-3">
+        <div className="space-y-4">
           {slots.map((slot, i) => (
             <motion.div
               key={slot.id}
-              initial={{ opacity: 0, y: 12 }}
+              initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.08, duration: 0.4 }}
-              className="flex flex-col sm:flex-row sm:items-center sm:justify-between rounded-2xl bg-white p-4 sm:p-5 transition-all duration-500 hover:shadow-xl hover:shadow-[#6838CE]/6 gap-3"
-              style={{ border: '1px solid rgba(169,119,250,0.06)' }}
+              className="flex flex-col sm:flex-row sm:items-center sm:justify-between rounded-2xl bg-white p-5 sm:p-6 transition-all duration-500 hover:shadow-[0_8px_40px_rgba(104,56,206,0.08)] hover:-translate-y-0.5 gap-4"
+              style={{ border: '1px solid rgba(169,119,250,0.08)' }}
             >
-              <div className="flex items-center gap-3.5">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl" style={{ background: 'linear-gradient(135deg, rgba(104,56,206,0.06), rgba(169,119,250,0.1))', color: '#6838CE' }}>
-                  <Calendar size={18} strokeWidth={1.6} />
+              <div className="flex items-center gap-4">
+                <div
+                  className="flex h-12 w-12 items-center justify-center rounded-2xl shrink-0"
+                  style={{ background: 'linear-gradient(135deg, rgba(104,56,206,0.06), rgba(169,119,250,0.1))', color: '#6838CE' }}
+                >
+                  <Calendar size={20} strokeWidth={1.5} />
                 </div>
                 <div>
-                  <p className="text-sm font-bold" style={{ color: '#2A168F' }}>{formatDate(slot.date)}</p>
-                  <div className="flex items-center gap-1.5 mt-0.5">
-                    <Clock size={12} style={{ color: '#B8ACFF' }} strokeWidth={2} />
-                    <span className="text-xs" style={{ color: '#8B7BAE' }}>{slot.time} (МСК)</span>
+                  <p className="text-[15px] font-bold" style={{ color: '#2A168F' }}>
+                    {formatDate(slot.date)}
+                  </p>
+                  <div className="flex items-center gap-2 mt-1">
+                    <Clock size={13} style={{ color: '#B8ACFF' }} strokeWidth={2} />
+                    <span className="text-sm" style={{ color: '#8B7BAE' }}>{slot.time} (МСК)</span>
                   </div>
                 </div>
               </div>
-              <div className="flex items-center gap-3 sm:flex-col sm:items-end sm:gap-1.5">
-                <p className="text-[11px]" style={{ color: '#B8ACFF' }}>{slot.spots > 0 ? `${slot.spots} мест` : 'Мест нет'}</p>
+
+              <div className="flex items-center gap-4 sm:flex-col sm:items-end sm:gap-2">
+                <p className="text-xs font-medium" style={{ color: '#B8ACFF' }}>
+                  {slot.spots > 0 ? `${slot.spots} мест` : 'Мест нет'}
+                </p>
                 <a
-                  href="https://t.me/SystemPromoBot?start=c1774180920281-ds" target="_blank" rel="noopener noreferrer"
+                  href="https://t.me/SystemPromoBot?start=c1774180920281-ds"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   onClick={fireConfetti}
-                  className="inline-block rounded-full px-5 py-1.5 text-sm font-semibold transition-all duration-300 hover:shadow-lg hover:shadow-[#FF8C00]/20 text-center"
-                  style={{ background: '#FF8C00', color: 'white', pointerEvents: slot.spots > 0 ? 'auto' : 'none', opacity: slot.spots > 0 ? 1 : 0.4 }}
+                  className="inline-flex items-center gap-2 rounded-full px-6 py-2.5 text-sm font-bold transition-all duration-300 hover:shadow-lg hover:shadow-[#FF8C00]/20 hover:brightness-105"
+                  style={{
+                    background: '#FF8C00',
+                    color: 'white',
+                    pointerEvents: slot.spots > 0 ? 'auto' : 'none',
+                    opacity: slot.spots > 0 ? 1 : 0.4,
+                  }}
                 >
                   {slot.spots > 0 ? 'Записаться' : 'В лист ожидания'}
+                  <ArrowRight size={14} strokeWidth={2} />
                 </a>
               </div>
             </motion.div>
           ))}
         </div>
 
+        {/* Pre-registration card */}
         <motion.div
-          initial={{ opacity: 0, y: 12 }}
+          initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: 0.15, duration: 0.4 }}
-          className="mt-4 text-center rounded-2xl bg-white/60 backdrop-blur-sm p-5"
-          style={{ border: '1px dashed rgba(169,119,250,0.12)' }}
+          className="mt-5 text-center rounded-2xl bg-white/70 backdrop-blur-sm p-6"
+          style={{ border: '1px dashed rgba(169,119,250,0.15)' }}
         >
-          <p className="text-sm mb-3" style={{ color: '#8B7BAE' }}>Нет подходящей даты? Запишитесь заранее</p>
+          <p className="text-sm mb-4" style={{ color: '#8B7BAE' }}>
+            Нет подходящей даты? Запишитесь заранее
+          </p>
           <a
-            href="https://t.me/SystemPromoBot?start=c1774180920281-ds" target="_blank" rel="noopener noreferrer"
+            href="https://t.me/SystemPromoBot?start=c1774180920281-ds"
+            target="_blank"
+            rel="noopener noreferrer"
             onClick={fireConfetti}
-            className="inline-block rounded-full px-6 py-2 text-sm font-semibold transition-all duration-300 hover:shadow-lg hover:shadow-[#FF8C00]/20"
+            className="inline-flex items-center gap-2 rounded-full px-7 py-2.5 text-sm font-bold transition-all duration-300 hover:shadow-lg hover:shadow-[#FF8C00]/20 hover:brightness-105"
             style={{ background: '#FF8C00', color: 'white' }}
           >
             Предзапись на заезд
+            <ArrowRight size={14} strokeWidth={2} />
           </a>
         </motion.div>
       </div>

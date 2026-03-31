@@ -13,41 +13,50 @@ interface Problem {
   icon: LucideIcon
   city: string
   text: string
+  number: string
 }
 
 const problems: Problem[] = [
-  { icon: PackageSearch, city: 'Ассортиминск', text: 'Не можете чётко объяснить, что продаёте' },
-  { icon: Tag, city: 'Продукто-Брендск', text: 'Продвигаете отдельные продукты, сливая бюджет' },
-  { icon: HelpCircle, city: 'Зачемград', text: 'Не можете за минуту объяснить, зачем вы клиенту' },
-  { icon: Megaphone, city: 'Траффик-Сити', text: 'Рекламный бюджет уходит непонятно куда' },
-  { icon: Users, city: 'Цалово', text: 'Не знаете свою целевую аудиторию' },
-  { icon: Repeat, city: 'Выборг', text: 'Ставите на разовые акции вместо системы' },
+  { icon: PackageSearch, city: 'Ассортиминск', text: 'Не можете чётко объяснить, что продаёте', number: '01' },
+  { icon: Tag, city: 'Продукто-Брендск', text: 'Продвигаете отдельные продукты, сливая бюджет', number: '02' },
+  { icon: HelpCircle, city: 'Зачемград', text: 'Не можете за минуту объяснить, зачем вы клиенту', number: '03' },
+  { icon: Megaphone, city: 'Траффик-Сити', text: 'Рекламный бюджет уходит непонятно куда', number: '04' },
+  { icon: Users, city: 'Цалово', text: 'Не знаете свою целевую аудиторию', number: '05' },
+  { icon: Repeat, city: 'Выборг', text: 'Ставите на разовые акции вместо системы', number: '06' },
 ]
 
 export default function ProblemSection() {
   return (
-    <section id="problems" className="py-16 px-4 sm:py-24">
-      <div className="mx-auto max-w-4xl">
-        <motion.h2
-          initial={{ opacity: 0, y: 12 }}
+    <section id="problems" className="py-24 px-5 sm:py-32">
+      <div className="mx-auto max-w-5xl">
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center text-2xl font-bold sm:text-3xl lg:text-[2.5rem] mb-3 leading-tight"
-          style={{ color: '#2A168F' }}
+          transition={{ duration: 0.7 }}
+          className="text-center mb-16"
         >
-          6 точек, где бизнес теряет клиентов
-        </motion.h2>
-        <motion.p
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.1, duration: 0.5 }}
-          className="text-center mb-12 max-w-md mx-auto text-sm leading-relaxed"
-          style={{ color: '#8B7BAE' }}
-        >
-          Каждая точка — город на вашем маршруте. Слабое место в одном тормозит весь заезд
-        </motion.p>
+          <p
+            className="text-[11px] font-semibold uppercase tracking-[0.2em] mb-4"
+            style={{ color: '#A977FA' }}
+          >
+            Диагностика
+          </p>
+          <h2
+            className="text-3xl font-bold sm:text-4xl lg:text-[2.75rem] leading-[1.15] mb-4"
+            style={{ color: '#2A168F' }}
+          >
+            6 точек, где бизнес
+            <br />
+            <span style={{ color: '#6838CE' }}>теряет клиентов</span>
+          </h2>
+          <p
+            className="max-w-lg mx-auto text-[15px] leading-relaxed"
+            style={{ color: '#8B7BAE' }}
+          >
+            Каждая точка — город на вашем маршруте. Слабое место в одном тормозит весь заезд
+          </p>
+        </motion.div>
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {problems.map((p, i) => {
@@ -55,21 +64,44 @@ export default function ProblemSection() {
             return (
               <motion.div
                 key={p.city}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 24 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.07, duration: 0.5 }}
-                className="group relative rounded-2xl bg-white p-5 transition-all duration-500 hover:shadow-2xl hover:shadow-[#6838CE]/8 hover:-translate-y-0.5"
+                transition={{ delay: i * 0.08, duration: 0.5 }}
+                className="group relative rounded-2xl bg-white p-6 transition-all duration-500 hover:shadow-[0_8px_40px_rgba(104,56,206,0.08)] hover:-translate-y-1"
                 style={{ border: '1px solid rgba(169,119,250,0.08)' }}
               >
-                <div className="absolute top-0 left-0 right-0 h-[2px] rounded-t-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: 'linear-gradient(90deg, #6838CE, #A977FA)' }} />
+                {/* Top gradient line on hover */}
+                <div
+                  className="absolute top-0 left-4 right-4 h-[2px] rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                  style={{ background: 'linear-gradient(90deg, #6838CE, #A977FA, #B8ACFF)' }}
+                />
+
                 <div className="flex items-start gap-4">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-colors duration-300" style={{ background: 'rgba(104,56,206,0.06)', color: '#6838CE' }}>
-                    <Icon size={19} strokeWidth={1.6} />
+                  <div
+                    className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl transition-all duration-300 group-hover:scale-105"
+                    style={{ background: 'rgba(104,56,206,0.05)', color: '#6838CE' }}
+                  >
+                    <Icon size={20} strokeWidth={1.5} />
                   </div>
-                  <div>
-                    <p className="text-[10px] font-semibold uppercase tracking-[0.15em] mb-1.5" style={{ color: '#A977FA' }}>{p.city}</p>
-                    <p className="text-[13px] leading-relaxed" style={{ color: '#3D2B6B' }}>{p.text}</p>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span
+                        className="text-[10px] font-bold tracking-[0.15em] uppercase"
+                        style={{ color: '#B8ACFF' }}
+                      >
+                        {p.number}
+                      </span>
+                      <span
+                        className="text-[11px] font-semibold uppercase tracking-[0.12em]"
+                        style={{ color: '#A977FA' }}
+                      >
+                        {p.city}
+                      </span>
+                    </div>
+                    <p className="text-sm leading-relaxed" style={{ color: '#3D2B6B' }}>
+                      {p.text}
+                    </p>
                   </div>
                 </div>
               </motion.div>
