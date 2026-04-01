@@ -1,5 +1,27 @@
-import { motion } from 'framer-motion'
+import { motion, useScroll, useTransform, useInView } from 'framer-motion'
 import { Quote, Users, Target, Clock } from 'lucide-react'
+import { useRef, useEffect, useState } from 'react'
+
+function CountUp({ target, duration = 1.5 }: { target: number; duration?: number }) {
+  const ref = useRef<HTMLSpanElement>(null)
+  const isInView = useInView(ref, { once: true })
+  const [count, setCount] = useState(0)
+
+  useEffect(() => {
+    if (!isInView) return
+    const startTime = Date.now()
+    const ms = duration * 1000
+    const timer = setInterval(() => {
+      const elapsed = Date.now() - startTime
+      const progress = Math.min(elapsed / ms, 1)
+      setCount(Math.round(target * progress))
+      if (progress >= 1) clearInterval(timer)
+    }, 30)
+    return () => clearInterval(timer)
+  }, [isInView, target, duration])
+
+  return <span ref={ref}>{count}</span>
+}
 
 interface Testimonial {
   name: string
@@ -79,24 +101,50 @@ const testimonials: Testimonial[] = [
 ]
 
 const stats = [
-  { icon: Users, value: '286', label: 'участников' },
-  { icon: Target, value: '92%', label: 'нашли слабые точки' },
-  { icon: Clock, value: '90', label: 'минут на диагностику' },
+  { icon: Users, value: 286, label: 'участников', suffix: '' },
+  { icon: Target, value: 92, label: 'нашли слабые точки', suffix: '%' },
+  { icon: Clock, value: 90, label: 'минут на диагностику', suffix: '' },
 ]
 
+const containerVariants = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.08,
+    },
+  },
+}
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 24, filter: 'blur(4px)' },
+  visible: {
+    opacity: 1,
+    y: 0,
+    filter: 'blur(0px)',
+    transition: { duration: 0.5, ease: 'easeOut' as const },
+  },
+}
+
 export default function TestimonialsSection() {
+  const sectionRef = useRef<HTMLElement>(null)
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start end', 'end start'],
+  })
+  const orbY = useTransform(scrollYProgress, [0, 1], ['5%', '-10%'])
+
   return (
-    <section id="testimonials" className="py-24 px-5 sm:py-32 relative overflow-hidden">
-      {/* Decorative orb */}
-      <div
+    <section ref={sectionRef} id="testimonials" className="py-24 px-5 sm:py-32 relative overflow-hidden">
+      {/* Decorative orb with parallax */}
+      <motion.div
         className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full blur-[120px] opacity-15"
-        style={{ background: 'radial-gradient(circle, #B8ACFF, transparent 70%)' }}
+        style={{ background: 'radial-gradient(circle, #B8ACFF, transparent 70%)', y: orbY }}
       />
 
       <div className="mx-auto max-w-6xl relative">
         <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, y: 16, filter: 'blur(6px)' }}
+          whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
           viewport={{ once: true }}
           transition={{ duration: 0.7 }}
           className="mb-14"
@@ -114,20 +162,27 @@ export default function TestimonialsSection() {
               </p>
             </div>
 
-            {/* Stat badges */}
+            {/* Stat badges with counter animation */}
             <div className="flex flex-wrap gap-3">
-              {stats.map((s) => {
+              {stats.map((s, idx) => {
                 const Icon = s.icon
                 return (
-                  <div
+                  <motion.div
                     key={s.label}
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    whileInView={{ scale: 1, opacity: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.2 + idx * 0.1, type: 'spring', stiffness: 200 }}
+                    whileHover={{ scale: 1.05, y: -2 }}
                     className="inline-flex items-center gap-2.5 rounded-2xl px-4 py-2.5"
                     style={{ background: '#2A168F' }}
                   >
                     <Icon size={16} style={{ color: '#FFD700' }} />
-                    <span className="text-sm font-bold text-white">{s.value}</span>
+                    <span className="text-sm font-bold text-white">
+                      <CountUp target={s.value} duration={1.5} />{s.suffix}
+                    </span>
                     <span className="text-xs text-white/50">{s.label}</span>
-                  </div>
+                  </motion.div>
                 )
               })}
             </div>
@@ -136,12 +191,13 @@ export default function TestimonialsSection() {
 
         {/* Layout: Featured + masonry */}
         <div className="grid gap-6 lg:grid-cols-5">
-          {/* Featured testimonial - LEFT */}
+          {/* Featured testimonial - LEFT - slides from left */}
           <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, x: -40, filter: 'blur(4px)' }}
+            whileInView={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
             viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
+            transition={{ duration: 0.6 }}
+            whileHover={{ y: -4 }}
             className="lg:col-span-2 rounded-2xl p-7 flex flex-col"
             style={{ background: '#2A168F' }}
           >
@@ -150,12 +206,16 @@ export default function TestimonialsSection() {
               {featured.text}
             </p>
             {featured.highlight && (
-              <div
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                whileInView={{ scale: 1, opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.4, type: 'spring', stiffness: 200 }}
                 className="rounded-xl px-4 py-2.5 mb-5 inline-block"
                 style={{ background: 'rgba(255,140,0,0.15)', border: '1px solid rgba(255,140,0,0.3)' }}
               >
                 <span className="text-sm font-bold" style={{ color: '#FF8C00' }}>{featured.highlight}</span>
-              </div>
+              </motion.div>
             )}
             <div className="flex items-center gap-3 pt-4" style={{ borderTop: '1px solid rgba(255,255,255,0.1)' }}>
               <div
@@ -171,17 +231,21 @@ export default function TestimonialsSection() {
             </div>
           </motion.div>
 
-          {/* Masonry grid - RIGHT */}
-          <div className="lg:col-span-3 columns-1 sm:columns-2 gap-4 [&>*]:mb-4 [&>*]:break-inside-avoid">
-            {testimonials.map((t, i) => (
+          {/* Masonry grid - RIGHT with stagger */}
+          <motion.div
+            className="lg:col-span-3 columns-1 sm:columns-2 gap-4 [&>*]:mb-4 [&>*]:break-inside-avoid"
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+          >
+            {testimonials.map((t) => (
               <motion.div
                 key={t.name}
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.05, duration: 0.5 }}
-                className="rounded-2xl bg-white p-5 transition-all duration-500 hover:shadow-[0_8px_40px_rgba(104,56,206,0.08)] hover:-translate-y-0.5"
-                style={{ border: '1px solid rgba(169,119,250,0.1)' }}
+                variants={cardVariants}
+                whileHover={{ y: -4, rotateY: 2, boxShadow: '0 12px 48px rgba(104,56,206,0.1)' }}
+                className="rounded-2xl bg-white p-5 transition-colors duration-500"
+                style={{ border: '1px solid rgba(169,119,250,0.1)', perspective: '800px' }}
               >
                 <p className="text-sm leading-[1.7] mb-4" style={{ color: '#3D2B6B' }}>
                   {t.text}
@@ -208,7 +272,7 @@ export default function TestimonialsSection() {
                 </div>
               </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>

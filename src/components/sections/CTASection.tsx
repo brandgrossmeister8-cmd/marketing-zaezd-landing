@@ -1,6 +1,7 @@
-import { motion } from 'framer-motion'
+import { motion, useScroll, useTransform } from 'framer-motion'
 import { Flag, Clock, Users, Video, Gift } from 'lucide-react'
 import confetti from 'canvas-confetti'
+import { useRef } from 'react'
 
 const infoPills = [
   { icon: Clock, label: '90 минут' },
@@ -10,6 +11,14 @@ const infoPills = [
 ]
 
 export default function CTASection() {
+  const sectionRef = useRef<HTMLElement>(null)
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start end', 'end start'],
+  })
+  const orbTopY = useTransform(scrollYProgress, [0, 1], ['0%', '15%'])
+  const orbBottomY = useTransform(scrollYProgress, [0, 1], ['5%', '-10%'])
+
   const handleCTA = () => {
     confetti({ particleCount: 120, spread: 90, origin: { y: 0.6 }, colors: ['#4338DF', '#FFD700', '#A977FA', '#6838CE', '#B8ACFF'] })
     window.open('https://t.me/SystemPromoBot?start=c1774180920281-ds', '_blank')
@@ -17,18 +26,19 @@ export default function CTASection() {
 
   return (
     <section
+      ref={sectionRef}
       id="cta"
       className="relative py-24 px-5 sm:py-32 overflow-hidden"
       style={{ background: 'linear-gradient(160deg, #1E0F6E 0%, #2A168F 40%, #4338DF 100%)' }}
     >
-      {/* Decorative orbs */}
-      <div
+      {/* Decorative orbs with parallax */}
+      <motion.div
         className="absolute top-0 left-1/4 w-[500px] h-[500px] rounded-full blur-[150px] opacity-15"
-        style={{ background: '#6838CE' }}
+        style={{ background: '#6838CE', y: orbTopY }}
       />
-      <div
+      <motion.div
         className="absolute bottom-0 right-1/4 w-[400px] h-[400px] rounded-full blur-[120px] opacity-10"
-        style={{ background: '#A977FA' }}
+        style={{ background: '#A977FA', y: orbBottomY }}
       />
       <div
         className="absolute inset-0"
@@ -38,8 +48,8 @@ export default function CTASection() {
       <div className="relative mx-auto max-w-2xl">
         {/* Glass card */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, y: 30, filter: 'blur(8px)' }}
+          whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
           viewport={{ once: true }}
           transition={{ duration: 0.7 }}
           className="rounded-3xl p-8 sm:p-12 text-center"
@@ -50,10 +60,22 @@ export default function CTASection() {
           }}
         >
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 mb-8" style={{ background: 'rgba(255,215,0,0.12)', border: '1px solid rgba(255,215,0,0.2)' }}>
-            <span className="text-lg">🏁</span>
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            whileInView={{ scale: 1, opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
+            className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 mb-8" style={{ background: 'rgba(255,215,0,0.12)', border: '1px solid rgba(255,215,0,0.2)' }}
+          >
+            <motion.span
+              className="text-lg"
+              animate={{ rotate: [0, -10, 10, -5, 0] }}
+              transition={{ delay: 1, duration: 0.8, ease: 'easeInOut' }}
+            >
+              🏁
+            </motion.span>
             <span className="text-xs font-semibold" style={{ color: '#FFD700' }}>Финишная прямая</span>
-          </div>
+          </motion.div>
 
           {/* Title */}
           <h2 className="text-3xl font-bold text-white sm:text-4xl lg:text-[2.75rem] leading-[1.15] mb-5">
@@ -70,19 +92,24 @@ export default function CTASection() {
             Запишитесь на ближайший онлайн-заезд и получите диагностику маркетинга с конкретными цифрами
           </p>
 
-          {/* Info pills */}
+          {/* Info pills with stagger + scale-in */}
           <div className="flex flex-wrap justify-center gap-3 mb-8">
-            {infoPills.map((pill) => {
+            {infoPills.map((pill, idx) => {
               const Icon = pill.icon
               return (
-                <div
+                <motion.div
                   key={pill.label}
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  whileInView={{ scale: 1, opacity: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.3 + idx * 0.08, type: 'spring', stiffness: 200 }}
+                  whileHover={{ scale: 1.08, y: -2 }}
                   className="inline-flex items-center gap-2 rounded-full px-4 py-2"
                   style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)' }}
                 >
                   <Icon size={14} style={{ color: '#B8ACFF' }} />
                   <span className="text-sm text-white/70">{pill.label}</span>
-                </div>
+                </motion.div>
               )
             })}
           </div>

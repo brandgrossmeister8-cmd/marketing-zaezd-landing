@@ -22,13 +22,15 @@ const faqs: FAQItem[] = [
 function FAQAccordionItem({ item, isOpen, onToggle, index }: { item: FAQItem; isOpen: boolean; onToggle: () => void; index: number }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 12 }}
-      whileInView={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0, y: 12, filter: 'blur(4px)' }}
+      whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
       viewport={{ once: true }}
-      transition={{ delay: index * 0.04, duration: 0.4 }}
+      transition={{ delay: index * 0.05, duration: 0.4 }}
       className="mb-3"
     >
-      <button
+      <motion.button
+        whileHover={{ scale: 1.01 }}
+        whileTap={{ scale: 0.99 }}
         onClick={onToggle}
         className="flex w-full items-center gap-4 rounded-xl px-5 py-4 text-left bg-transparent border cursor-pointer transition-all duration-300"
         style={{
@@ -56,7 +58,7 @@ function FAQAccordionItem({ item, isOpen, onToggle, index }: { item: FAQItem; is
             transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
           }}
         />
-      </button>
+      </motion.button>
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -84,20 +86,26 @@ export default function FAQSection() {
       <div className="mx-auto max-w-6xl">
         {/* Two-column layout */}
         <div className="grid gap-10 lg:grid-cols-5">
-          {/* LEFT column */}
+          {/* LEFT column - slides from left */}
           <div className="lg:col-span-2">
             <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, x: -30, filter: 'blur(6px)' }}
+              whileInView={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
               viewport={{ once: true }}
               transition={{ duration: 0.7 }}
             >
-              <div className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 mb-5" style={{ background: 'rgba(169,119,250,0.1)' }}>
+              <motion.div
+                initial={{ scale: 0.8, opacity: 0 }}
+                whileInView={{ scale: 1, opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, type: 'spring', stiffness: 200 }}
+                className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 mb-5" style={{ background: 'rgba(169,119,250,0.1)' }}
+              >
                 <HelpCircle size={14} style={{ color: '#6838CE' }} />
                 <span className="text-[11px] font-semibold uppercase tracking-[0.2em]" style={{ color: '#6838CE' }}>
                   FAQ
                 </span>
-              </div>
+              </motion.div>
               <h2
                 className="text-3xl font-bold sm:text-4xl leading-[1.15] mb-3"
                 style={{ color: '#2A168F' }}
@@ -111,20 +119,23 @@ export default function FAQSection() {
 
             {/* Contact card */}
             <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, x: -30, filter: 'blur(4px)' }}
+              whileInView={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
               viewport={{ once: true }}
               transition={{ delay: 0.2, duration: 0.5 }}
+              whileHover={{ y: -4, boxShadow: '0 8px 32px rgba(104,56,206,0.08)' }}
               className="rounded-2xl p-6"
               style={{ background: 'white', border: '1px solid rgba(169,119,250,0.1)', boxShadow: '0 4px 24px rgba(104,56,206,0.04)' }}
             >
               <div className="flex items-center gap-3 mb-3">
-                <div
+                <motion.div
+                  whileHover={{ rotate: 15 }}
+                  transition={{ type: 'spring', stiffness: 300 }}
                   className="flex h-10 w-10 items-center justify-center rounded-full"
                   style={{ background: '#6838CE' }}
                 >
                   <MessageCircle size={18} color="white" />
-                </div>
+                </motion.div>
                 <p className="text-base font-bold" style={{ color: '#2A168F' }}>
                   Не нашли ответ?
                 </p>
@@ -144,8 +155,14 @@ export default function FAQSection() {
             </motion.div>
           </div>
 
-          {/* RIGHT column - accordion */}
-          <div className="lg:col-span-3">
+          {/* RIGHT column - accordion - slides from right */}
+          <motion.div
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="lg:col-span-3"
+          >
             {faqs.map((faq, i) => (
               <FAQAccordionItem
                 key={i}
@@ -155,7 +172,7 @@ export default function FAQSection() {
                 index={i}
               />
             ))}
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>

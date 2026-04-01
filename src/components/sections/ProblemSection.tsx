@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion'
+import { motion, useScroll, useTransform } from 'framer-motion'
 import {
   PackageSearch,
   Tag,
@@ -10,6 +10,7 @@ import {
   AlertTriangle,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
+import { useRef } from 'react'
 
 interface Problem {
   icon: LucideIcon
@@ -64,36 +65,73 @@ const problems: Problem[] = [
   },
 ]
 
+const containerVariants = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+}
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 30, filter: 'blur(4px)' },
+  visible: {
+    opacity: 1,
+    y: 0,
+    filter: 'blur(0px)',
+    transition: { duration: 0.5, ease: 'easeOut' as const },
+  },
+}
+
 export default function ProblemSection() {
+  const sectionRef = useRef<HTMLElement>(null)
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start end', 'end start'],
+  })
+  const orbY = useTransform(scrollYProgress, [0, 1], ['-10%', '10%'])
+
   return (
     <section
+      ref={sectionRef}
       id="problems"
       className="py-24 px-5 sm:py-32 relative overflow-hidden"
       style={{ background: 'linear-gradient(180deg, #FDFBFF 0%, #F5F0FF 50%, #EDE5FF 100%)' }}
     >
-      {/* Decorative orb */}
-      <div
+      {/* Decorative orb with parallax */}
+      <motion.div
         className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full blur-[120px] opacity-20"
-        style={{ background: 'radial-gradient(circle, #B8ACFF, transparent 70%)' }}
+        style={{ background: 'radial-gradient(circle, #B8ACFF, transparent 70%)', y: orbY }}
       />
 
       <div className="mx-auto max-w-6xl relative">
         <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, y: 16, filter: 'blur(6px)' }}
+          whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
           viewport={{ once: true }}
           transition={{ duration: 0.7 }}
           className="mb-14"
         >
           {/* Top row: label + badge */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-            <div className="inline-flex items-center gap-2 rounded-full px-4 py-1.5" style={{ background: 'rgba(169,119,250,0.1)' }}>
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              whileInView={{ scale: 1, opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, type: 'spring', stiffness: 200 }}
+              className="inline-flex items-center gap-2 rounded-full px-4 py-1.5" style={{ background: 'rgba(169,119,250,0.1)' }}
+            >
               <Stethoscope size={14} style={{ color: '#6838CE' }} />
               <span className="text-[11px] font-semibold uppercase tracking-[0.2em]" style={{ color: '#6838CE' }}>
                 Диагностика
               </span>
-            </div>
-            <div
+            </motion.div>
+            <motion.div
+              initial={{ x: 30, opacity: 0 }}
+              whileInView={{ x: 0, opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2, duration: 0.5 }}
               className="rounded-2xl px-5 py-3 max-w-xs"
               style={{ background: '#2A168F' }}
             >
@@ -102,7 +140,7 @@ export default function ProblemSection() {
                 <span className="text-sm font-bold text-white">Каждая слабая точка = -10 км/ч</span>
               </div>
               <p className="text-xs text-white/50">Каскадный эффект на весь бизнес</p>
-            </div>
+            </motion.div>
           </div>
 
           {/* Title */}
@@ -122,27 +160,33 @@ export default function ProblemSection() {
           </p>
         </motion.div>
 
-        {/* 3x2 grid */}
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {problems.map((p, i) => {
+        {/* 3x2 grid with staggered children */}
+        <motion.div
+          className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3"
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+        >
+          {problems.map((p) => {
             const Icon = p.icon
             return (
               <motion.div
                 key={p.city}
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.08, duration: 0.5 }}
-                className="group relative rounded-2xl bg-white p-6 transition-all duration-500 hover:shadow-[0_8px_40px_rgba(104,56,206,0.08)] hover:-translate-y-1 flex flex-col"
-                style={{ border: '1px solid rgba(169,119,250,0.1)', boxShadow: '0 2px 16px rgba(104,56,206,0.04)' }}
+                variants={cardVariants}
+                whileHover={{ y: -6, rotateY: 3, rotateX: -2, boxShadow: '0 12px 48px rgba(104,56,206,0.12)' }}
+                className="group relative rounded-2xl bg-white p-6 transition-colors duration-500 flex flex-col"
+                style={{ border: '1px solid rgba(169,119,250,0.1)', boxShadow: '0 2px 16px rgba(104,56,206,0.04)', perspective: '800px' }}
               >
                 {/* Purple circle icon */}
-                <div
-                  className="flex h-12 w-12 items-center justify-center rounded-full mb-4 transition-transform duration-300 group-hover:scale-110"
+                <motion.div
+                  whileHover={{ rotate: 10, scale: 1.15 }}
+                  transition={{ type: 'spring', stiffness: 300 }}
+                  className="flex h-12 w-12 items-center justify-center rounded-full mb-4"
                   style={{ background: '#6838CE' }}
                 >
                   <Icon size={20} strokeWidth={1.5} color="white" />
-                </div>
+                </motion.div>
 
                 {/* Pit-stop label */}
                 <span
@@ -169,7 +213,7 @@ export default function ProblemSection() {
               </motion.div>
             )
           })}
-        </div>
+        </motion.div>
       </div>
     </section>
   )

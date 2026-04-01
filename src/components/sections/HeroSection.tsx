@@ -1,13 +1,14 @@
-import { motion } from 'framer-motion'
+import { motion, useScroll, useTransform } from 'framer-motion'
 import confetti from 'canvas-confetti'
 import { ChevronDown, Clock, Car, Trophy } from 'lucide-react'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 const fadeUp = {
-  hidden: { opacity: 0, y: 30 },
+  hidden: { opacity: 0, y: 30, filter: 'blur(6px)' },
   visible: (i: number) => ({
     opacity: 1,
     y: 0,
+    filter: 'blur(0px)',
     transition: { delay: i * 0.15, duration: 0.6, ease: 'easeOut' as const },
   }),
 }
@@ -85,6 +86,13 @@ function Typewriter({ text, speed = 60, delay = 0 }: { text: string; speed?: num
 }
 
 export default function HeroSection() {
+  const sectionRef = useRef<HTMLElement>(null)
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start start', 'end start'],
+  })
+  const bgY = useTransform(scrollYProgress, [0, 1], ['0%', '20%'])
+
   const handleCTA = () => {
     confetti({
       particleCount: 80,
@@ -97,6 +105,7 @@ export default function HeroSection() {
 
   return (
     <section
+      ref={sectionRef}
       className="relative overflow-hidden py-12 px-4 sm:py-16 lg:py-24"
       style={{
         background: 'linear-gradient(135deg, #6838CE 0%, #2A168F 100%)',
@@ -109,10 +118,10 @@ export default function HeroSection() {
         }
       `}</style>
 
-      {/* Track photo background */}
-      <div className="absolute inset-0">
+      {/* Track photo background with parallax */}
+      <motion.div className="absolute inset-0" style={{ y: bgY }}>
         <img src="/track.webp" alt="" className="w-full h-full object-cover opacity-20" />
-      </div>
+      </motion.div>
 
       <div className="relative mx-auto max-w-4xl text-center">
         {/* Announcement badge */}
@@ -123,13 +132,20 @@ export default function HeroSection() {
           animate="visible"
           className="mb-6"
         >
-          <span
+          <motion.span
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: 0.1, duration: 0.5, type: 'spring', stiffness: 200 }}
             className="inline-flex items-center gap-2 rounded-full px-5 py-2 text-sm text-white/90"
             style={{ background: 'rgba(255,255,255,0.1)', backdropFilter: 'blur(8px)' }}
           >
-            <span className="h-2 w-2 rounded-full bg-[#FFD700]" />
+            <motion.span
+              className="h-2 w-2 rounded-full bg-[#FFD700]"
+              animate={{ scale: [1, 1.4, 1] }}
+              transition={{ repeat: Infinity, duration: 2, ease: 'easeInOut' }}
+            />
             Ближайший заезд — набор открыт
-          </span>
+          </motion.span>
         </motion.div>
 
         {/* Title with flags */}
@@ -140,11 +156,23 @@ export default function HeroSection() {
           animate="visible"
           className="flex items-start justify-center gap-3 sm:gap-5 lg:gap-8 mb-6"
         >
-          <span className="text-4xl sm:text-6xl lg:text-8xl">🏁</span>
+          <motion.span
+            className="text-4xl sm:text-6xl lg:text-8xl"
+            animate={{ rotate: [0, -10, 10, -5, 0] }}
+            transition={{ delay: 0.8, duration: 0.8, ease: 'easeInOut' }}
+          >
+            🏁
+          </motion.span>
           <p className="font-bold uppercase tracking-wider text-white text-[22px] sm:text-[34px] lg:text-[52px] xl:text-[64px]">
             Маркетинговый заезд
           </p>
-          <span className="text-4xl sm:text-6xl lg:text-8xl">🏁</span>
+          <motion.span
+            className="text-4xl sm:text-6xl lg:text-8xl"
+            animate={{ rotate: [0, 10, -10, 5, 0] }}
+            transition={{ delay: 0.8, duration: 0.8, ease: 'easeInOut' }}
+          >
+            🏁
+          </motion.span>
         </motion.div>
 
         {/* Glass card with typewriter */}
@@ -179,7 +207,7 @@ export default function HeroSection() {
           </p>
         </motion.div>
 
-        {/* Info pills */}
+        {/* Info pills with stagger + scale-in */}
         <motion.div
           custom={3}
           variants={fadeUp}
@@ -191,11 +219,15 @@ export default function HeroSection() {
             { icon: Clock, value: '90', label: 'минут' },
             { icon: Car, value: '6', label: 'гонщиков' },
             { icon: Trophy, value: '6', label: 'пит-стопов' },
-          ].map((item) => {
+          ].map((item, idx) => {
             const Icon = item.icon
             return (
-              <div
+              <motion.div
                 key={item.label}
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ delay: 0.6 + idx * 0.12, duration: 0.4, type: 'spring', stiffness: 200 }}
+                whileHover={{ scale: 1.08, y: -2 }}
                 className="flex items-center gap-2.5 rounded-xl px-4 py-2.5"
                 style={{ background: 'rgba(255,255,255,0.08)', backdropFilter: 'blur(8px)' }}
               >
@@ -204,7 +236,7 @@ export default function HeroSection() {
                   <span className="text-white font-bold text-sm block leading-tight">{item.value}</span>
                   <span className="text-white/50 text-[11px]">{item.label}</span>
                 </div>
-              </div>
+              </motion.div>
             )
           })}
         </motion.div>
