@@ -10,6 +10,7 @@ import FAQSection from '@/components/sections/FAQSection'
 import AuthorSection from '@/components/sections/AuthorSection'
 import CTASection from '@/components/sections/CTASection'
 import ScheduleSection from '@/components/sections/ScheduleSection'
+import QuizSection from '@/components/sections/QuizSection'
 
 export default function LandingPage() {
   return (
@@ -19,6 +20,7 @@ export default function LandingPage() {
         <HeroSection />
         <ProblemSection />
         <DemoSection />
+        <QuizSection />
         <ScheduleSection />
         <BenefitsSection />
         <HowItWorksSection />
