@@ -1,14 +1,9 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { getSchedule, saveSchedule } from '@/components/sections/ScheduleSection'
 import { Trash2, Plus, ArrowLeft } from 'lucide-react'
-
-interface GameSlot {
-  id: string
-  date: string
-  time: string
-  spots: number
-}
+import { collection, doc, setDoc, deleteDoc, updateDoc, onSnapshot, query } from 'firebase/firestore'
+import { db } from '@/config/firebase'
+import type { GameSlot } from '@/components/sections/ScheduleSection'
 
 const ADMIN_PASSWORD = '369852147'
 
@@ -22,9 +17,17 @@ export default function AdminSchedulePage() {
   const [newSpots, setNewSpots] = useState(6)
 
   useEffect(() => {
-    if (authorized) {
-      setSlots(getSchedule())
-    }
+    if (!authorized) return
+    const q = query(collection(db, 'gameSlots'))
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const data: GameSlot[] = snapshot.docs.map(d => ({
+        id: d.id,
+        ...d.data(),
+      })) as GameSlot[]
+      data.sort((a, b) => `${a.date}${a.time}`.localeCompare(`${b.date}${b.time}`))
+      setSlots(data)
+    })
+    return () => unsubscribe()
   }, [authorized])
 
   const handleLogin = () => {
@@ -37,32 +40,26 @@ export default function AdminSchedulePage() {
     }
   }
 
-  const addSlot = () => {
+  const addSlot = async () => {
     if (!newDate) return
-    const slot: GameSlot = {
-      id: Date.now().toString(),
+    const slotId = `slot-${newDate}-${newTime.replace(':', '')}`
+    await setDoc(doc(db, 'gameSlots', slotId), {
       date: newDate,
       time: newTime,
-      spots: newSpots,
-    }
-    const updated = [...slots, slot].sort((a, b) => `${a.date}${a.time}`.localeCompare(`${b.date}${b.time}`))
-    setSlots(updated)
-    saveSchedule(updated)
+      totalSpots: newSpots,
+      registeredCount: 0,
+    })
     setNewDate('')
     setNewTime('12:00')
     setNewSpots(6)
   }
 
-  const removeSlot = (id: string) => {
-    const updated = slots.filter(s => s.id !== id)
-    setSlots(updated)
-    saveSchedule(updated)
+  const removeSlot = async (id: string) => {
+    await deleteDoc(doc(db, 'gameSlots', id))
   }
 
-  const updateSpots = (id: string, spots: number) => {
-    const updated = slots.map(s => s.id === id ? { ...s, spots } : s)
-    setSlots(updated)
-    saveSchedule(updated)
+  const updateTotalSpots = async (id: string, totalSpots: number) => {
+    await updateDoc(doc(db, 'gameSlots', id), { totalSpots })
   }
 
   if (!authorized) {
@@ -155,35 +152,41 @@ export default function AdminSchedulePage() {
           {slots.length === 0 && (
             <p className="text-center py-8" style={{ color: '#A977FA' }}>Нет запланированных игр</p>
           )}
-          {slots.map(slot => (
-            <div key={slot.id} className="flex items-center justify-between rounded-xl bg-white p-4" style={{ border: '1px solid #A977FA' }}>
-              <div>
-                <p className="font-bold" style={{ color: '#2A168F' }}>{slot.date}</p>
-                <p className="text-sm" style={{ color: '#6838CE' }}>{slot.time} (МСК)</p>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="flex items-center gap-2">
-                  <label className="text-xs" style={{ color: '#6838CE' }}>Мест:</label>
-                  <input
-                    type="number"
-                    min={0}
-                    max={6}
-                    value={slot.spots}
-                    onChange={e => updateSpots(slot.id, Number(e.target.value))}
-                    className="w-14 p-1 rounded text-center outline-none"
-                    style={{ border: '1px solid #A977FA', color: '#2A168F' }}
-                  />
+          {slots.map(slot => {
+            const spotsLeft = slot.totalSpots - slot.registeredCount
+            return (
+              <div key={slot.id} className="flex items-center justify-between rounded-xl bg-white p-4" style={{ border: '1px solid #A977FA' }}>
+                <div>
+                  <p className="font-bold" style={{ color: '#2A168F' }}>{slot.date}</p>
+                  <p className="text-sm" style={{ color: '#6838CE' }}>{slot.time} (МСК)</p>
+                  <p className="text-xs mt-1" style={{ color: '#A977FA' }}>
+                    Записано: {slot.registeredCount} / Свободно: {spotsLeft}
+                  </p>
                 </div>
-                <button
-                  onClick={() => removeSlot(slot.id)}
-                  className="p-2 rounded-lg cursor-pointer border-none hover:opacity-70 transition-opacity"
-                  style={{ background: '#FAF5FF', color: '#6838CE' }}
-                >
-                  <Trash2 size={16} />
-                </button>
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2">
+                    <label className="text-xs" style={{ color: '#6838CE' }}>Всего мест:</label>
+                    <input
+                      type="number"
+                      min={slot.registeredCount}
+                      max={20}
+                      value={slot.totalSpots}
+                      onChange={e => updateTotalSpots(slot.id, Number(e.target.value))}
+                      className="w-14 p-1 rounded text-center outline-none"
+                      style={{ border: '1px solid #A977FA', color: '#2A168F' }}
+                    />
+                  </div>
+                  <button
+                    onClick={() => removeSlot(slot.id)}
+                    className="p-2 rounded-lg cursor-pointer border-none hover:opacity-70 transition-opacity"
+                    style={{ background: '#FAF5FF', color: '#6838CE' }}
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
               </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       </div>
     </div>

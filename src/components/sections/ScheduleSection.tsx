@@ -2,32 +2,15 @@ import { motion, useScroll, useTransform, useInView } from 'framer-motion'
 import { Calendar, Clock, Flag, Video, Timer, Gift, CalendarPlus } from 'lucide-react'
 import { useEffect, useState, useRef } from 'react'
 import confetti from 'canvas-confetti'
+import { collection, onSnapshot, query } from 'firebase/firestore'
+import { db } from '@/config/firebase'
 
-interface GameSlot {
+export interface GameSlot {
   id: string
   date: string
   time: string
-  spots: number
-}
-
-const STORAGE_KEY = 'game-schedule'
-
-const defaultSlots: GameSlot[] = [
-  { id: '1', date: '2026-04-10', time: '12:00', spots: 6 },
-  { id: '2', date: '2026-04-10', time: '15:00', spots: 6 },
-]
-
-export function getSchedule(): GameSlot[] {
-  try {
-    const saved = localStorage.getItem(STORAGE_KEY)
-    return saved ? JSON.parse(saved) : defaultSlots
-  } catch {
-    return defaultSlots
-  }
-}
-
-export function saveSchedule(slots: GameSlot[]) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(slots))
+  totalSpots: number
+  registeredCount: number
 }
 
 function getMonthShort(dateStr: string): string {
@@ -81,7 +64,16 @@ export default function ScheduleSection() {
   const orbRightY = useTransform(scrollYProgress, [0, 1], ['5%', '-10%'])
 
   useEffect(() => {
-    setSlots(getSchedule())
+    const q = query(collection(db, 'gameSlots'))
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const data: GameSlot[] = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+      })) as GameSlot[]
+      data.sort((a, b) => `${a.date}${a.time}`.localeCompare(`${b.date}${b.time}`))
+      setSlots(data)
+    })
+    return () => unsubscribe()
   }, [])
 
   const fireConfetti = () => {
@@ -201,9 +193,8 @@ export default function ScheduleSection() {
           {/* Time slots - slide from right */}
           <div className="lg:col-span-3 flex flex-col gap-4">
             {slots.map((slot, i) => {
-              const totalSpots = 6
-              const filled = totalSpots - slot.spots
-              const fillPercent = (filled / totalSpots) * 100
+              const spotsLeft = slot.totalSpots - slot.registeredCount
+              const fillPercent = (slot.registeredCount / slot.totalSpots) * 100
               return (
                 <motion.div
                   key={slot.id}
@@ -234,7 +225,7 @@ export default function ScheduleSection() {
                         className="text-xs font-semibold px-3 py-1 rounded-full"
                         style={{ background: 'rgba(169,119,250,0.15)', color: '#B8ACFF' }}
                       >
-                        {slot.spots} из {totalSpots}
+                        {spotsLeft > 0 ? `${spotsLeft} из ${slot.totalSpots}` : 'Мест нет'}
                       </motion.span>
                     </div>
                     <a
@@ -246,12 +237,12 @@ export default function ScheduleSection() {
                       style={{
                         background: '#FF8C00',
                         color: 'white',
-                        pointerEvents: slot.spots > 0 ? 'auto' : 'none',
-                        opacity: slot.spots > 0 ? 1 : 0.4,
+                        pointerEvents: spotsLeft > 0 ? 'auto' : 'none',
+                        opacity: spotsLeft > 0 ? 1 : 0.4,
                       }}
                     >
                       <Flag size={14} />
-                      {slot.spots > 0 ? 'Записаться' : 'В лист ожидания'}
+                      {spotsLeft > 0 ? 'Записаться' : 'В лист ожидания'}
                     </a>
                   </div>
                   {/* Animated progress bar */}

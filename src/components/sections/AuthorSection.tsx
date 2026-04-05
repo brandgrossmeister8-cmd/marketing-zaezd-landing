@@ -178,15 +178,13 @@ export default function AuthorSection() {
                   display: 'block',
                 }}
               />
-              {/* Purple gradient bottom overlay */}
-              <div
-                className="absolute bottom-0 left-0 right-0 p-5"
-                style={{ background: 'linear-gradient(to top, rgba(42,22,143,0.9), rgba(42,22,143,0.6), transparent)' }}
-              >
-                <p className="text-base font-bold text-white">Ия Имшинецкая</p>
-                <p className="text-xs text-white/60">с 1993 года в маркетинге</p>
-              </div>
             </motion.div>
+
+            {/* Name + subtitle below photo */}
+            <div className="text-center mt-4 mb-3">
+              <p className="text-lg font-bold" style={{ color: '#2A168F' }}>Ия Имшинецкая</p>
+              <p className="text-xs" style={{ color: '#8B7BAE' }}>с 1993 года в маркетинге</p>
+            </div>
 
             {/* Stat badges below photo with stagger + scale */}
             <div className="flex flex-wrap gap-2 mt-4 justify-center">
