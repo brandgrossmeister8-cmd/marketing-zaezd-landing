@@ -290,6 +290,14 @@ export default function ScheduleSection() {
             </motion.div>
           </div>
         </div>
+
+        {/* Скрытая ссылка на админку */}
+        <a
+          href="#/admin-schedule"
+          className="block mt-8 text-[10px] text-white/10 hover:text-white/30 transition-colors text-center no-underline"
+        >
+          ⚙
+        </a>
       </div>
     </section>
   )
