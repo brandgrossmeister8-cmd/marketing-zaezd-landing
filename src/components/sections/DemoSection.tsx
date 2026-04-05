@@ -1,14 +1,14 @@
 import { motion, useScroll, useTransform, useInView } from 'framer-motion'
-import { Gauge, Trophy, Play, Eye, MapPin } from 'lucide-react'
+import { Gauge, Trophy, Play, Flag } from 'lucide-react'
 import { useState, useRef, useEffect } from 'react'
 
 const cities = [
-  { name: 'Ассортиминск', short: 'АС' },
-  { name: 'Продукто-Брендск', short: 'ПБ' },
-  { name: 'Зачемград', short: 'ЗГ' },
-  { name: 'Траффик-Сити', short: 'ТС' },
-  { name: 'Цалово', short: 'ЦА' },
-  { name: 'Выборг', short: 'ВБ' },
+  { name: 'Ассортиминск', km: 20 },
+  { name: 'Продукто-Брендск', km: 40 },
+  { name: 'Зачемград', km: 60 },
+  { name: 'Траффик-Сити', km: 80 },
+  { name: 'Цалово', km: 100 },
+  { name: 'Выборг', km: 120 },
 ]
 
 export default function DemoSection() {
@@ -17,13 +17,14 @@ export default function DemoSection() {
   const speedRef = useRef<HTMLSpanElement>(null)
   const speedInView = useInView(speedRef, { once: true })
   const [speedCount, setSpeedCount] = useState(0)
+  const trackRef = useRef<HTMLDivElement>(null)
+  const trackInView = useInView(trackRef, { once: true })
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ['start end', 'end start'],
   })
   const glowY = useTransform(scrollYProgress, [0, 1], ['0%', '15%'])
-  const glowX = useTransform(scrollYProgress, [0, 1], ['-5%', '5%'])
 
   useEffect(() => {
     if (!speedInView) return
@@ -51,16 +52,27 @@ export default function DemoSection() {
       ref={sectionRef}
       id="demo"
       className="py-24 px-5 sm:py-32 relative overflow-hidden"
-      style={{ background: 'linear-gradient(170deg, #0D0740 0%, #160B52 40%, #1E0F6E 100%)' }}
+      style={{ background: 'linear-gradient(170deg, #0A0530 0%, #120845 40%, #1A0C5A 100%)' }}
     >
+      {/* Checkered flag strip — top */}
+      <div className="absolute top-0 left-0 right-0 h-2 flex">
+        {Array.from({ length: 60 }).map((_, i) => (
+          <div
+            key={`top-${i}`}
+            className="flex-1 h-full"
+            style={{ background: i % 2 === 0 ? 'rgba(255,255,255,0.08)' : 'transparent' }}
+          />
+        ))}
+      </div>
+
       {/* Ambient glows */}
       <motion.div
-        className="absolute w-[500px] h-[500px] rounded-full blur-[160px] opacity-[0.07]"
-        style={{ background: '#4338DF', top: '10%', left: '20%', y: glowY, x: glowX }}
+        className="absolute w-[500px] h-[500px] rounded-full blur-[180px] opacity-[0.06]"
+        style={{ background: '#4338DF', top: '5%', left: '15%', y: glowY }}
       />
       <motion.div
-        className="absolute w-[350px] h-[350px] rounded-full blur-[120px] opacity-[0.05]"
-        style={{ background: '#A977FA', bottom: '15%', right: '10%', y: glowY }}
+        className="absolute w-[400px] h-[400px] rounded-full blur-[140px] opacity-[0.04]"
+        style={{ background: '#FF8C00', bottom: '10%', right: '5%', y: glowY }}
       />
 
       <div className="mx-auto max-w-6xl relative">
@@ -70,20 +82,20 @@ export default function DemoSection() {
           whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
           viewport={{ once: true }}
           transition={{ duration: 0.7 }}
-          className="mb-14"
+          className="mb-12"
         >
-          <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-6">
+          <div className="flex items-center gap-3 mb-6">
             <motion.div
               initial={{ scale: 0.8, opacity: 0 }}
               whileInView={{ scale: 1, opacity: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.4, type: 'spring', stiffness: 200 }}
               className="inline-flex items-center gap-2 rounded-full px-4 py-1.5"
-              style={{ background: 'rgba(255,215,0,0.1)' }}
+              style={{ background: 'rgba(255,140,0,0.12)' }}
             >
-              <Eye size={14} style={{ color: '#FFD700' }} />
-              <span className="text-[11px] font-semibold uppercase tracking-[0.2em]" style={{ color: '#FFD700' }}>
-                Превью
+              <Flag size={14} style={{ color: '#FF8C00' }} />
+              <span className="text-[11px] font-semibold uppercase tracking-[0.2em]" style={{ color: '#FF8C00' }}>
+                Превью гонки
               </span>
             </motion.div>
           </div>
@@ -91,41 +103,53 @@ export default function DemoSection() {
           <h2 className="text-3xl font-bold text-white sm:text-4xl lg:text-[2.75rem] leading-[1.15] mb-3">
             Как выглядит заезд
           </h2>
-          <p className="text-base text-white/40 max-w-xl">
-            38 секунд — и вы увидите, как 6 этапов превращаются в персональную стратегию продвижения
+          <p className="text-base text-white/60 max-w-xl">
+            38 секунд — и вы увидите, как 6 этапов превращаются в персональную стратегию
           </p>
         </motion.div>
 
-        {/* Main layout */}
-        <div className="grid gap-8 lg:grid-cols-5">
-          {/* Video — LEFT */}
+        {/* Race dashboard layout */}
+        <div className="grid gap-6 lg:grid-cols-12">
+
+          {/* Video — main screen */}
           <motion.div
-            initial={{ opacity: 0, x: -30, filter: 'blur(6px)' }}
-            whileInView={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
+            initial={{ opacity: 0, y: 20, filter: 'blur(6px)' }}
+            whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="lg:col-span-3"
+            className="lg:col-span-8"
           >
             <div
-              className="relative rounded-2xl overflow-hidden group"
+              className="relative rounded-2xl overflow-hidden"
               style={{
-                boxShadow: '0 32px 80px rgba(0,0,0,0.4), 0 0 0 1px rgba(169,119,250,0.1)',
+                boxShadow: '0 0 0 1px rgba(255,140,0,0.15), 0 24px 80px rgba(0,0,0,0.5)',
               }}
             >
-              {/* Subtle gradient border effect */}
-              <div
-                className="absolute inset-0 rounded-2xl pointer-events-none z-10"
-                style={{
-                  background: 'linear-gradient(135deg, rgba(67,56,223,0.15), transparent 50%, rgba(169,119,250,0.1))',
-                }}
-              />
+              {/* HUD corners */}
+              <div className="absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 rounded-tl-2xl z-10 pointer-events-none" style={{ borderColor: 'rgba(255,140,0,0.3)' }} />
+              <div className="absolute top-0 right-0 w-8 h-8 border-t-2 border-r-2 rounded-tr-2xl z-10 pointer-events-none" style={{ borderColor: 'rgba(255,140,0,0.3)' }} />
+              <div className="absolute bottom-0 left-0 w-8 h-8 border-b-2 border-l-2 rounded-bl-2xl z-10 pointer-events-none" style={{ borderColor: 'rgba(255,140,0,0.3)' }} />
+              <div className="absolute bottom-0 right-0 w-8 h-8 border-b-2 border-r-2 rounded-br-2xl z-10 pointer-events-none" style={{ borderColor: 'rgba(255,140,0,0.3)' }} />
+
+              {/* REC indicator */}
+              {!isPlaying && (
+                <div className="absolute top-4 left-4 z-20 flex items-center gap-2">
+                  <motion.div
+                    animate={{ opacity: [1, 0.3, 1] }}
+                    transition={{ repeat: Infinity, duration: 1.5 }}
+                    className="w-2 h-2 rounded-full"
+                    style={{ background: '#ef4444' }}
+                  />
+                  <span className="text-[10px] font-mono font-bold text-white/50 uppercase tracking-wider">demo</span>
+                </div>
+              )}
 
               <video
                 id="demo-video"
                 controls={isPlaying}
                 preload="metadata"
                 className="w-full relative z-0"
-                style={{ aspectRatio: '16/9', background: '#0D0740' }}
+                style={{ aspectRatio: '16/9', background: '#080430' }}
                 onPlay={() => setIsPlaying(true)}
               >
                 <source src={`${import.meta.env.BASE_URL}demo.mp4`} type="video/mp4" />
@@ -136,8 +160,8 @@ export default function DemoSection() {
               {!isPlaying && (
                 <button
                   onClick={handlePlay}
-                  className="absolute inset-0 z-20 flex items-center justify-center cursor-pointer border-none transition-all duration-500"
-                  style={{ background: 'linear-gradient(135deg, rgba(13,7,64,0.5), rgba(30,15,110,0.4))' }}
+                  className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-4 cursor-pointer border-none"
+                  style={{ background: 'radial-gradient(ellipse at center, rgba(10,5,48,0.3), rgba(10,5,48,0.7))' }}
                 >
                   <motion.div
                     animate={{ scale: [1, 1.06, 1] }}
@@ -145,162 +169,216 @@ export default function DemoSection() {
                     className="flex h-20 w-20 items-center justify-center rounded-full transition-transform duration-300 hover:scale-110"
                     style={{
                       background: 'linear-gradient(135deg, #FF8C00, #ff6b00)',
-                      boxShadow: '0 8px 40px rgba(255,140,0,0.35), 0 0 0 8px rgba(255,140,0,0.08)',
+                      boxShadow: '0 0 60px rgba(255,140,0,0.3), 0 0 0 6px rgba(255,140,0,0.1)',
                     }}
                   >
                     <Play size={30} fill="white" color="white" className="ml-1" />
                   </motion.div>
+                  <span className="text-xs font-semibold text-white/50 uppercase tracking-widest">Смотреть заезд</span>
                 </button>
               )}
             </div>
           </motion.div>
 
-          {/* Cards — RIGHT */}
-          <div className="lg:col-span-2 flex flex-col gap-5">
-            {/* Speedometer */}
+          {/* Dashboard panel — RIGHT */}
+          <div className="lg:col-span-4 flex flex-col gap-4">
+
+            {/* Speedometer — race style */}
             <motion.div
-              initial={{ opacity: 0, x: 30, filter: 'blur(4px)' }}
+              initial={{ opacity: 0, x: 20, filter: 'blur(4px)' }}
               whileInView={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
               viewport={{ once: true }}
-              transition={{ delay: 0.1, duration: 0.5 }}
-              whileHover={{ y: -3 }}
-              className="rounded-2xl p-5"
-              style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', backdropFilter: 'blur(12px)' }}
+              transition={{ delay: 0.15, duration: 0.5 }}
+              className="rounded-2xl p-5 relative overflow-hidden"
+              style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,140,0,0.12)' }}
             >
-              <div className="flex items-center gap-3 mb-4">
-                <div className="flex h-9 w-9 items-center justify-center rounded-xl" style={{ background: 'rgba(104,56,206,0.2)' }}>
-                  <Gauge size={17} strokeWidth={1.5} style={{ color: '#A977FA' }} />
+              {/* Subtle scan line */}
+              <div className="absolute inset-0 pointer-events-none" style={{
+                background: 'repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(255,255,255,0.01) 3px, rgba(255,255,255,0.01) 4px)',
+              }} />
+
+              <div className="flex items-center justify-between mb-3 relative">
+                <div className="flex items-center gap-2">
+                  <Gauge size={16} style={{ color: '#FF8C00' }} />
+                  <span className="text-xs font-semibold uppercase tracking-wider text-white/50">Скорость</span>
                 </div>
-                <p className="text-sm font-semibold text-white/70">Ваша скорость</p>
+                <span className="text-[10px] font-mono text-white/25">KM/H</span>
               </div>
 
-              <div className="flex items-baseline gap-1.5 mb-4">
-                <span ref={speedRef} className="text-4xl font-bold" style={{ color: '#FFD700' }}>{speedCount}</span>
-                <span className="text-sm text-white/25">км/ч</span>
+              <div className="flex items-baseline gap-1 mb-3 relative">
+                <span ref={speedRef} className="text-5xl font-bold font-mono tabular-nums" style={{ color: '#FFD700' }}>
+                  {speedCount}
+                </span>
               </div>
 
-              {/* Mini gauge */}
-              <div className="relative h-1.5 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.06)' }}>
+              {/* Gauge bar */}
+              <div className="relative h-2 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.05)' }}>
                 <motion.div
                   className="absolute inset-y-0 left-0 rounded-full"
                   initial={{ width: '0%' }}
                   animate={speedInView ? { width: '75%' } : { width: '0%' }}
                   transition={{ delay: 0.5, duration: 1.2, ease: 'easeOut' }}
-                  style={{ background: 'linear-gradient(90deg, #4338DF, #A977FA, #FFD700)' }}
+                  style={{ background: 'linear-gradient(90deg, #FF8C00, #FFD700)' }}
                 />
               </div>
-              <div className="flex justify-between mt-1 text-[10px] text-white/15">
-                <span>старт</span>
-                <span>максимум</span>
+              <div className="flex justify-between mt-1.5 text-[9px] font-mono text-white/20">
+                <span>0</span>
+                <span>60</span>
+                <span>120</span>
               </div>
             </motion.div>
 
-            {/* Route — compact city track */}
+            {/* Race track — horizontal mini-map */}
             <motion.div
-              initial={{ opacity: 0, x: 30, filter: 'blur(4px)' }}
+              ref={trackRef}
+              initial={{ opacity: 0, x: 20, filter: 'blur(4px)' }}
               whileInView={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
               viewport={{ once: true }}
-              transition={{ delay: 0.2, duration: 0.5 }}
-              whileHover={{ y: -3 }}
-              className="rounded-2xl p-5"
-              style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', backdropFilter: 'blur(12px)' }}
+              transition={{ delay: 0.25, duration: 0.5 }}
+              className="rounded-2xl p-5 relative overflow-hidden"
+              style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(169,119,250,0.12)' }}
             >
-              <div className="flex items-center gap-3 mb-5">
-                <div className="flex h-9 w-9 items-center justify-center rounded-xl" style={{ background: 'rgba(104,56,206,0.2)' }}>
-                  <MapPin size={17} strokeWidth={1.5} style={{ color: '#A977FA' }} />
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <Flag size={16} style={{ color: '#A977FA' }} />
+                  <span className="text-xs font-semibold uppercase tracking-wider text-white/50">Маршрут</span>
                 </div>
-                <p className="text-sm font-semibold text-white/70">6 городов маршрута</p>
+                <span className="text-[10px] font-mono" style={{ color: '#A977FA' }}>4/6</span>
               </div>
 
-              {/* Route visualization */}
-              <div className="relative pl-4">
-                {/* Vertical line */}
-                <div className="absolute left-[7px] top-1 bottom-1 w-px" style={{ background: 'rgba(169,119,250,0.15)' }} />
+              {/* Horizontal track */}
+              <div className="relative mb-3">
+                {/* Track line */}
+                <div className="h-1 rounded-full" style={{ background: 'rgba(255,255,255,0.06)' }} />
+                <motion.div
+                  className="absolute top-0 left-0 h-1 rounded-full"
+                  initial={{ width: '0%' }}
+                  animate={trackInView ? { width: '66%' } : { width: '0%' }}
+                  transition={{ delay: 0.5, duration: 1.5, ease: 'easeOut' }}
+                  style={{ background: 'linear-gradient(90deg, #4338DF, #A977FA)' }}
+                />
 
-                <div className="space-y-3">
+                {/* City markers */}
+                <div className="absolute top-0 left-0 right-0 flex justify-between" style={{ transform: 'translateY(-3px)' }}>
                   {cities.map((city, i) => {
                     const passed = i < 4
                     return (
                       <motion.div
                         key={city.name}
-                        initial={{ opacity: 0, x: 8 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: 0.3 + i * 0.06, duration: 0.25 }}
-                        className="flex items-center gap-3 relative"
-                      >
-                        {/* Dot on the line */}
-                        <div
-                          className={`absolute -left-4 w-[9px] h-[9px] rounded-full z-10`}
-                          style={{
-                            background: passed ? '#A977FA' : 'rgba(255,255,255,0.08)',
-                            boxShadow: passed ? '0 0 0 2px rgba(169,119,250,0.3)' : '0 0 0 2px rgba(255,255,255,0.05)',
-                          }}
-                        />
-
-                        <span className={`text-[13px] ${passed ? 'text-white/60' : 'text-white/25'}`}>
-                          {city.name}
-                        </span>
-
-                        {passed && (
-                          <motion.span
-                            initial={{ scale: 0 }}
-                            whileInView={{ scale: 1 }}
-                            viewport={{ once: true }}
-                            transition={{ delay: 0.5 + i * 0.06, type: 'spring', stiffness: 250 }}
-                            className="ml-auto text-[11px] font-semibold"
-                            style={{ color: '#A977FA' }}
-                          >
-                            +10
-                          </motion.span>
-                        )}
-                      </motion.div>
+                        initial={{ scale: 0 }}
+                        animate={trackInView ? { scale: 1 } : { scale: 0 }}
+                        transition={{ delay: 0.6 + i * 0.1, type: 'spring', stiffness: 300 }}
+                        className="w-[7px] h-[7px] rounded-full"
+                        style={{
+                          background: passed ? '#A977FA' : 'rgba(255,255,255,0.15)',
+                          boxShadow: passed ? '0 0 6px rgba(169,119,250,0.5)' : 'none',
+                        }}
+                      />
                     )
                   })}
                 </div>
+
+                {/* Car emoji on track */}
+                <motion.div
+                  className="absolute text-sm"
+                  style={{ top: '-10px' }}
+                  initial={{ left: '0%' }}
+                  animate={trackInView ? { left: '63%' } : { left: '0%' }}
+                  transition={{ delay: 0.5, duration: 1.5, ease: 'easeOut' }}
+                >
+                  🏎️
+                </motion.div>
+              </div>
+
+              {/* City names */}
+              <div className="space-y-1.5 mt-4">
+                {cities.map((city, i) => {
+                  const passed = i < 4
+                  return (
+                    <motion.div
+                      key={city.name}
+                      initial={{ opacity: 0, x: 8 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: 0.4 + i * 0.05, duration: 0.2 }}
+                      className="flex items-center justify-between"
+                    >
+                      <div className="flex items-center gap-2">
+                        <div className="w-1.5 h-1.5 rounded-full" style={{ background: passed ? '#A977FA' : 'rgba(255,255,255,0.1)' }} />
+                        <span className={`text-[12px] font-mono ${passed ? 'text-white/60' : 'text-white/25'}`}>
+                          {city.name}
+                        </span>
+                      </div>
+                      {passed && (
+                        <span className="text-[10px] font-mono font-bold" style={{ color: '#4ade80' }}>+10</span>
+                      )}
+                    </motion.div>
+                  )
+                })}
               </div>
             </motion.div>
 
-            {/* Result */}
+            {/* Finish results — compact */}
             <motion.div
-              initial={{ opacity: 0, x: 30, filter: 'blur(4px)' }}
+              initial={{ opacity: 0, x: 20, filter: 'blur(4px)' }}
               whileInView={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
               viewport={{ once: true }}
-              transition={{ delay: 0.3, duration: 0.5 }}
-              whileHover={{ y: -3 }}
-              className="rounded-2xl p-5"
-              style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', backdropFilter: 'blur(12px)' }}
+              transition={{ delay: 0.35, duration: 0.5 }}
+              className="rounded-2xl p-5 relative overflow-hidden"
+              style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,215,0,0.12)' }}
             >
-              <div className="flex items-center gap-3 mb-4">
-                <div className="flex h-9 w-9 items-center justify-center rounded-xl" style={{ background: 'rgba(104,56,206,0.2)' }}>
-                  <Trophy size={17} strokeWidth={1.5} style={{ color: '#A977FA' }} />
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <Trophy size={16} style={{ color: '#FFD700' }} />
+                  <span className="text-xs font-semibold uppercase tracking-wider text-white/50">Финиш</span>
                 </div>
-                <p className="text-sm font-semibold text-white/70">На финише вы получите</p>
+                <span className="text-[10px] font-mono" style={{ color: '#FFD700' }}>🏁</span>
               </div>
 
-              <div className="space-y-2.5">
+              <div className="space-y-2">
                 {[
-                  { label: 'Сильные стороны', value: '4 из 6', color: '#A977FA', bg: 'rgba(169,119,250,0.1)' },
-                  { label: 'Точки роста', value: '2 из 6', color: '#fb7185', bg: 'rgba(244,63,94,0.1)' },
-                  { label: 'Скрытые потери', value: '~34%', color: '#FFD700', bg: 'rgba(255,215,0,0.08)' },
+                  { label: 'Сильные', value: '4/6', color: '#A977FA', bar: '66%' },
+                  { label: 'Точки роста', value: '2/6', color: '#fb7185', bar: '33%' },
+                  { label: 'Потери', value: '~34%', color: '#FFD700', bar: '34%' },
                 ].map((item, idx) => (
                   <motion.div
                     key={item.label}
-                    initial={{ opacity: 0, y: 6 }}
-                    whileInView={{ opacity: 1, y: 0 }}
+                    initial={{ opacity: 0, x: 8 }}
+                    whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: 0.5 + idx * 0.08, duration: 0.3 }}
-                    className="flex items-center justify-between rounded-xl px-3.5 py-2.5"
-                    style={{ background: item.bg }}
                   >
-                    <span className="text-[13px] text-white/50">{item.label}</span>
-                    <span className="text-sm font-bold" style={{ color: item.color }}>{item.value}</span>
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-[11px] text-white/40">{item.label}</span>
+                      <span className="text-[12px] font-mono font-bold" style={{ color: item.color }}>{item.value}</span>
+                    </div>
+                    <div className="h-1 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.05)' }}>
+                      <motion.div
+                        className="h-full rounded-full"
+                        initial={{ width: '0%' }}
+                        whileInView={{ width: item.bar }}
+                        viewport={{ once: true }}
+                        transition={{ delay: 0.7 + idx * 0.1, duration: 0.8, ease: 'easeOut' }}
+                        style={{ background: item.color }}
+                      />
+                    </div>
                   </motion.div>
                 ))}
               </div>
             </motion.div>
           </div>
         </div>
+      </div>
+
+      {/* Checkered flag strip — bottom */}
+      <div className="absolute bottom-0 left-0 right-0 h-2 flex">
+        {Array.from({ length: 60 }).map((_, i) => (
+          <div
+            key={`bot-${i}`}
+            className="flex-1 h-full"
+            style={{ background: i % 2 === 0 ? 'rgba(255,255,255,0.08)' : 'transparent' }}
+          />
+        ))}
       </div>
     </section>
   )
