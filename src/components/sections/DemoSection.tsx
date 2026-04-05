@@ -108,16 +108,15 @@ export default function DemoSection() {
           </p>
         </motion.div>
 
-        {/* Race dashboard layout */}
-        <div className="grid gap-6 lg:grid-cols-12">
+        {/* Race dashboard layout — video full width, cards below */}
+        <div className="space-y-6">
 
-          {/* Video — main screen */}
+          {/* Video — full width */}
           <motion.div
             initial={{ opacity: 0, y: 20, filter: 'blur(6px)' }}
             whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="lg:col-span-8"
           >
             <div
               className="relative rounded-2xl overflow-hidden"
@@ -180,8 +179,8 @@ export default function DemoSection() {
             </div>
           </motion.div>
 
-          {/* Dashboard panel — RIGHT */}
-          <div className="lg:col-span-4 flex flex-col gap-4">
+          {/* Dashboard panel — 3 cards row */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
 
             {/* Speedometer — analog gauge with needle */}
             <motion.div
