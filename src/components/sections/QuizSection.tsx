@@ -117,12 +117,12 @@ export default function QuizSection() {
       ref={sectionRef}
       id="quiz"
       className="py-24 px-5 sm:py-32 relative overflow-hidden"
-      style={{ background: 'linear-gradient(170deg, #1E0F6E 0%, #160B52 50%, #130842 100%)' }}
+      style={{ background: 'linear-gradient(180deg, #FDFBFF 0%, #F5F0FF 50%, #EDE5FF 100%)' }}
     >
       {/* Ambient */}
       <div
-        className="absolute w-[400px] h-[400px] rounded-full blur-[140px] opacity-[0.06]"
-        style={{ background: '#A977FA', top: '20%', right: '10%' }}
+        className="absolute w-[400px] h-[400px] rounded-full blur-[140px] opacity-[0.08]"
+        style={{ background: '#B8ACFF', top: '20%', right: '10%' }}
       />
 
       <div className="mx-auto max-w-2xl relative">
@@ -140,25 +140,25 @@ export default function QuizSection() {
             viewport={{ once: true }}
             transition={{ duration: 0.4, type: 'spring', stiffness: 200 }}
             className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 mb-6"
-            style={{ background: 'rgba(255,215,0,0.1)' }}
+            style={{ background: 'rgba(104,56,206,0.1)' }}
           >
-            <HelpCircle size={14} style={{ color: '#FFD700' }} />
-            <span className="text-[11px] font-semibold uppercase tracking-[0.2em]" style={{ color: '#FFD700' }}>
+            <HelpCircle size={14} style={{ color: '#6838CE' }} />
+            <span className="text-[11px] font-semibold uppercase tracking-[0.2em]" style={{ color: '#6838CE' }}>
               Мини-тест
             </span>
           </motion.div>
 
-          <h2 className="text-3xl font-bold text-white sm:text-4xl lg:text-[2.75rem] leading-[1.15] mb-3">
+          <h2 className="text-3xl font-bold sm:text-4xl lg:text-[2.75rem] leading-[1.15] mb-3" style={{ color: '#2A168F' }}>
             А мне точно надо участвовать?
           </h2>
-          <p className="text-base text-white/70">
+          <p className="text-base" style={{ color: '#6838CE' }}>
             Узнай прямо сейчас
           </p>
         </motion.div>
 
         {/* Progress bar */}
         <div className="mb-8">
-          <div className="relative h-1 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.06)' }}>
+          <div className="relative h-1 rounded-full overflow-hidden" style={{ background: 'rgba(42,22,143,0.1)' }}>
             <motion.div
               className="absolute inset-y-0 left-0 rounded-full"
               animate={{ width: `${progress * 100}%` }}
@@ -166,7 +166,7 @@ export default function QuizSection() {
               style={{ background: 'linear-gradient(90deg, #4338DF, #A977FA)' }}
             />
           </div>
-          <div className="flex justify-between mt-2 text-[11px] text-white/50">
+          <div className="flex justify-between mt-2 text-[11px]" style={{ color: '#8B7BAE' }}>
             <span>{isResult ? 'Готово' : `${step + 1} из ${questions.length}`}</span>
             <span>{Math.round(progress * 100)}%</span>
           </div>
@@ -182,15 +182,15 @@ export default function QuizSection() {
                 animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
                 exit={{ opacity: 0, x: -40, filter: 'blur(6px)' }}
                 transition={{ duration: 0.35 }}
-                className="rounded-2xl p-6 sm:p-8"
-                style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', backdropFilter: 'blur(12px)' }}
+                className="rounded-2xl p-6 sm:p-8 bg-white"
+                style={{ border: '1px solid rgba(184,172,255,0.2)', boxShadow: '0 4px 24px rgba(42,22,143,0.06)' }}
               >
                 {/* Question */}
                 <div className="flex items-start gap-4 mb-6">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl" style={{ background: 'rgba(104,56,206,0.2)' }}>
-                    <currentQ.icon size={18} style={{ color: '#A977FA' }} />
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl" style={{ background: 'rgba(104,56,206,0.1)' }}>
+                    <currentQ.icon size={18} style={{ color: '#6838CE' }} />
                   </div>
-                  <p className="text-lg font-semibold text-white leading-snug pt-1.5">
+                  <p className="text-lg font-semibold leading-snug pt-1.5" style={{ color: '#2A168F' }}>
                     {currentQ.question}
                   </p>
                 </div>
@@ -207,26 +207,26 @@ export default function QuizSection() {
                         whileTap={selectedOption === null ? { scale: 0.98 } : {}}
                         className="w-full text-left rounded-xl px-5 py-4 flex items-center gap-3 cursor-pointer border-none transition-all duration-300"
                         style={{
-                          background: isSelected ? 'rgba(169,119,250,0.15)' : 'rgba(255,255,255,0.03)',
-                          border: isSelected ? '1px solid rgba(169,119,250,0.3)' : '1px solid rgba(255,255,255,0.06)',
+                          background: isSelected ? 'rgba(169,119,250,0.12)' : '#F8F5FF',
+                          border: isSelected ? '1px solid rgba(169,119,250,0.4)' : '1px solid rgba(184,172,255,0.2)',
                         }}
                       >
                         <span
                           className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold"
                           style={{
-                            background: isSelected ? '#A977FA' : 'rgba(255,255,255,0.08)',
-                            color: isSelected ? 'white' : 'rgba(255,255,255,0.7)',
+                            background: isSelected ? '#6838CE' : 'rgba(104,56,206,0.1)',
+                            color: isSelected ? 'white' : '#6838CE',
                           }}
                         >
                           {String.fromCharCode(65 + idx)}
                         </span>
-                        <span className={`text-sm ${isSelected ? 'text-white' : 'text-white/80'}`}>
+                        <span className="text-sm" style={{ color: isSelected ? '#2A168F' : '#4a3a6e' }}>
                           {opt.text}
                         </span>
                         <ChevronRight
                           size={16}
                           className="ml-auto shrink-0 transition-opacity duration-200"
-                          style={{ color: '#A977FA', opacity: isSelected ? 1 : 0 }}
+                          style={{ color: '#6838CE', opacity: isSelected ? 1 : 0 }}
                         />
                       </motion.button>
                     )
@@ -239,8 +239,8 @@ export default function QuizSection() {
                 initial={{ opacity: 0, scale: 0.95, filter: 'blur(8px)' }}
                 animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
                 transition={{ duration: 0.5 }}
-                className="rounded-2xl p-6 sm:p-8 text-center"
-                style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', backdropFilter: 'blur(12px)' }}
+                className="rounded-2xl p-6 sm:p-8 text-center bg-white"
+                style={{ border: '1px solid rgba(184,172,255,0.2)', boxShadow: '0 4px 24px rgba(42,22,143,0.06)' }}
               >
                 <motion.p
                   initial={{ scale: 0 }}
@@ -251,21 +251,21 @@ export default function QuizSection() {
                   {result.emoji}
                 </motion.p>
 
-                <h3 className="text-2xl font-bold text-white mb-3">
+                <h3 className="text-2xl font-bold mb-3" style={{ color: '#2A168F' }}>
                   {result.title}
                 </h3>
 
-                <p className="text-sm text-white/75 mb-6 max-w-md mx-auto leading-relaxed">
+                <p className="text-sm mb-6 max-w-md mx-auto leading-relaxed" style={{ color: '#4a3a6e' }}>
                   {result.description}
                 </p>
 
-                <a
-                  href="#schedule"
-                  className="inline-flex items-center gap-2 rounded-full px-7 py-3 text-sm font-bold no-underline transition-all duration-300 hover:shadow-lg hover:shadow-[#FF8C00]/30 hover:brightness-105"
+                <button
+                  onClick={() => document.getElementById('schedule')?.scrollIntoView({ behavior: 'smooth' })}
+                  className="inline-flex items-center gap-2 rounded-full px-7 py-3 text-sm font-bold cursor-pointer border-none transition-all duration-300 hover:shadow-lg hover:shadow-[#FF8C00]/30 hover:brightness-105"
                   style={{ background: '#FF8C00', color: 'white' }}
                 >
                   Записаться на заезд
-                </a>
+                </button>
               </motion.div>
             )}
           </AnimatePresence>
