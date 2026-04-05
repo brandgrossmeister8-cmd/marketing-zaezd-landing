@@ -183,7 +183,7 @@ export default function DemoSection() {
           {/* Dashboard panel — RIGHT */}
           <div className="lg:col-span-4 flex flex-col gap-4">
 
-            {/* Speedometer — race style */}
+            {/* Speedometer — analog gauge with needle */}
             <motion.div
               initial={{ opacity: 0, x: 20, filter: 'blur(4px)' }}
               whileInView={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
@@ -192,12 +192,7 @@ export default function DemoSection() {
               className="rounded-2xl p-5 relative overflow-hidden"
               style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,140,0,0.12)' }}
             >
-              {/* Subtle scan line */}
-              <div className="absolute inset-0 pointer-events-none" style={{
-                background: 'repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(255,255,255,0.01) 3px, rgba(255,255,255,0.01) 4px)',
-              }} />
-
-              <div className="flex items-center justify-between mb-3 relative">
+              <div className="flex items-center justify-between mb-2 relative">
                 <div className="flex items-center gap-2">
                   <Gauge size={16} style={{ color: '#FF8C00' }} />
                   <span className="text-xs font-semibold uppercase tracking-wider text-white/50">Скорость</span>
@@ -205,26 +200,80 @@ export default function DemoSection() {
                 <span className="text-[10px] font-mono text-white/25">KM/H</span>
               </div>
 
-              <div className="flex items-baseline gap-1 mb-3 relative">
-                <span ref={speedRef} className="text-5xl font-bold font-mono tabular-nums" style={{ color: '#FFD700' }}>
-                  {speedCount}
-                </span>
-              </div>
+              {/* SVG Gauge */}
+              <div className="flex justify-center">
+                <svg viewBox="0 0 200 120" className="w-full max-w-[220px]">
+                  {/* Arc background */}
+                  <path
+                    d="M 20 100 A 80 80 0 0 1 180 100"
+                    fill="none"
+                    stroke="rgba(255,255,255,0.06)"
+                    strokeWidth="8"
+                    strokeLinecap="round"
+                  />
+                  {/* Arc filled */}
+                  <motion.path
+                    d="M 20 100 A 80 80 0 0 1 180 100"
+                    fill="none"
+                    stroke="url(#gaugeGrad)"
+                    strokeWidth="8"
+                    strokeLinecap="round"
+                    strokeDasharray="251"
+                    initial={{ strokeDashoffset: 251 }}
+                    animate={speedInView ? { strokeDashoffset: 251 * 0.25 } : { strokeDashoffset: 251 }}
+                    transition={{ delay: 0.4, duration: 1.5, ease: 'easeOut' }}
+                  />
+                  {/* Gradient definition */}
+                  <defs>
+                    <linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" stopColor="#FF8C00" />
+                      <stop offset="100%" stopColor="#FFD700" />
+                    </linearGradient>
+                  </defs>
 
-              {/* Gauge bar */}
-              <div className="relative h-2 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.05)' }}>
-                <motion.div
-                  className="absolute inset-y-0 left-0 rounded-full"
-                  initial={{ width: '0%' }}
-                  animate={speedInView ? { width: '75%' } : { width: '0%' }}
-                  transition={{ delay: 0.5, duration: 1.2, ease: 'easeOut' }}
-                  style={{ background: 'linear-gradient(90deg, #FF8C00, #FFD700)' }}
-                />
-              </div>
-              <div className="flex justify-between mt-1.5 text-[9px] font-mono text-white/20">
-                <span>0</span>
-                <span>60</span>
-                <span>120</span>
+                  {/* Tick marks */}
+                  {[0, 20, 40, 60, 80, 100, 120].map((val, i) => {
+                    const angle = -180 + (i / 6) * 180
+                    const rad = (angle * Math.PI) / 180
+                    const x1 = 100 + 72 * Math.cos(rad)
+                    const y1 = 100 + 72 * Math.sin(rad)
+                    const x2 = 100 + 80 * Math.cos(rad)
+                    const y2 = 100 + 80 * Math.sin(rad)
+                    const tx = 100 + 62 * Math.cos(rad)
+                    const ty = 100 + 62 * Math.sin(rad)
+                    return (
+                      <g key={val}>
+                        <line x1={x1} y1={y1} x2={x2} y2={y2} stroke="rgba(255,255,255,0.2)" strokeWidth="1.5" />
+                        <text x={tx} y={ty} fill="rgba(255,255,255,0.25)" fontSize="8" fontFamily="monospace" textAnchor="middle" dominantBaseline="middle">
+                          {val}
+                        </text>
+                      </g>
+                    )
+                  })}
+
+                  {/* Needle */}
+                  <motion.g
+                    style={{ transformOrigin: '100px 100px' }}
+                    initial={{ rotate: -180 }}
+                    animate={speedInView ? { rotate: -180 + (speedCount / 120) * 180 } : { rotate: -180 }}
+                    transition={{ delay: 0.4, duration: 1.5, ease: 'easeOut' }}
+                  >
+                    <line x1="100" y1="100" x2="100" y2="32" stroke="#FF8C00" strokeWidth="2.5" strokeLinecap="round" />
+                    <line x1="100" y1="100" x2="100" y2="32" stroke="#FFD700" strokeWidth="1" strokeLinecap="round" opacity="0.5" />
+                  </motion.g>
+
+                  {/* Center circle */}
+                  <circle cx="100" cy="100" r="6" fill="#1a0c5a" stroke="#FF8C00" strokeWidth="2" />
+                  <circle cx="100" cy="100" r="2.5" fill="#FFD700" />
+
+                  {/* Speed value */}
+                  <text ref={speedRef as any} x="100" y="90" fill="#FFD700" fontSize="22" fontWeight="bold" fontFamily="monospace" textAnchor="middle">
+                    {speedCount}
+                  </text>
+                  <text x="100" y="78" fill="rgba(255,255,255,0.25)" fontSize="7" fontFamily="monospace" textAnchor="middle">
+                    км/ч
+                  </text>
+                </svg>
               </div>
             </motion.div>
 
