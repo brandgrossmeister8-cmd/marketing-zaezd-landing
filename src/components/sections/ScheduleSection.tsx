@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from 'react'
 import confetti from 'canvas-confetti'
 import { collection, onSnapshot, query } from 'firebase/firestore'
 import { db } from '@/config/firebase'
+import RegistrationModal from '@/components/RegistrationModal'
 
 export interface GameSlot {
   id: string
@@ -54,6 +55,7 @@ function AnimatedProgressBar({ fillPercent }: { fillPercent: number }) {
 
 export default function ScheduleSection() {
   const [slots, setSlots] = useState<GameSlot[]>([])
+  const [selectedSlot, setSelectedSlot] = useState<GameSlot | null>(null)
   const sectionRef = useRef<HTMLElement>(null)
 
   const { scrollYProgress } = useScroll({
@@ -228,12 +230,9 @@ export default function ScheduleSection() {
                         {spotsLeft > 0 ? `${spotsLeft} из ${slot.totalSpots}` : 'Мест нет'}
                       </motion.span>
                     </div>
-                    <a
-                      href="https://t.me/SystemPromoBot?start=c1774180920281-ds"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={fireConfetti}
-                      className="inline-flex items-center gap-2 rounded-full px-6 py-2.5 text-sm font-bold transition-all duration-300 hover:shadow-lg hover:shadow-[#FF8C00]/30 hover:brightness-105 no-underline shrink-0"
+                    <button
+                      onClick={() => { fireConfetti(); setSelectedSlot(slot) }}
+                      className="inline-flex items-center gap-2 rounded-full px-6 py-2.5 text-sm font-bold transition-all duration-300 hover:shadow-lg hover:shadow-[#FF8C00]/30 hover:brightness-105 cursor-pointer border-none shrink-0"
                       style={{
                         background: '#FF8C00',
                         color: 'white',
@@ -243,7 +242,7 @@ export default function ScheduleSection() {
                     >
                       <Flag size={14} />
                       {spotsLeft > 0 ? 'Записаться' : 'В лист ожидания'}
-                    </a>
+                    </button>
                   </div>
                   {/* Animated progress bar */}
                   <AnimatedProgressBar fillPercent={fillPercent} />
@@ -288,6 +287,16 @@ export default function ScheduleSection() {
                 Предзапись на заезд
               </a>
             </motion.div>
+
+            {/* Подсказка про Telegram */}
+            <p className="text-center text-xs" style={{ color: 'rgba(255,255,255,0.3)' }}>
+              Если не получается записаться — нажмите кнопку «Записаться» и заполните форму.
+              <br />
+              Или напишите напрямую в{' '}
+              <a href="https://t.me/brandgros" target="_blank" rel="noopener noreferrer" className="underline" style={{ color: 'rgba(255,255,255,0.5)' }}>
+                Telegram @brandgros
+              </a>
+            </p>
           </div>
         </div>
 
@@ -299,6 +308,17 @@ export default function ScheduleSection() {
           ⚙
         </a>
       </div>
+
+      {/* Модалка регистрации */}
+      {selectedSlot && (
+        <RegistrationModal
+          slotId={selectedSlot.id}
+          date={selectedSlot.date}
+          time={selectedSlot.time}
+          onClose={() => setSelectedSlot(null)}
+          onSuccess={() => fireConfetti()}
+        />
+      )}
     </section>
   )
 }

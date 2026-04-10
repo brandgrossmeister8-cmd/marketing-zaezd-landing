@@ -21,7 +21,12 @@ export default function CTASection() {
 
   const handleCTA = () => {
     confetti({ particleCount: 120, spread: 90, origin: { y: 0.6 }, colors: ['#4338DF', '#FFD700', '#A977FA', '#6838CE', '#B8ACFF'] })
-    window.open('https://t.me/SystemPromoBot?start=c1774180920281-ds', '_blank')
+    const scheduleEl = document.getElementById('schedule')
+    if (scheduleEl) {
+      scheduleEl.scrollIntoView({ behavior: 'smooth' })
+    } else {
+      window.open('https://t.me/SystemPromoBot?start=c1774180920281-ds', '_blank')
+    }
   }
 
   return (
@@ -128,7 +133,8 @@ export default function CTASection() {
 
           {/* Trust line */}
           <p className="mt-5 text-xs" style={{ color: 'rgba(255,255,255,0.25)' }}>
-            Запись через Telegram-бот — ответ за 30 секунд
+            Запись через форму на сайте или{' '}
+            <a href="https://t.me/SystemPromoBot?start=c1774180920281-ds" target="_blank" rel="noopener noreferrer" className="underline" style={{ color: 'rgba(255,255,255,0.35)' }}>Telegram-бот</a>
           </p>
         </motion.div>
       </div>

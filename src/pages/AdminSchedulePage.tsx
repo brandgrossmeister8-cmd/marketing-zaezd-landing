@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { Trash2, Plus, ArrowLeft } from 'lucide-react'
+import { Trash2, Plus, ArrowLeft, Copy, Check } from 'lucide-react'
 import { collection, doc, setDoc, deleteDoc, updateDoc, onSnapshot, query } from 'firebase/firestore'
 import { db } from '@/config/firebase'
 import type { GameSlot } from '@/components/sections/ScheduleSection'
 
 const ADMIN_PASSWORD = '369852147'
+const WEBHOOK_BASE = 'https://marketing-zaezd-landing.vercel.app/api/webhook'
 
 export default function AdminSchedulePage() {
   const [authorized, setAuthorized] = useState(false)
@@ -15,6 +16,23 @@ export default function AdminSchedulePage() {
   const [newDate, setNewDate] = useState('')
   const [newTime, setNewTime] = useState('12:00')
   const [newSpots, setNewSpots] = useState(6)
+  const [copied, setCopied] = useState<string | null>(null)
+
+  const copyToClipboard = (text: string, label: string) => {
+    navigator.clipboard.writeText(text)
+    setCopied(label)
+    setTimeout(() => setCopied(null), 2000)
+  }
+
+  const getWebhookUrl = (slotId: string, action: 'register' | 'cancel') =>
+    `${WEBHOOK_BASE}?slot=${encodeURIComponent(slotId)}&action=${action}`
+
+  const formatDateRu = (dateStr: string) => {
+    try {
+      const d = new Date(dateStr + 'T00:00:00')
+      return d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', weekday: 'short' })
+    } catch { return dateStr }
+  }
 
   useEffect(() => {
     if (!authorized) return
@@ -154,35 +172,71 @@ export default function AdminSchedulePage() {
           )}
           {slots.map(slot => {
             const spotsLeft = slot.totalSpots - slot.registeredCount
+            const regUrl = getWebhookUrl(slot.id, 'register')
+            const cancelUrl = getWebhookUrl(slot.id, 'cancel')
             return (
-              <div key={slot.id} className="flex items-center justify-between rounded-xl bg-white p-4" style={{ border: '1px solid #A977FA' }}>
-                <div>
-                  <p className="font-bold" style={{ color: '#2A168F' }}>{slot.date}</p>
-                  <p className="text-sm" style={{ color: '#6838CE' }}>{slot.time} (МСК)</p>
-                  <p className="text-xs mt-1" style={{ color: '#A977FA' }}>
-                    Записано: {slot.registeredCount} / Свободно: {spotsLeft}
-                  </p>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center gap-2">
-                    <label className="text-xs" style={{ color: '#6838CE' }}>Всего мест:</label>
-                    <input
-                      type="number"
-                      min={slot.registeredCount}
-                      max={20}
-                      value={slot.totalSpots}
-                      onChange={e => updateTotalSpots(slot.id, Number(e.target.value))}
-                      className="w-14 p-1 rounded text-center outline-none"
-                      style={{ border: '1px solid #A977FA', color: '#2A168F' }}
-                    />
+              <div key={slot.id} className="rounded-xl bg-white p-4 space-y-3" style={{ border: '1px solid #A977FA' }}>
+                {/* Верхняя строка: дата, время, места, удалить */}
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-bold" style={{ color: '#2A168F' }}>{formatDateRu(slot.date)}</p>
+                    <p className="text-sm" style={{ color: '#6838CE' }}>{slot.time} (МСК)</p>
+                    <p className="text-xs mt-1" style={{ color: '#A977FA' }}>
+                      Записано: {slot.registeredCount} / Свободно: {spotsLeft}
+                    </p>
                   </div>
-                  <button
-                    onClick={() => removeSlot(slot.id)}
-                    className="p-2 rounded-lg cursor-pointer border-none hover:opacity-70 transition-opacity"
-                    style={{ background: '#FAF5FF', color: '#6838CE' }}
-                  >
-                    <Trash2 size={16} />
-                  </button>
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2">
+                      <label className="text-xs" style={{ color: '#6838CE' }}>Мест:</label>
+                      <input
+                        type="number"
+                        min={slot.registeredCount}
+                        max={20}
+                        value={slot.totalSpots}
+                        onChange={e => updateTotalSpots(slot.id, Number(e.target.value))}
+                        className="w-14 p-1 rounded text-center outline-none"
+                        style={{ border: '1px solid #A977FA', color: '#2A168F' }}
+                      />
+                    </div>
+                    <button
+                      onClick={() => removeSlot(slot.id)}
+                      className="p-2 rounded-lg cursor-pointer border-none hover:opacity-70 transition-opacity"
+                      style={{ background: '#FAF5FF', color: '#6838CE' }}
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Вебхук-ссылки */}
+                <div className="space-y-2 pt-2" style={{ borderTop: '1px solid rgba(169,119,250,0.2)' }}>
+                  {/* Регистрация */}
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-semibold shrink-0" style={{ color: '#16a34a' }}>📝 Регистрация:</span>
+                    <code className="text-xs truncate flex-1 px-2 py-1 rounded" style={{ background: '#FAF5FF', color: '#6838CE' }}>{regUrl}</code>
+                    <button
+                      onClick={() => copyToClipboard(regUrl, `reg-${slot.id}`)}
+                      className="p-1.5 rounded cursor-pointer border-none hover:opacity-70 transition-opacity shrink-0"
+                      style={{ background: '#FAF5FF', color: '#6838CE' }}
+                      title="Скопировать"
+                    >
+                      {copied === `reg-${slot.id}` ? <Check size={14} /> : <Copy size={14} />}
+                    </button>
+                  </div>
+
+                  {/* Отписка */}
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-semibold shrink-0" style={{ color: '#dc2626' }}>🚫 Отписка:</span>
+                    <code className="text-xs truncate flex-1 px-2 py-1 rounded" style={{ background: '#FAF5FF', color: '#6838CE' }}>{cancelUrl}</code>
+                    <button
+                      onClick={() => copyToClipboard(cancelUrl, `cancel-${slot.id}`)}
+                      className="p-1.5 rounded cursor-pointer border-none hover:opacity-70 transition-opacity shrink-0"
+                      style={{ background: '#FAF5FF', color: '#6838CE' }}
+                      title="Скопировать"
+                    >
+                      {copied === `cancel-${slot.id}` ? <Check size={14} /> : <Copy size={14} />}
+                    </button>
+                  </div>
                 </div>
               </div>
             )
