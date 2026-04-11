@@ -29,7 +29,7 @@ export default function RegistrationModal({ slotId, date, time, onClose, onSucce
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!name.trim() || !business.trim()) return
+    if (!name.trim() || !business.trim() || !city.trim() || !telegram.trim()) return
 
     setStatus('loading')
     try {
@@ -148,12 +148,13 @@ export default function RegistrationModal({ slotId, date, time, onClose, onSucce
 
                 <div>
                   <label className="text-xs font-semibold block mb-1.5" style={{ color: '#B8ACFF' }}>
-                    Город
+                    Город *
                   </label>
                   <input
                     value={city}
                     onChange={e => setCity(e.target.value)}
                     placeholder="Ваш город"
+                    required
                     className="w-full p-3 rounded-xl text-white text-sm outline-none transition-colors"
                     style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.12)' }}
                   />
@@ -161,12 +162,13 @@ export default function RegistrationModal({ slotId, date, time, onClose, onSucce
 
                 <div>
                   <label className="text-xs font-semibold block mb-1.5" style={{ color: '#B8ACFF' }}>
-                    Telegram
+                    Telegram *
                   </label>
                   <input
                     value={telegram}
                     onChange={e => setTelegram(e.target.value)}
                     placeholder="@username"
+                    required
                     className="w-full p-3 rounded-xl text-white text-sm outline-none transition-colors"
                     style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.12)' }}
                   />
@@ -195,7 +197,7 @@ export default function RegistrationModal({ slotId, date, time, onClose, onSucce
 
                 <button
                   type="submit"
-                  disabled={!name.trim() || !business.trim() || status === 'loading'}
+                  disabled={!name.trim() || !business.trim() || !city.trim() || !telegram.trim() || status === 'loading'}
                   className="w-full flex items-center justify-center gap-2 py-3.5 rounded-full font-bold text-base cursor-pointer border-none transition-all duration-300 disabled:opacity-40"
                   style={{ background: '#FF8C00', color: 'white' }}
                 >
