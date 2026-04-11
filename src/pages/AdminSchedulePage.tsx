@@ -28,12 +28,7 @@ export default function AdminSchedulePage() {
   const getWebhookUrl = (slotId: string, action: 'register' | 'cancel') =>
     `${WEBHOOK_BASE}?slot=${encodeURIComponent(slotId)}&action=${action}`
 
-  const formatDateRu = (dateStr: string) => {
-    try {
-      const d = new Date(dateStr + 'T00:00:00')
-      return d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', weekday: 'short' })
-    } catch { return dateStr }
-  }
+
 
   useEffect(() => {
     if (!authorized) return
