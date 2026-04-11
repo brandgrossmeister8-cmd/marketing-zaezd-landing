@@ -79,6 +79,10 @@ export default function AdminSchedulePage() {
     await updateDoc(doc(db, 'gameSlots', id), { consultant })
   }
 
+  const updateRegisteredCount = async (id: string, count: number) => {
+    await updateDoc(doc(db, 'gameSlots', id), { registeredCount: count })
+  }
+
   const removeSlot = async (id: string) => {
     await deleteDoc(doc(db, 'gameSlots', id))
   }
@@ -198,9 +202,21 @@ export default function AdminSchedulePage() {
                   <div>
                     <p className="font-bold" style={{ color: '#2A168F' }}>{formatDateRu(slot.date)}</p>
                     <p className="text-sm" style={{ color: '#6838CE' }}>{slot.time} (МСК)</p>
-                    <p className="text-xs mt-1" style={{ color: '#A977FA' }}>
-                      Записано: {slot.registeredCount} / Свободно: {spotsLeft}
-                    </p>
+                    <div className="flex items-center gap-3 mt-1">
+                      <div className="flex items-center gap-1">
+                        <label className="text-xs" style={{ color: '#6838CE' }}>Занято:</label>
+                        <input
+                          type="number"
+                          min={0}
+                          max={slot.totalSpots}
+                          value={slot.registeredCount}
+                          onChange={e => updateRegisteredCount(slot.id, Math.min(Number(e.target.value), slot.totalSpots))}
+                          className="w-12 p-1 rounded text-center outline-none text-xs"
+                          style={{ border: '1px solid #A977FA', color: '#2A168F' }}
+                        />
+                      </div>
+                      <span className="text-xs" style={{ color: '#A977FA' }}>Свободно: {spotsLeft}</span>
+                    </div>
                     <div className="flex items-center gap-2 mt-1">
                       <label className="text-xs" style={{ color: '#6838CE' }}>Консультант:</label>
                       <input
