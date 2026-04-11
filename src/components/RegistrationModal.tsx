@@ -101,6 +101,8 @@ export default function RegistrationModal({ slotId, date, time, onClose, onSucce
               <p className="text-white/40 text-xs mt-4">
                 Ссылка на встречу придёт в Telegram или на почту
                 <br />за час до начала заезда.
+                <br /><br />Сохраните себе напоминание в календаре,
+                <br />чтобы не пропустить встречу!
               </p>
               <button
                 onClick={onClose}

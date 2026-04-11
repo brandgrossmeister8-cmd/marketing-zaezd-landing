@@ -1,5 +1,5 @@
 import { motion, useScroll, useTransform, useInView } from 'framer-motion'
-import { Calendar, Clock, Flag, Video, Timer, Gift, CalendarPlus } from 'lucide-react'
+import { Calendar, Video, Timer, Gift, CalendarPlus } from 'lucide-react'
 import { useEffect, useState, useRef } from 'react'
 import confetti from 'canvas-confetti'
 import { collection, onSnapshot, query } from 'firebase/firestore'
@@ -15,12 +15,6 @@ export interface GameSlot {
   consultant?: string
 }
 
-function getMonthShort(dateStr: string): string {
-  const months = ['ЯНВ', 'ФЕВ', 'МАР', 'АПР', 'МАЙ', 'ИЮН', 'ИЮЛ', 'АВГ', 'СЕН', 'ОКТ', 'НОЯ', 'ДЕК']
-  const d = new Date(dateStr + 'T00:00:00')
-  return months[d.getMonth()]
-}
-
 function getDayNumber(dateStr: string): number {
   return new Date(dateStr + 'T00:00:00').getDate()
 }
@@ -31,27 +25,30 @@ function getWeekdayShort(dateStr: string): string {
   return days[d.getDay()]
 }
 
-function AnimatedProgressBar({ fillPercent }: { fillPercent: number }) {
+function SpotsIndicator({ registered, total }: { registered: number, total: number }) {
   const ref = useRef<HTMLDivElement>(null)
   const isInView = useInView(ref, { once: true })
+  const dots = Array.from({ length: total }, (_, i) => i < registered)
 
   return (
-    <div ref={ref} className="mt-3">
-      <div className="relative h-1.5 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.06)' }}>
+    <div ref={ref} className="flex items-center gap-1">
+      {dots.map((filled, i) => (
         <motion.div
-          className="absolute inset-y-0 left-0 rounded-full"
-          initial={{ width: '0%' }}
-          animate={isInView ? { width: `${fillPercent}%` } : { width: '0%' }}
-          transition={{ delay: 0.4, duration: 0.8, ease: 'easeOut' }}
-          style={{ background: 'linear-gradient(90deg, #4338DF, #A977FA)' }}
+          key={i}
+          initial={{ scale: 0 }}
+          animate={isInView ? { scale: 1 } : { scale: 0 }}
+          transition={{ delay: 0.3 + i * 0.05, type: 'spring', stiffness: 300 }}
+          className="w-2 h-2 rounded-full"
+          style={{ background: filled ? '#A977FA' : 'rgba(255,255,255,0.1)' }}
         />
-      </div>
-      <div className="flex justify-between mt-1 text-[10px] text-white/20">
-        <span>свободно</span>
-        <span>заполнено</span>
-      </div>
+      ))}
     </div>
   )
+}
+
+function getMonthFull(dateStr: string): string {
+  const months = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря']
+  return months[new Date(dateStr + 'T00:00:00').getMonth()]
 }
 
 export default function ScheduleSection() {
@@ -160,159 +157,115 @@ export default function ScheduleSection() {
           </h2>
         </motion.div>
 
-        {/* Все даты */}
-        <div className="space-y-8">
+        {/* Компактный список слотов */}
+        <div className="max-w-3xl mx-auto space-y-3">
           {uniqueDates.map((dateStr, dateIdx) => {
             const dateSlots = slotsByDate[dateStr]
             return (
-              <div key={dateStr} className="grid gap-6 lg:grid-cols-5">
-                {/* Большая карточка даты */}
+              <div key={dateStr} className="space-y-3">
+                {/* Разделитель даты */}
                 <motion.div
-                  initial={{ opacity: 0, x: -40, filter: 'blur(4px)' }}
-                  whileInView={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
-                  transition={{ delay: dateIdx * 0.15, duration: 0.5 }}
-                  whileHover={{ y: -4 }}
-                  className="lg:col-span-2 rounded-2xl p-8 flex flex-col items-center justify-center text-center"
-                  style={{
-                    background: 'rgba(255,255,255,0.06)',
-                    border: '1px solid rgba(255,255,255,0.1)',
-                    backdropFilter: 'blur(12px)',
-                  }}
+                  transition={{ delay: dateIdx * 0.1, duration: 0.4 }}
+                  className="flex items-center gap-3 pt-2"
                 >
-                  <motion.p
-                    initial={{ scale: 0.8, opacity: 0 }}
-                    whileInView={{ scale: 1, opacity: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
-                    className="text-sm font-bold uppercase tracking-[0.2em] mb-2" style={{ color: '#FFD700' }}
-                  >
-                    {getMonthShort(dateStr)}
-                  </motion.p>
-                  <motion.p
-                    initial={{ scale: 0.5, opacity: 0 }}
-                    whileInView={{ scale: 1, opacity: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: 0.3, duration: 0.5, type: 'spring', stiffness: 150 }}
-                    className="text-7xl sm:text-8xl font-bold text-white leading-none mb-2"
-                  >
-                    {getDayNumber(dateStr)}
-                  </motion.p>
-                  <p className="text-lg font-semibold text-white/60">
-                    {getWeekdayShort(dateStr)}
-                  </p>
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-3xl sm:text-4xl font-bold text-white">{getDayNumber(dateStr)}</span>
+                    <span className="text-sm font-semibold" style={{ color: '#FFD700' }}>{getMonthFull(dateStr)}</span>
+                    <span className="text-xs text-white/30">{getWeekdayShort(dateStr)}</span>
+                  </div>
+                  <div className="flex-1 h-px" style={{ background: 'rgba(255,255,255,0.08)' }} />
                 </motion.div>
 
-                {/* Слоты этой даты */}
-                <div className="lg:col-span-3 flex flex-col gap-4">
-                  {dateSlots.map((slot, i) => {
-                    const spotsLeft = slot.totalSpots - slot.registeredCount
-                    const fillPercent = (slot.registeredCount / slot.totalSpots) * 100
-                    return (
-                      <motion.div
-                        key={slot.id}
-                        initial={{ opacity: 0, x: 30, filter: 'blur(4px)' }}
-                        whileInView={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
-                        viewport={{ once: true }}
-                        transition={{ delay: dateIdx * 0.15 + i * 0.1, duration: 0.5 }}
-                        whileHover={{ y: -3, boxShadow: '0 8px 32px rgba(104,56,206,0.15)' }}
-                        className="rounded-2xl p-5"
+                {/* Слоты */}
+                {dateSlots.map((slot, i) => {
+                  const spotsLeft = slot.totalSpots - slot.registeredCount
+                  return (
+                    <motion.div
+                      key={slot.id}
+                      initial={{ opacity: 0, y: 12 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: dateIdx * 0.1 + i * 0.08, duration: 0.4 }}
+                      whileHover={{ y: -2, boxShadow: '0 8px 24px rgba(104,56,206,0.12)' }}
+                      className="rounded-xl px-5 py-4 flex items-center gap-4 transition-all"
+                      style={{
+                        background: 'rgba(255,255,255,0.04)',
+                        border: '1px solid rgba(255,255,255,0.07)',
+                      }}
+                    >
+                      {/* Время */}
+                      <div className="shrink-0 text-center" style={{ minWidth: '60px' }}>
+                        <p className="text-lg font-bold text-white leading-none">{slot.time}</p>
+                        <p className="text-[10px] text-white/30 mt-0.5">МСК</p>
+                      </div>
+
+                      {/* Разделитель */}
+                      <div className="w-px h-10 shrink-0" style={{ background: 'rgba(255,255,255,0.08)' }} />
+
+                      {/* Инфо */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <SpotsIndicator registered={slot.registeredCount} total={slot.totalSpots} />
+                          <span className="text-[11px] text-white/30">
+                            {spotsLeft > 0 ? `${spotsLeft} мест` : 'мест нет'}
+                          </span>
+                        </div>
+                        {slot.consultant && (
+                          <p className="text-[11px] text-white/25 mt-1 truncate">{slot.consultant}</p>
+                        )}
+                      </div>
+
+                      {/* Кнопка */}
+                      <motion.button
+                        whileHover={{ scale: 1.04 }}
+                        whileTap={{ scale: 0.97 }}
+                        onClick={() => { fireConfetti(); setSelectedSlot(slot) }}
+                        className="rounded-full px-5 py-2 text-sm font-bold cursor-pointer border-none shrink-0 transition-shadow duration-300 hover:shadow-lg hover:shadow-[#FF8C00]/25"
                         style={{
-                          background: 'rgba(255,255,255,0.04)',
-                          border: '1px solid rgba(255,255,255,0.08)',
-                          backdropFilter: 'blur(12px)',
+                          background: spotsLeft > 0 ? '#FF8C00' : 'rgba(255,255,255,0.06)',
+                          color: spotsLeft > 0 ? 'white' : 'rgba(255,255,255,0.3)',
+                          pointerEvents: spotsLeft > 0 ? 'auto' : 'none',
                         }}
                       >
-                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                          <div className="flex flex-col gap-1">
-                            <div className="flex items-center gap-4">
-                              <div className="flex items-center gap-2">
-                                <Clock size={16} style={{ color: '#B8ACFF' }} />
-                                <span className="text-lg font-bold text-white">{slot.time}</span>
-                                <span className="text-sm text-white/40">МСК</span>
-                              </div>
-                              <motion.span
-                                initial={{ scale: 0.8, opacity: 0 }}
-                                whileInView={{ scale: 1, opacity: 1 }}
-                                viewport={{ once: true }}
-                                transition={{ delay: 0.3 + i * 0.1, type: 'spring', stiffness: 200 }}
-                                className="text-xs font-semibold px-3 py-1 rounded-full"
-                                style={{ background: 'rgba(169,119,250,0.15)', color: '#B8ACFF' }}
-                              >
-                                {spotsLeft > 0 ? `${spotsLeft} из ${slot.totalSpots}` : 'Мест нет'}
-                              </motion.span>
-                            </div>
-                            {slot.consultant && (
-                              <p className="text-xs" style={{ color: '#B8ACFF' }}>
-                                Консультант: {slot.consultant}
-                              </p>
-                            )}
-                          </div>
-                          <button
-                            onClick={() => { fireConfetti(); setSelectedSlot(slot) }}
-                            className="inline-flex items-center gap-2 rounded-full px-6 py-2.5 text-sm font-bold transition-all duration-300 hover:shadow-lg hover:shadow-[#FF8C00]/30 hover:brightness-105 cursor-pointer border-none shrink-0"
-                            style={{
-                              background: '#FF8C00',
-                              color: 'white',
-                              pointerEvents: spotsLeft > 0 ? 'auto' : 'none',
-                              opacity: spotsLeft > 0 ? 1 : 0.4,
-                            }}
-                          >
-                            <Flag size={14} />
-                            {spotsLeft > 0 ? 'Записаться' : 'В лист ожидания'}
-                          </button>
-                        </div>
-                        <AnimatedProgressBar fillPercent={fillPercent} />
-                      </motion.div>
-                    )
-                  })}
-                </div>
+                        {spotsLeft > 0 ? 'Записаться' : 'Занято'}
+                      </motion.button>
+                    </motion.div>
+                  )
+                })}
               </div>
             )
           })}
 
-          {/* Предзапись */}
+          {/* Предзапись — компактная */}
           <motion.div
-            initial={{ opacity: 0, y: 16, filter: 'blur(4px)' }}
-            whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            transition={{ delay: 0.2, duration: 0.4 }}
-            whileHover={{ y: -3 }}
-            className="rounded-2xl p-5 flex flex-col sm:flex-row items-center gap-4"
-            style={{
-              background: 'rgba(255,255,255,0.04)',
-              border: '1px dashed rgba(255,255,255,0.12)',
-            }}
+            transition={{ delay: 0.2 }}
+            className="flex items-center justify-between gap-4 rounded-xl px-5 py-3 mt-2"
+            style={{ border: '1px dashed rgba(255,255,255,0.1)' }}
           >
-            <div className="flex items-center gap-3 flex-1">
-              <motion.div
-                whileHover={{ rotate: 15 }}
-                transition={{ type: 'spring', stiffness: 300 }}
-                className="flex h-10 w-10 items-center justify-center rounded-full shrink-0" style={{ background: 'rgba(255,215,0,0.15)' }}
-              >
-                <CalendarPlus size={18} style={{ color: '#FFD700' }} />
-              </motion.div>
-              <div>
-                <p className="text-sm font-bold text-white">Нет подходящей даты?</p>
-                <p className="text-xs text-white/40">Запишитесь заранее — узнаете о новых заездах первыми</p>
-              </div>
+            <div className="flex items-center gap-2.5">
+              <CalendarPlus size={16} style={{ color: '#FFD700' }} />
+              <span className="text-sm text-white/50">Нет подходящей даты?</span>
             </div>
             <button
               onClick={() => { fireConfetti(); setSelectedSlot({ id: 'predzapis', date: '', time: '', totalSpots: 99, registeredCount: 0 }) }}
-              className="inline-flex items-center gap-2 rounded-full px-6 py-2.5 text-sm font-bold transition-all duration-300 hover:shadow-lg cursor-pointer border-none shrink-0"
-              style={{ background: 'white', color: '#2A168F' }}
+              className="text-sm font-semibold cursor-pointer border-none bg-transparent transition-colors"
+              style={{ color: '#FFD700' }}
             >
-              Предзапись на заезд
+              Предзапись →
             </button>
           </motion.div>
 
           {/* Подсказка */}
-          <p className="text-center text-xs" style={{ color: 'rgba(255,255,255,0.3)' }}>
-            Если не получается записаться — нажмите кнопку «Записаться» и заполните форму.
-            <br />
-            Или напишите напрямую в{' '}
-            <a href="https://t.me/brandgros" target="_blank" rel="noopener noreferrer" className="underline" style={{ color: 'rgba(255,255,255,0.5)' }}>
-              Telegram @brandgros
+          <p className="text-center text-[11px] pt-2" style={{ color: 'rgba(255,255,255,0.2)' }}>
+            Не получается? Напишите в{' '}
+            <a href="https://t.me/brandgros" target="_blank" rel="noopener noreferrer" className="underline" style={{ color: 'rgba(255,255,255,0.35)' }}>
+              @brandgros
             </a>
           </p>
         </div>
