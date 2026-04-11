@@ -21,12 +21,7 @@ export default function CTASection() {
 
   const handleCTA = () => {
     confetti({ particleCount: 120, spread: 90, origin: { y: 0.6 }, colors: ['#4338DF', '#FFD700', '#A977FA', '#6838CE', '#B8ACFF'] })
-    const scheduleEl = document.getElementById('schedule')
-    if (scheduleEl) {
-      scheduleEl.scrollIntoView({ behavior: 'smooth' })
-    } else {
-      window.open('https://t.me/SystemPromoBot?start=c1774180920281-ds', '_blank')
-    }
+    document.getElementById('schedule')?.scrollIntoView({ behavior: 'smooth' })
   }
 
   return (
