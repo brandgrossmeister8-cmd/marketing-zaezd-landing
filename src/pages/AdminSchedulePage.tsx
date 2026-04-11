@@ -83,6 +83,14 @@ export default function AdminSchedulePage() {
     await updateDoc(doc(db, 'gameSlots', id), { registeredCount: count })
   }
 
+  const updateSlotDate = async (id: string, date: string) => {
+    await updateDoc(doc(db, 'gameSlots', id), { date })
+  }
+
+  const updateSlotTime = async (id: string, time: string) => {
+    await updateDoc(doc(db, 'gameSlots', id), { time })
+  }
+
   const removeSlot = async (id: string) => {
     await deleteDoc(doc(db, 'gameSlots', id))
   }
@@ -200,8 +208,22 @@ export default function AdminSchedulePage() {
                 {/* Верхняя строка: дата, время, места, удалить */}
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="font-bold" style={{ color: '#2A168F' }}>{formatDateRu(slot.date)}</p>
-                    <p className="text-sm" style={{ color: '#6838CE' }}>{slot.time} (МСК)</p>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="date"
+                        value={slot.date}
+                        onChange={e => updateSlotDate(slot.id, e.target.value)}
+                        className="p-1 rounded text-sm font-bold outline-none"
+                        style={{ border: '1px solid #A977FA', color: '#2A168F' }}
+                      />
+                      <input
+                        type="time"
+                        value={slot.time}
+                        onChange={e => updateSlotTime(slot.id, e.target.value)}
+                        className="p-1 rounded text-sm outline-none w-24"
+                        style={{ border: '1px solid #A977FA', color: '#6838CE' }}
+                      />
+                    </div>
                     <div className="flex items-center gap-3 mt-1">
                       <div className="flex items-center gap-1">
                         <label className="text-xs" style={{ color: '#6838CE' }}>Занято:</label>
