@@ -211,15 +211,17 @@ export default function AdminSchedulePage() {
                     <div className="flex items-center gap-2">
                       <input
                         type="date"
-                        value={slot.date}
-                        onChange={e => updateSlotDate(slot.id, e.target.value)}
+                        key={`date-${slot.id}-${slot.date}`}
+                        defaultValue={slot.date}
+                        onChange={e => { if (e.target.value) updateSlotDate(slot.id, e.target.value) }}
                         className="p-1 rounded text-sm font-bold outline-none"
                         style={{ border: '1px solid #A977FA', color: '#2A168F' }}
                       />
                       <input
                         type="time"
-                        value={slot.time}
-                        onChange={e => updateSlotTime(slot.id, e.target.value)}
+                        key={`time-${slot.id}-${slot.time}`}
+                        defaultValue={slot.time}
+                        onChange={e => { if (e.target.value) updateSlotTime(slot.id, e.target.value) }}
                         className="p-1 rounded text-sm outline-none w-24"
                         style={{ border: '1px solid #A977FA', color: '#6838CE' }}
                       />
