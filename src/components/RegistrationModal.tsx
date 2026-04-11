@@ -175,7 +175,11 @@ export default function RegistrationModal({ slotId, date, time, onClose, onSucce
                   </label>
                   <input
                     value={telegram}
-                    onChange={e => setTelegram(e.target.value)}
+                    onChange={e => {
+                      let v = e.target.value
+                      if (v && !v.startsWith('@')) v = '@' + v.replace(/^@+/, '')
+                      setTelegram(v)
+                    }}
                     placeholder="@username"
                     required
                     className="w-full p-3 rounded-xl text-white text-sm outline-none transition-colors"
