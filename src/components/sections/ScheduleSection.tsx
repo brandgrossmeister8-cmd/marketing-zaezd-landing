@@ -214,7 +214,7 @@ export default function ScheduleSection() {
                           </span>
                         </div>
                         {slot.consultant && (
-                          <p className="text-[11px] text-white/25 mt-1 truncate">{slot.consultant}</p>
+                          <p className="text-[11px] text-white/25 mt-1 truncate">Ведущая: {slot.consultant}</p>
                         )}
                       </div>
 
