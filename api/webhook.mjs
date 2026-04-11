@@ -1,33 +1,13 @@
-import https from 'https';
-
 const PROJECT = 'marketing-race-game';
-const DB_PATH = `/v1/projects/${PROJECT}/databases/(default)/documents`;
+const FIRESTORE_BASE = `https://firestore.googleapis.com/v1/projects/${PROJECT}/databases/(default)/documents`;
 
-function encodePath(p) {
-  return p.replace(/\(/g, '%28').replace(/\)/g, '%29');
-}
-
-function firestoreRequest(method, docPath, body) {
-  return new Promise((resolve, reject) => {
-    const opts = {
-      hostname: 'firestore.googleapis.com',
-      path: encodePath(DB_PATH + docPath),
-      method,
-      headers: { 'Content-Type': 'application/json' },
-    };
-    const r = https.request(opts, (response) => {
-      const chunks = [];
-      response.on('data', (c) => chunks.push(c));
-      response.on('end', () => {
-        const raw = Buffer.concat(chunks).toString();
-        try { resolve({ code: response.statusCode, body: JSON.parse(raw) }); }
-        catch { resolve({ code: response.statusCode, body: raw }); }
-      });
-    });
-    r.on('error', reject);
-    if (body) r.write(JSON.stringify(body));
-    r.end();
-  });
+async function firestoreRequest(method, docPath, body) {
+  const url = FIRESTORE_BASE + docPath;
+  const opts = { method, headers: { 'Content-Type': 'application/json' } };
+  if (body) opts.body = JSON.stringify(body);
+  const r = await fetch(url, opts);
+  const data = await r.json().catch(() => null);
+  return { code: r.status, body: data };
 }
 
 export default async function handler(req, res) {

@@ -1,58 +1,27 @@
-import https from 'https'
-
 const PROJECT = 'marketing-race-game'
-const DB_PATH = `/v1/projects/${PROJECT}/databases/(default)/documents`
+const FIRESTORE_BASE = `https://firestore.googleapis.com/v1/projects/${PROJECT}/databases/(default)/documents`
 
-// Telegram Bot API — токен и chat_id задаются в Vercel Environment Variables
 const TG_BOT_TOKEN = process.env.TG_BOT_TOKEN || ''
 const TG_CHAT_ID = process.env.TG_CHAT_ID || ''
 
-function encodePath(p) {
-  return p.replace(/\(/g, '%28').replace(/\)/g, '%29')
+async function firestoreRequest(method, docPath, body) {
+  const url = FIRESTORE_BASE + docPath
+  const opts = { method, headers: { 'Content-Type': 'application/json' } }
+  if (body) opts.body = JSON.stringify(body)
+  const r = await fetch(url, opts)
+  const data = await r.json().catch(() => null)
+  return { code: r.status, body: data }
 }
 
-function firestoreRequest(method, docPath, body) {
-  return new Promise((resolve, reject) => {
-    const opts = {
-      hostname: 'firestore.googleapis.com',
-      path: encodePath(DB_PATH + docPath),
-      method,
-      headers: { 'Content-Type': 'application/json' },
-    }
-    const r = https.request(opts, (response) => {
-      const chunks = []
-      response.on('data', (c) => chunks.push(c))
-      response.on('end', () => {
-        const raw = Buffer.concat(chunks).toString()
-        try { resolve({ code: response.statusCode, body: JSON.parse(raw) }) }
-        catch { resolve({ code: response.statusCode, body: raw }) }
-      })
-    })
-    r.on('error', reject)
-    if (body) r.write(JSON.stringify(body))
-    r.end()
-  })
-}
-
-function sendTelegramMessage(text) {
-  if (!TG_BOT_TOKEN || !TG_CHAT_ID) return Promise.resolve()
-  return new Promise((resolve) => {
-    const data = JSON.stringify({ chat_id: TG_CHAT_ID, text, parse_mode: 'HTML' })
-    const opts = {
-      hostname: 'api.telegram.org',
-      path: `/bot${TG_BOT_TOKEN}/sendMessage`,
+async function sendTelegramMessage(text) {
+  if (!TG_BOT_TOKEN || !TG_CHAT_ID) return
+  try {
+    await fetch(`https://api.telegram.org/bot${TG_BOT_TOKEN}/sendMessage`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(data) },
-    }
-    const r = https.request(opts, (res) => {
-      const chunks = []
-      res.on('data', (c) => chunks.push(c))
-      res.on('end', () => resolve())
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ chat_id: TG_CHAT_ID, text, parse_mode: 'HTML' }),
     })
-    r.on('error', () => resolve())
-    r.write(data)
-    r.end()
-  })
+  } catch {}
 }
 
 export default async function handler(req, res) {
@@ -73,7 +42,6 @@ export default async function handler(req, res) {
     let tot = 0
 
     if (!isPredzapis) {
-      // 1. Получаем слот
       const get = await firestoreRequest('GET', `/gameSlots/${slotId}`)
       if (get.code !== 200) return res.status(404).json({ error: 'Slot not found' })
 
@@ -85,7 +53,6 @@ export default async function handler(req, res) {
 
       if (reg >= tot) return res.status(409).json({ error: 'Нет свободных мест' })
 
-      // 2. Увеличиваем счётчик
       next = reg + 1
       await firestoreRequest('PATCH',
         `/gameSlots/${slotId}?updateMask.fieldPaths=registeredCount`,
@@ -93,7 +60,6 @@ export default async function handler(req, res) {
       )
     }
 
-    // 3. Сохраняем заявку в Firestore
     const regId = `reg-${Date.now()}`
     await firestoreRequest('PATCH', `/registrations/${regId}`, {
       fields: {
@@ -107,7 +73,6 @@ export default async function handler(req, res) {
       },
     })
 
-    // 4. Уведомление в Telegram
     const tgText = isPredzapis
       ? [
           `<b>Предзапись на игру</b>`,
