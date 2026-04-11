@@ -112,10 +112,19 @@ export default function RegistrationModal({ slotId, date, time, onClose, onSucce
             </div>
           ) : (
             <>
-              <h3 className="text-xl font-bold text-white mb-1">Запись на заезд</h3>
-              <p className="text-sm mb-6" style={{ color: '#B8ACFF' }}>
-                {formatDate(date)}, {time} МСК
-              </p>
+              <h3 className="text-xl font-bold text-white mb-1">
+                {slotId === 'predzapis' ? 'Предзапись на заезд' : 'Запись на заезд'}
+              </h3>
+              {slotId !== 'predzapis' && (
+                <p className="text-sm mb-6" style={{ color: '#B8ACFF' }}>
+                  {formatDate(date)}, {time} МСК
+                </p>
+              )}
+              {slotId === 'predzapis' && (
+                <p className="text-sm mb-6" style={{ color: '#B8ACFF' }}>
+                  Мы свяжемся, когда появится подходящая дата
+                </p>
+              )}
 
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>

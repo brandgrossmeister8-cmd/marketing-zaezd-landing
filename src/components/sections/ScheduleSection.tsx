@@ -297,16 +297,13 @@ export default function ScheduleSection() {
                 <p className="text-xs text-white/40">Запишитесь заранее — узнаете о новых заездах первыми</p>
               </div>
             </div>
-            <a
-              href="https://t.me/SystemPromoBot?start=c1774180920281-ds"
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={fireConfetti}
-              className="inline-flex items-center gap-2 rounded-full px-6 py-2.5 text-sm font-bold transition-all duration-300 hover:shadow-lg no-underline shrink-0"
+            <button
+              onClick={() => { fireConfetti(); setSelectedSlot({ id: 'predzapis', date: '', time: '', totalSpots: 99, registeredCount: 0 }) }}
+              className="inline-flex items-center gap-2 rounded-full px-6 py-2.5 text-sm font-bold transition-all duration-300 hover:shadow-lg cursor-pointer border-none shrink-0"
               style={{ background: 'white', color: '#2A168F' }}
             >
               Предзапись на заезд
-            </a>
+            </button>
           </motion.div>
 
           {/* Подсказка */}

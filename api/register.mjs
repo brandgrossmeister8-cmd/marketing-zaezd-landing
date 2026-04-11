@@ -62,24 +62,32 @@ export default async function handler(req, res) {
   if (!slotId || !name) return res.status(400).json({ error: 'slotId and name required' })
 
   try {
-    // 1. Получаем слот
-    const get = await firestoreRequest('GET', `/gameSlots/${slotId}`)
-    if (get.code !== 200) return res.status(404).json({ error: 'Slot not found' })
+    const isPredzapis = slotId === 'predzapis'
+    let slotDate = '—'
+    let slotTime = ''
+    let next = 0
+    let tot = 0
 
-    const f = get.body.fields
-    const reg = parseInt(f.registeredCount.integerValue, 10)
-    const tot = parseInt(f.totalSpots.integerValue, 10)
-    const slotDate = f.date?.stringValue || '?'
-    const slotTime = f.time?.stringValue || '?'
+    if (!isPredzapis) {
+      // 1. Получаем слот
+      const get = await firestoreRequest('GET', `/gameSlots/${slotId}`)
+      if (get.code !== 200) return res.status(404).json({ error: 'Slot not found' })
 
-    if (reg >= tot) return res.status(409).json({ error: 'Нет свободных мест' })
+      const f = get.body.fields
+      const reg = parseInt(f.registeredCount.integerValue, 10)
+      tot = parseInt(f.totalSpots.integerValue, 10)
+      slotDate = f.date?.stringValue || '?'
+      slotTime = f.time?.stringValue || '?'
 
-    // 2. Увеличиваем счётчик
-    const next = reg + 1
-    await firestoreRequest('PATCH',
-      `/gameSlots/${slotId}?updateMask.fieldPaths=registeredCount`,
-      { fields: { registeredCount: { integerValue: String(next) } } }
-    )
+      if (reg >= tot) return res.status(409).json({ error: 'Нет свободных мест' })
+
+      // 2. Увеличиваем счётчик
+      next = reg + 1
+      await firestoreRequest('PATCH',
+        `/gameSlots/${slotId}?updateMask.fieldPaths=registeredCount`,
+        { fields: { registeredCount: { integerValue: String(next) } } }
+      )
+    }
 
     // 3. Сохраняем заявку в Firestore
     const regId = `reg-${Date.now()}`
@@ -96,23 +104,31 @@ export default async function handler(req, res) {
     })
 
     // 4. Уведомление в Telegram
-    const tgText = [
-      `<b>Новая заявка на игру</b>`,
-      ``,
-      `<b>Дата:</b> ${slotDate} ${slotTime} МСК`,
-      `<b>Имя:</b> ${name}`,
-      phone ? `<b>Контакт:</b> ${phone}` : '',
-      comment ? `<b>Бизнес:</b> ${comment}` : '',
-      ``,
-      `Мест осталось: ${tot - next} из ${tot}`,
-    ].filter(Boolean).join('\n')
+    const tgText = isPredzapis
+      ? [
+          `<b>Предзапись на игру</b>`,
+          ``,
+          `<b>Имя:</b> ${name}`,
+          phone ? `<b>Контакт:</b> ${phone}` : '',
+          comment ? `<b>Бизнес:</b> ${comment}` : '',
+        ].filter(Boolean).join('\n')
+      : [
+          `<b>Новая заявка на игру</b>`,
+          ``,
+          `<b>Дата:</b> ${slotDate} ${slotTime} МСК`,
+          `<b>Имя:</b> ${name}`,
+          phone ? `<b>Контакт:</b> ${phone}` : '',
+          comment ? `<b>Бизнес:</b> ${comment}` : '',
+          ``,
+          `Мест осталось: ${tot - next} из ${tot}`,
+        ].filter(Boolean).join('\n')
 
     await sendTelegramMessage(tgText)
 
     return res.status(200).json({
       ok: true,
       registered: next,
-      left: tot - next,
+      left: isPredzapis ? 0 : tot - next,
     })
   } catch (e) {
     return res.status(500).json({ error: String(e) })
