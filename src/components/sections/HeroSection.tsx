@@ -100,7 +100,7 @@ export default function HeroSection() {
       origin: { y: 0.7 },
       colors: ['#4338DF', '#FFD700', '#A977FA', '#6838CE'],
     })
-    window.open('https://t.me/SystemPromoBot?start=c1774180920281-ds', '_blank')
+    document.getElementById('schedule')?.scrollIntoView({ behavior: 'smooth' })
   }
 
   return (

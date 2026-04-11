@@ -133,8 +133,7 @@ export default function CTASection() {
 
           {/* Trust line */}
           <p className="mt-5 text-xs" style={{ color: 'rgba(255,255,255,0.25)' }}>
-            Запись через форму на сайте или{' '}
-            <a href="https://t.me/SystemPromoBot?start=c1774180920281-ds" target="_blank" rel="noopener noreferrer" className="underline" style={{ color: 'rgba(255,255,255,0.35)' }}>Telegram-бот</a>
+            Выберите дату и заполните форму — ответ за 30 секунд
           </p>
         </motion.div>
       </div>

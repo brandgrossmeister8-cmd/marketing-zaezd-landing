@@ -67,7 +67,7 @@ export default function BenefitsSection() {
 
   const handleCTA = () => {
     confetti({ particleCount: 100, spread: 80, origin: { y: 0.6 }, colors: ['#4338DF', '#FFD700', '#A977FA', '#6838CE', '#B8ACFF'] })
-    window.open('https://t.me/SystemPromoBot?start=c1774180920281-ds', '_blank')
+    document.getElementById('schedule')?.scrollIntoView({ behavior: 'smooth' })
   }
 
   return (

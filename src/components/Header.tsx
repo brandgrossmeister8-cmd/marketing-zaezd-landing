@@ -54,7 +54,7 @@ export default function Header() {
             </button>
           ))}
           <button
-            onClick={() => window.open('https://t.me/SystemPromoBot?start=c1774180920281-ds', '_blank')}
+            onClick={() => handleNav('#schedule')}
             className="ml-3 rounded-full px-5 py-2 text-[13px] font-bold transition-all duration-300 cursor-pointer border-none hover:shadow-lg hover:shadow-[#FF8C00]/25 hover:brightness-110"
             style={{ background: '#FF8C00', color: 'white' }}
           >
@@ -94,7 +94,7 @@ export default function Header() {
                 </button>
               ))}
               <button
-                onClick={() => window.open('https://t.me/SystemPromoBot?start=c1774180920281-ds', '_blank')}
+                onClick={() => handleNav('#schedule')}
                 className="mt-3 w-full rounded-full px-5 py-3 text-[15px] font-bold transition-all duration-300 cursor-pointer border-none"
                 style={{ background: '#FF8C00', color: 'white' }}
               >
