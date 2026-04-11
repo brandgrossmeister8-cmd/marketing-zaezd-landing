@@ -5,9 +5,10 @@ const DB_PATH = `/v1/projects/${PROJECT}/databases/(default)/documents`;
 
 function firestoreRequest(method, docPath, body) {
   return new Promise((resolve, reject) => {
+    const url = new URL(`https://firestore.googleapis.com${DB_PATH}${docPath}`);
     const opts = {
-      hostname: 'firestore.googleapis.com',
-      path: DB_PATH + docPath,
+      hostname: url.hostname,
+      path: url.pathname + url.search,
       method,
       headers: { 'Content-Type': 'application/json' },
     };
