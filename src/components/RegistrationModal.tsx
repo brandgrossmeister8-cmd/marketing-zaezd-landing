@@ -99,8 +99,8 @@ export default function RegistrationModal({ slotId, date, time, onClose, onSucce
               <h3 className="text-xl font-bold text-white mb-2">Вы записаны!</h3>
               <p className="text-white/50 text-sm mb-1">{formatDate(date)}, {time} МСК</p>
               <p className="text-white/40 text-xs mt-4">
-                Мы свяжемся с вами для подтверждения.
-                <br />Ссылка на Zoom придёт за час до начала.
+                Ссылка на встречу придёт в Telegram или на почту
+                <br />за час до начала заезда.
               </p>
               <button
                 onClick={onClose}
