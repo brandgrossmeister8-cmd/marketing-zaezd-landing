@@ -14,8 +14,10 @@ const API_URL = '/api/register'
 
 export default function RegistrationModal({ slotId, date, time, onClose, onSuccess }: Props) {
   const [name, setName] = useState('')
-  const [phone, setPhone] = useState('')
-  const [comment, setComment] = useState('')
+  const [telegram, setTelegram] = useState('')
+  const [email, setEmail] = useState('')
+  const [city, setCity] = useState('')
+  const [business, setBusiness] = useState('')
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
   const [errorMsg, setErrorMsg] = useState('')
 
@@ -27,14 +29,19 @@ export default function RegistrationModal({ slotId, date, time, onClose, onSucce
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!name.trim()) return
+    if (!name.trim() || !business.trim()) return
 
     setStatus('loading')
     try {
       const res = await fetch(API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ slotId, name: name.trim(), phone: phone.trim(), comment: comment.trim() }),
+        body: JSON.stringify({
+          slotId,
+          name: name.trim(),
+          phone: [telegram.trim(), email.trim()].filter(Boolean).join(' | '),
+          comment: [business.trim(), city.trim() ? `Город: ${city.trim()}` : ''].filter(Boolean).join('. '),
+        }),
       })
       const data = await res.json()
       if (!res.ok) {
@@ -127,12 +134,13 @@ export default function RegistrationModal({ slotId, date, time, onClose, onSucce
 
                 <div>
                   <label className="text-xs font-semibold block mb-1.5" style={{ color: '#B8ACFF' }}>
-                    Телефон или Telegram
+                    Ваш бизнес *
                   </label>
                   <input
-                    value={phone}
-                    onChange={e => setPhone(e.target.value)}
-                    placeholder="+7... или @username"
+                    value={business}
+                    onChange={e => setBusiness(e.target.value)}
+                    placeholder="Чем занимаетесь"
+                    required
                     className="w-full p-3 rounded-xl text-white text-sm outline-none transition-colors"
                     style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.12)' }}
                   />
@@ -140,14 +148,40 @@ export default function RegistrationModal({ slotId, date, time, onClose, onSucce
 
                 <div>
                   <label className="text-xs font-semibold block mb-1.5" style={{ color: '#B8ACFF' }}>
-                    Ваш бизнес / комментарий
+                    Город
                   </label>
-                  <textarea
-                    value={comment}
-                    onChange={e => setComment(e.target.value)}
-                    placeholder="Чем занимаетесь (необязательно)"
-                    rows={2}
-                    className="w-full p-3 rounded-xl text-white text-sm outline-none resize-none transition-colors"
+                  <input
+                    value={city}
+                    onChange={e => setCity(e.target.value)}
+                    placeholder="Ваш город"
+                    className="w-full p-3 rounded-xl text-white text-sm outline-none transition-colors"
+                    style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.12)' }}
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs font-semibold block mb-1.5" style={{ color: '#B8ACFF' }}>
+                    Telegram
+                  </label>
+                  <input
+                    value={telegram}
+                    onChange={e => setTelegram(e.target.value)}
+                    placeholder="@username"
+                    className="w-full p-3 rounded-xl text-white text-sm outline-none transition-colors"
+                    style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.12)' }}
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs font-semibold block mb-1.5" style={{ color: '#B8ACFF' }}>
+                    Электронная почта
+                  </label>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={e => setEmail(e.target.value)}
+                    placeholder="email@example.com"
+                    className="w-full p-3 rounded-xl text-white text-sm outline-none transition-colors"
                     style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.12)' }}
                   />
                 </div>
@@ -161,7 +195,7 @@ export default function RegistrationModal({ slotId, date, time, onClose, onSucce
 
                 <button
                   type="submit"
-                  disabled={!name.trim() || status === 'loading'}
+                  disabled={!name.trim() || !business.trim() || status === 'loading'}
                   className="w-full flex items-center justify-center gap-2 py-3.5 rounded-full font-bold text-base cursor-pointer border-none transition-all duration-300 disabled:opacity-40"
                   style={{ background: '#FF8C00', color: 'white' }}
                 >

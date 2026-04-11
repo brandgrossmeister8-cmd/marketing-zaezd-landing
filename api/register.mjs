@@ -101,8 +101,8 @@ export default async function handler(req, res) {
       ``,
       `<b>Дата:</b> ${slotDate} ${slotTime} МСК`,
       `<b>Имя:</b> ${name}`,
-      phone ? `<b>Телефон/контакт:</b> ${phone}` : '',
-      comment ? `<b>Комментарий:</b> ${comment}` : '',
+      phone ? `<b>Контакт:</b> ${phone}` : '',
+      comment ? `<b>Бизнес:</b> ${comment}` : '',
       ``,
       `Мест осталось: ${tot - next} из ${tot}`,
     ].filter(Boolean).join('\n')
