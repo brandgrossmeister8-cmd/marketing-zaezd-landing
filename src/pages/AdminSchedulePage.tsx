@@ -142,7 +142,7 @@ export default function AdminSchedulePage() {
         {/* Добавление */}
         <div className="rounded-2xl bg-white p-6 space-y-4" style={{ border: '1px solid #A977FA' }}>
           <p className="font-bold" style={{ color: '#2A168F' }}>Добавить игру</p>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div>
               <label className="text-xs block mb-1" style={{ color: '#6838CE' }}>Дата</label>
               <input
@@ -176,7 +176,7 @@ export default function AdminSchedulePage() {
               />
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="text-xs block mb-1" style={{ color: '#6838CE' }}>Консультант (имя и фамилия)</label>
               <input
@@ -219,83 +219,85 @@ export default function AdminSchedulePage() {
             const cancelUrl = getWebhookUrl(slot.id, 'cancel')
             return (
               <div key={slot.id} className="rounded-xl bg-white p-4 space-y-3" style={{ border: '1px solid #A977FA' }}>
-                {/* Верхняя строка: дата, время, места, удалить */}
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="date"
-                        key={`date-${slot.id}-${slot.date}`}
-                        defaultValue={slot.date}
-                        onChange={e => { if (e.target.value) updateSlotDate(slot.id, e.target.value) }}
-                        className="p-1 rounded text-sm font-bold outline-none"
-                        style={{ border: '1px solid #A977FA', color: '#2A168F' }}
-                      />
-                      <input
-                        type="time"
-                        key={`time-${slot.id}-${slot.time}`}
-                        defaultValue={slot.time}
-                        onChange={e => { if (e.target.value) updateSlotTime(slot.id, e.target.value) }}
-                        className="p-1 rounded text-sm outline-none w-24"
-                        style={{ border: '1px solid #A977FA', color: '#6838CE' }}
-                      />
-                    </div>
-                    <div className="flex items-center gap-3 mt-1">
-                      <div className="flex items-center gap-1">
-                        <label className="text-xs" style={{ color: '#6838CE' }}>Занято:</label>
-                        <input
-                          type="number"
-                          min={0}
-                          max={slot.totalSpots}
-                          value={slot.registeredCount}
-                          onChange={e => updateRegisteredCount(slot.id, Math.min(Number(e.target.value), slot.totalSpots))}
-                          className="w-12 p-1 rounded text-center outline-none text-xs"
-                          style={{ border: '1px solid #A977FA', color: '#2A168F' }}
-                        />
-                      </div>
-                      <span className="text-xs" style={{ color: '#A977FA' }}>Свободно: {spotsLeft}</span>
-                    </div>
-                    <div className="flex items-center gap-2 mt-1">
-                      <label className="text-xs" style={{ color: '#6838CE' }}>Консультант:</label>
-                      <input
-                        value={slot.consultant || ''}
-                        onChange={e => updateConsultant(slot.id, e.target.value)}
-                        placeholder="Имя Фамилия"
-                        className="p-1 rounded text-xs outline-none"
-                        style={{ border: '1px solid #A977FA', color: '#2A168F', width: '160px' }}
-                      />
-                    </div>
-                    <div className="flex items-center gap-2 mt-1">
-                      <label className="text-xs" style={{ color: '#6838CE' }}>TG Chat ID:</label>
-                      <input
-                        value={slot.consultantTgChatId || ''}
-                        onChange={e => updateConsultantTgChatId(slot.id, e.target.value)}
-                        placeholder="Узнать: @userinfobot"
-                        className="p-1 rounded text-xs outline-none"
-                        style={{ border: '1px solid #A977FA', color: '#2A168F', width: '160px' }}
-                      />
-                    </div>
+                {/* Верхняя строка: дата, время, удалить */}
+                <div className="flex items-start justify-between gap-2">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <input
+                      type="date"
+                      key={`date-${slot.id}-${slot.date}`}
+                      defaultValue={slot.date}
+                      onChange={e => { if (e.target.value) updateSlotDate(slot.id, e.target.value) }}
+                      className="p-1 rounded text-sm font-bold outline-none"
+                      style={{ border: '1px solid #A977FA', color: '#2A168F' }}
+                    />
+                    <input
+                      type="time"
+                      key={`time-${slot.id}-${slot.time}`}
+                      defaultValue={slot.time}
+                      onChange={e => { if (e.target.value) updateSlotTime(slot.id, e.target.value) }}
+                      className="p-1 rounded text-sm outline-none w-24"
+                      style={{ border: '1px solid #A977FA', color: '#6838CE' }}
+                    />
                   </div>
-                  <div className="flex items-center gap-3">
-                    <div className="flex items-center gap-2">
-                      <label className="text-xs" style={{ color: '#6838CE' }}>Мест:</label>
-                      <input
-                        type="number"
-                        min={slot.registeredCount}
-                        max={20}
-                        value={slot.totalSpots}
-                        onChange={e => updateTotalSpots(slot.id, Number(e.target.value))}
-                        className="w-14 p-1 rounded text-center outline-none"
-                        style={{ border: '1px solid #A977FA', color: '#2A168F' }}
-                      />
-                    </div>
-                    <button
-                      onClick={() => removeSlot(slot.id)}
-                      className="p-2 rounded-lg cursor-pointer border-none hover:opacity-70 transition-opacity"
-                      style={{ background: '#FAF5FF', color: '#6838CE' }}
-                    >
-                      <Trash2 size={16} />
-                    </button>
+                  <button
+                    onClick={() => removeSlot(slot.id)}
+                    className="p-2 rounded-lg cursor-pointer border-none hover:opacity-70 transition-opacity shrink-0"
+                    style={{ background: '#FAF5FF', color: '#6838CE' }}
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
+
+                {/* Места */}
+                <div className="flex items-center gap-3 flex-wrap">
+                  <div className="flex items-center gap-1">
+                    <label className="text-xs" style={{ color: '#6838CE' }}>Занято:</label>
+                    <input
+                      type="number"
+                      min={0}
+                      max={slot.totalSpots}
+                      value={slot.registeredCount}
+                      onChange={e => updateRegisteredCount(slot.id, Math.min(Number(e.target.value), slot.totalSpots))}
+                      className="w-12 p-1 rounded text-center outline-none text-xs"
+                      style={{ border: '1px solid #A977FA', color: '#2A168F' }}
+                    />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <label className="text-xs" style={{ color: '#6838CE' }}>Мест:</label>
+                    <input
+                      type="number"
+                      min={slot.registeredCount}
+                      max={20}
+                      value={slot.totalSpots}
+                      onChange={e => updateTotalSpots(slot.id, Number(e.target.value))}
+                      className="w-14 p-1 rounded text-center outline-none"
+                      style={{ border: '1px solid #A977FA', color: '#2A168F' }}
+                    />
+                  </div>
+                  <span className="text-xs" style={{ color: '#A977FA' }}>Свободно: {spotsLeft}</span>
+                </div>
+
+                {/* Консультант и TG */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <div className="flex items-center gap-2">
+                    <label className="text-xs shrink-0" style={{ color: '#6838CE' }}>Консультант:</label>
+                    <input
+                      value={slot.consultant || ''}
+                      onChange={e => updateConsultant(slot.id, e.target.value)}
+                      placeholder="Имя Фамилия"
+                      className="p-1 rounded text-xs outline-none flex-1 min-w-0"
+                      style={{ border: '1px solid #A977FA', color: '#2A168F' }}
+                    />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <label className="text-xs shrink-0" style={{ color: '#6838CE' }}>TG Chat ID:</label>
+                    <input
+                      value={slot.consultantTgChatId || ''}
+                      onChange={e => updateConsultantTgChatId(slot.id, e.target.value)}
+                      placeholder="@userinfobot"
+                      className="p-1 rounded text-xs outline-none flex-1 min-w-0"
+                      style={{ border: '1px solid #A977FA', color: '#2A168F' }}
+                    />
                   </div>
                 </div>
 
