@@ -190,7 +190,7 @@ export default function ScheduleSection() {
                       viewport={{ once: true }}
                       transition={{ delay: dateIdx * 0.1 + i * 0.08, duration: 0.4 }}
                       whileHover={{ y: -2, boxShadow: '0 8px 24px rgba(104,56,206,0.12)' }}
-                      className="rounded-xl px-5 py-4 flex items-center gap-4 transition-all"
+                      className="rounded-xl px-5 py-4 flex flex-wrap sm:flex-nowrap items-center gap-4 transition-all"
                       style={{
                         background: 'rgba(255,255,255,0.04)',
                         border: '1px solid rgba(255,255,255,0.07)',
@@ -223,7 +223,7 @@ export default function ScheduleSection() {
                         whileHover={{ scale: 1.04 }}
                         whileTap={{ scale: 0.97 }}
                         onClick={() => { fireConfetti(); setSelectedSlot(slot) }}
-                        className="rounded-full px-5 py-2 text-sm font-bold cursor-pointer border-none shrink-0 transition-shadow duration-300 hover:shadow-lg hover:shadow-[#FF8C00]/25"
+                        className="rounded-full px-5 py-2 text-sm font-bold cursor-pointer border-none shrink-0 transition-shadow duration-300 hover:shadow-lg hover:shadow-[#FF8C00]/25 w-full sm:w-auto"
                         style={{
                           background: spotsLeft > 0 ? '#FF8C00' : 'rgba(255,255,255,0.06)',
                           color: spotsLeft > 0 ? 'white' : 'rgba(255,255,255,0.3)',
