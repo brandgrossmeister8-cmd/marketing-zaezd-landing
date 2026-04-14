@@ -214,7 +214,10 @@ export default function ScheduleSection() {
                           </span>
                         </div>
                         {slot.consultant && (
-                          <p className="text-[11px] text-white/25 mt-1 truncate">Ведущая: {slot.consultant}</p>
+                          <div className="mt-1 leading-tight">
+                            <span className="text-[11px] font-semibold" style={{ color: '#FF8C00' }}>Ведущая:</span>
+                            <span className="block text-[11px] font-semibold" style={{ color: '#FFD700' }}>{slot.consultant}</span>
+                          </div>
                         )}
                       </div>
 
