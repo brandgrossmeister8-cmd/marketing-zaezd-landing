@@ -13,6 +13,7 @@ export interface GameSlot {
   totalSpots: number
   registeredCount: number
   consultant?: string
+  consultantTgChatId?: string
 }
 
 function getDayNumber(dateStr: string): number {

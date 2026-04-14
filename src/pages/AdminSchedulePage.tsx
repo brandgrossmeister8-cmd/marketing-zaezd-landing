@@ -17,6 +17,7 @@ export default function AdminSchedulePage() {
   const [newTime, setNewTime] = useState('12:00')
   const [newSpots, setNewSpots] = useState(6)
   const [newConsultant, setNewConsultant] = useState('')
+  const [newConsultantTgChatId, setNewConsultantTgChatId] = useState('')
   const [copied, setCopied] = useState<string | null>(null)
 
   const copyToClipboard = (text: string, label: string) => {
@@ -63,15 +64,21 @@ export default function AdminSchedulePage() {
       totalSpots: newSpots,
       registeredCount: 0,
       consultant: newConsultant.trim(),
+      consultantTgChatId: newConsultantTgChatId.trim(),
     })
     setNewDate('')
     setNewTime('12:00')
     setNewSpots(6)
     setNewConsultant('')
+    setNewConsultantTgChatId('')
   }
 
   const updateConsultant = async (id: string, consultant: string) => {
     await updateDoc(doc(db, 'gameSlots', id), { consultant })
+  }
+
+  const updateConsultantTgChatId = async (id: string, consultantTgChatId: string) => {
+    await updateDoc(doc(db, 'gameSlots', id), { consultantTgChatId })
   }
 
   const updateRegisteredCount = async (id: string, count: number) => {
@@ -169,15 +176,27 @@ export default function AdminSchedulePage() {
               />
             </div>
           </div>
-          <div>
-            <label className="text-xs block mb-1" style={{ color: '#6838CE' }}>Консультант (имя и фамилия)</label>
-            <input
-              value={newConsultant}
-              onChange={e => setNewConsultant(e.target.value)}
-              placeholder="Например: Анна Иванова"
-              className="w-full p-2 rounded-lg outline-none"
-              style={{ border: '1px solid #A977FA', color: '#2A168F' }}
-            />
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="text-xs block mb-1" style={{ color: '#6838CE' }}>Консультант (имя и фамилия)</label>
+              <input
+                value={newConsultant}
+                onChange={e => setNewConsultant(e.target.value)}
+                placeholder="Например: Анна Иванова"
+                className="w-full p-2 rounded-lg outline-none"
+                style={{ border: '1px solid #A977FA', color: '#2A168F' }}
+              />
+            </div>
+            <div>
+              <label className="text-xs block mb-1" style={{ color: '#6838CE' }}>Telegram Chat ID</label>
+              <input
+                value={newConsultantTgChatId}
+                onChange={e => setNewConsultantTgChatId(e.target.value)}
+                placeholder="Напишите @userinfobot"
+                className="w-full p-2 rounded-lg outline-none"
+                style={{ border: '1px solid #A977FA', color: '#2A168F' }}
+              />
+            </div>
           </div>
           <button
             onClick={addSlot}
@@ -242,6 +261,16 @@ export default function AdminSchedulePage() {
                         value={slot.consultant || ''}
                         onChange={e => updateConsultant(slot.id, e.target.value)}
                         placeholder="Имя Фамилия"
+                        className="p-1 rounded text-xs outline-none"
+                        style={{ border: '1px solid #A977FA', color: '#2A168F', width: '160px' }}
+                      />
+                    </div>
+                    <div className="flex items-center gap-2 mt-1">
+                      <label className="text-xs" style={{ color: '#6838CE' }}>TG Chat ID:</label>
+                      <input
+                        value={slot.consultantTgChatId || ''}
+                        onChange={e => updateConsultantTgChatId(slot.id, e.target.value)}
+                        placeholder="Узнать: @userinfobot"
                         className="p-1 rounded text-xs outline-none"
                         style={{ border: '1px solid #A977FA', color: '#2A168F', width: '160px' }}
                       />

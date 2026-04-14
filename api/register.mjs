@@ -13,13 +13,14 @@ async function firestoreRequest(method, docPath, body) {
   return { code: r.status, body: data }
 }
 
-async function sendTelegramMessage(text) {
-  if (!TG_BOT_TOKEN || !TG_CHAT_ID) return
+async function sendTelegramMessage(text, chatId) {
+  const targetChatId = chatId || TG_CHAT_ID
+  if (!TG_BOT_TOKEN || !targetChatId) return
   try {
     await fetch(`https://api.telegram.org/bot${TG_BOT_TOKEN}/sendMessage`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ chat_id: TG_CHAT_ID, text, parse_mode: 'HTML' }),
+      body: JSON.stringify({ chat_id: targetChatId, text, parse_mode: 'HTML' }),
     })
   } catch {}
 }
@@ -40,6 +41,8 @@ export default async function handler(req, res) {
     let slotTime = ''
     let next = 0
     let tot = 0
+    let consultantTgChatId = ''
+    let consultantName = ''
 
     if (!isPredzapis) {
       const get = await firestoreRequest('GET', `/gameSlots/${slotId}`)
@@ -50,6 +53,8 @@ export default async function handler(req, res) {
       tot = parseInt(f.totalSpots.integerValue, 10)
       slotDate = f.date?.stringValue || '?'
       slotTime = f.time?.stringValue || '?'
+      consultantTgChatId = f.consultantTgChatId?.stringValue || ''
+      consultantName = f.consultant?.stringValue || ''
 
       if (reg >= tot) return res.status(409).json({ error: 'Нет свободных мест' })
 
@@ -92,7 +97,23 @@ export default async function handler(req, res) {
           `Мест осталось: ${tot - next} из ${tot}`,
         ].filter(Boolean).join('\n')
 
+    // Уведомление в общий чат
     await sendTelegramMessage(tgText)
+
+    // Уведомление консультанту лично
+    if (consultantTgChatId && !isPredzapis) {
+      const consultantText = [
+        `<b>🎯 К вам записался новый участник!</b>`,
+        ``,
+        `<b>Дата:</b> ${slotDate} ${slotTime} МСК`,
+        `<b>Имя:</b> ${name}`,
+        phone ? `<b>Контакт:</b> ${phone}` : '',
+        comment ? `<b>Бизнес:</b> ${comment}` : '',
+        ``,
+        `Мест осталось: ${tot - next} из ${tot}`,
+      ].filter(Boolean).join('\n')
+      await sendTelegramMessage(consultantText, consultantTgChatId)
+    }
 
     return res.status(200).json({
       ok: true,
