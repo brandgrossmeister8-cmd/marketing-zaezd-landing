@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { Trash2, Plus, ArrowLeft, Copy, Check } from 'lucide-react'
+import { Trash2, Plus, ArrowLeft, Copy, Check, Save } from 'lucide-react'
 import { collection, doc, setDoc, deleteDoc, updateDoc, onSnapshot, query } from 'firebase/firestore'
 import { db } from '@/config/firebase'
 import type { GameSlot } from '@/components/sections/ScheduleSection'
@@ -19,6 +19,9 @@ export default function AdminSchedulePage() {
   const [newConsultant, setNewConsultant] = useState('')
   const [newConsultantTgChatId, setNewConsultantTgChatId] = useState('')
   const [copied, setCopied] = useState<string | null>(null)
+  const [editConsultant, setEditConsultant] = useState<Record<string, string>>({})
+  const [editTgChatId, setEditTgChatId] = useState<Record<string, string>>({})
+  const [saved, setSaved] = useState<string | null>(null)
 
   const copyToClipboard = (text: string, label: string) => {
     navigator.clipboard.writeText(text)
@@ -73,12 +76,14 @@ export default function AdminSchedulePage() {
     setNewConsultantTgChatId('')
   }
 
-  const updateConsultant = async (id: string, consultant: string) => {
-    await updateDoc(doc(db, 'gameSlots', id), { consultant })
-  }
-
-  const updateConsultantTgChatId = async (id: string, consultantTgChatId: string) => {
-    await updateDoc(doc(db, 'gameSlots', id), { consultantTgChatId })
+  const saveConsultantInfo = async (slot: GameSlot) => {
+    const consultant = editConsultant[slot.id] ?? slot.consultant ?? ''
+    const consultantTgChatId = editTgChatId[slot.id] ?? slot.consultantTgChatId ?? ''
+    await updateDoc(doc(db, 'gameSlots', slot.id), { consultant, consultantTgChatId })
+    setEditConsultant(prev => { const n = { ...prev }; delete n[slot.id]; return n })
+    setEditTgChatId(prev => { const n = { ...prev }; delete n[slot.id]; return n })
+    setSaved(slot.id)
+    setTimeout(() => setSaved(null), 2000)
   }
 
   const updateRegisteredCount = async (id: string, count: number) => {
@@ -282,8 +287,8 @@ export default function AdminSchedulePage() {
                   <div className="flex items-center gap-2">
                     <label className="text-xs shrink-0" style={{ color: '#6838CE' }}>Консультант:</label>
                     <input
-                      value={slot.consultant || ''}
-                      onChange={e => updateConsultant(slot.id, e.target.value)}
+                      value={editConsultant[slot.id] ?? slot.consultant ?? ''}
+                      onChange={e => setEditConsultant(prev => ({ ...prev, [slot.id]: e.target.value }))}
                       placeholder="Имя Фамилия"
                       className="p-1 rounded text-xs outline-none flex-1 min-w-0"
                       style={{ border: '1px solid #A977FA', color: '#2A168F' }}
@@ -292,14 +297,22 @@ export default function AdminSchedulePage() {
                   <div className="flex items-center gap-2">
                     <label className="text-xs shrink-0" style={{ color: '#6838CE' }}>TG Chat ID:</label>
                     <input
-                      value={slot.consultantTgChatId || ''}
-                      onChange={e => updateConsultantTgChatId(slot.id, e.target.value)}
+                      value={editTgChatId[slot.id] ?? slot.consultantTgChatId ?? ''}
+                      onChange={e => setEditTgChatId(prev => ({ ...prev, [slot.id]: e.target.value }))}
                       placeholder="@userinfobot"
                       className="p-1 rounded text-xs outline-none flex-1 min-w-0"
                       style={{ border: '1px solid #A977FA', color: '#2A168F' }}
                     />
                   </div>
                 </div>
+                {/* Кнопка сохранить */}
+                <button
+                  onClick={() => saveConsultantInfo(slot)}
+                  className="flex items-center gap-2 px-4 py-1.5 rounded-lg font-semibold text-white cursor-pointer border-none text-xs"
+                  style={{ background: saved === slot.id ? '#16a34a' : '#6838CE' }}
+                >
+                  {saved === slot.id ? <><Check size={14} /> Сохранено</> : <><Save size={14} /> Сохранить</>}
+                </button>
 
                 {/* Вебхук-ссылки */}
                 <div className="space-y-2 pt-2" style={{ borderTop: '1px solid rgba(169,119,250,0.2)' }}>
