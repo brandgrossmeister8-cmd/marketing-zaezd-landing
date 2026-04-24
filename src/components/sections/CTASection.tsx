@@ -5,7 +5,7 @@ import { useRef } from 'react'
 
 const infoPills = [
   { icon: Clock, label: '90 минут' },
-  { icon: Users, label: '6 участников' },
+  { icon: Users, label: 'Командный формат' },
   { icon: Video, label: 'Онлайн в Zoom' },
   { icon: Gift, label: 'Безоплатно' },
 ]
