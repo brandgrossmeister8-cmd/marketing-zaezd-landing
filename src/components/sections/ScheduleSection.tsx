@@ -208,12 +208,6 @@ export default function ScheduleSection() {
 
                       {/* Инфо */}
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <SpotsIndicator registered={slot.registeredCount} total={slot.totalSpots} />
-                          <span className="text-[11px] text-white/30">
-                            {spotsLeft > 0 ? `${spotsLeft} мест` : 'мест нет'}
-                          </span>
-                        </div>
                         {slot.consultant && (
                           <div className="mt-1 leading-tight">
                             <span className="text-[11px] font-semibold" style={{ color: '#FF8C00' }}>Ведущая:</span>
