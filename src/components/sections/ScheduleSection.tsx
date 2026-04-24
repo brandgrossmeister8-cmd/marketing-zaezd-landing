@@ -1,4 +1,4 @@
-import { motion, useScroll, useTransform, useInView } from 'framer-motion'
+import { motion, useScroll, useTransform } from 'framer-motion'
 import { Calendar, Video, Timer, Gift, CalendarPlus } from 'lucide-react'
 import { useEffect, useState, useRef } from 'react'
 import confetti from 'canvas-confetti'
@@ -24,27 +24,6 @@ function getWeekdayShort(dateStr: string): string {
   const days = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб']
   const d = new Date(dateStr + 'T00:00:00')
   return days[d.getDay()]
-}
-
-function SpotsIndicator({ registered, total }: { registered: number, total: number }) {
-  const ref = useRef<HTMLDivElement>(null)
-  const isInView = useInView(ref, { once: true })
-  const dots = Array.from({ length: total }, (_, i) => i < registered)
-
-  return (
-    <div ref={ref} className="flex items-center gap-1">
-      {dots.map((filled, i) => (
-        <motion.div
-          key={i}
-          initial={{ scale: 0 }}
-          animate={isInView ? { scale: 1 } : { scale: 0 }}
-          transition={{ delay: 0.3 + i * 0.05, type: 'spring', stiffness: 300 }}
-          className="w-2 h-2 rounded-full"
-          style={{ background: filled ? '#A977FA' : 'rgba(255,255,255,0.1)' }}
-        />
-      ))}
-    </div>
-  )
 }
 
 function getMonthFull(dateStr: string): string {
