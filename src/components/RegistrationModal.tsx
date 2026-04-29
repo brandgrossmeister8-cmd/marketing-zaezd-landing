@@ -105,7 +105,10 @@ export default function RegistrationModal({ slotId, date, time, onClose, onSucce
                 <br />чтобы не пропустить встречу!
               </p>
               <button
-                onClick={onClose}
+                onClick={() => {
+                  if (document.activeElement instanceof HTMLElement) document.activeElement.blur()
+                  onClose()
+                }}
                 className="mt-6 px-8 py-2.5 rounded-full font-semibold cursor-pointer border-none text-sm"
                 style={{ background: '#6838CE', color: 'white' }}
               >
@@ -138,8 +141,8 @@ export default function RegistrationModal({ slotId, date, time, onClose, onSucce
                     onChange={e => setName(e.target.value)}
                     placeholder="Как вас зовут"
                     required
-                    className="w-full p-3 rounded-xl text-white text-sm outline-none transition-colors"
-                    style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.12)' }}
+                    className="w-full p-3 rounded-xl text-white text-base outline-none transition-colors"
+                    style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.12)', fontSize: '16px' }}
                   />
                 </div>
 
@@ -152,8 +155,8 @@ export default function RegistrationModal({ slotId, date, time, onClose, onSucce
                     onChange={e => setBusiness(e.target.value)}
                     placeholder="Чем занимаетесь"
                     required
-                    className="w-full p-3 rounded-xl text-white text-sm outline-none transition-colors"
-                    style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.12)' }}
+                    className="w-full p-3 rounded-xl text-white text-base outline-none transition-colors"
+                    style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.12)', fontSize: '16px' }}
                   />
                 </div>
 
@@ -166,8 +169,8 @@ export default function RegistrationModal({ slotId, date, time, onClose, onSucce
                     onChange={e => setCity(e.target.value)}
                     placeholder="Ваш город"
                     required
-                    className="w-full p-3 rounded-xl text-white text-sm outline-none transition-colors"
-                    style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.12)' }}
+                    className="w-full p-3 rounded-xl text-white text-base outline-none transition-colors"
+                    style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.12)', fontSize: '16px' }}
                   />
                 </div>
 
@@ -184,8 +187,8 @@ export default function RegistrationModal({ slotId, date, time, onClose, onSucce
                     }}
                     placeholder="@username"
                     required
-                    className="w-full p-3 rounded-xl text-white text-sm outline-none transition-colors"
-                    style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.12)' }}
+                    className="w-full p-3 rounded-xl text-white text-base outline-none transition-colors"
+                    style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.12)', fontSize: '16px' }}
                   />
                 </div>
 
@@ -198,8 +201,8 @@ export default function RegistrationModal({ slotId, date, time, onClose, onSucce
                     value={email}
                     onChange={e => setEmail(e.target.value)}
                     placeholder="email@example.com"
-                    className="w-full p-3 rounded-xl text-white text-sm outline-none transition-colors"
-                    style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.12)' }}
+                    className="w-full p-3 rounded-xl text-white text-base outline-none transition-colors"
+                    style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.12)', fontSize: '16px' }}
                   />
                 </div>
 
