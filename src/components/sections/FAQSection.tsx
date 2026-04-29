@@ -110,7 +110,7 @@ export default function FAQSection() {
                 className="text-3xl font-bold sm:text-4xl leading-[1.15] mb-3"
                 style={{ color: '#2A168F' }}
               >
-                FAQ
+                Частые вопросы
               </h2>
               <p className="text-sm leading-relaxed mb-8" style={{ color: '#8B7BAE' }}>
                 Ответы на самые частые вопросы о маркетинговом заезде
