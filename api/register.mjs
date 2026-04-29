@@ -100,8 +100,8 @@ export default async function handler(req, res) {
     // Уведомление в общий чат
     await sendTelegramMessage(tgText)
 
-    // Уведомление консультанту лично
-    if (consultantTgChatId && !isPredzapis) {
+    // Уведомление консультанту лично (если чат отличается от общего)
+    if (consultantTgChatId && consultantTgChatId !== TG_CHAT_ID && !isPredzapis) {
       const consultantText = [
         `<b>🎯 К вам записался новый участник!</b>`,
         ``,
