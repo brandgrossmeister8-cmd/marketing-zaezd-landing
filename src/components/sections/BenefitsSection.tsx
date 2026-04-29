@@ -73,6 +73,7 @@ export default function BenefitsSection() {
   return (
     <section
       ref={sectionRef}
+      id="benefits"
       className="py-24 px-5 sm:py-32 relative overflow-hidden"
       style={{ background: 'linear-gradient(180deg, #FDFBFF 0%, #F8F5FF 100%)' }}
     >

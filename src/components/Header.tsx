@@ -3,11 +3,13 @@ import { Menu, X } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 const navLinks = [
-  { label: 'Этапы заезда', href: '#how-it-works' },
   { label: 'Демо', href: '#demo' },
+  { label: 'Тест', href: '#quiz' },
   { label: 'Расписание', href: '#schedule' },
-  { label: 'FAQ', href: '#faq' },
+  { label: 'Результат', href: '#benefits' },
+  { label: 'Этапы заезда', href: '#how-it-works' },
   { label: 'Отзывы', href: '#testimonials' },
+  { label: 'FAQ', href: '#faq' },
 ]
 
 export default function Header() {
