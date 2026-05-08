@@ -18,18 +18,24 @@ function getAudioCtx() {
   if (sharedAudioCtx.state === 'suspended') sharedAudioCtx.resume()
   return sharedAudioCtx
 }
-if (typeof window !== 'undefined') {
-  const unlock = () => {
-    getAudioCtx()
-    document.removeEventListener('click', unlock)
-    document.removeEventListener('touchstart', unlock)
-    document.removeEventListener('scroll', unlock)
-  }
-  document.addEventListener('click', unlock)
-  document.addEventListener('touchstart', unlock)
-  document.addEventListener('scroll', unlock)
+
+let soundEnabled = false
+function setSoundEnabled(on: boolean) {
+  soundEnabled = on
 }
+
+function makeDriveCurve(drive: number) {
+  const n = 4096
+  const curve = new Float32Array(n)
+  for (let i = 0; i < n; i++) {
+    const x = (i / n) * 2 - 1
+    curve[i] = Math.tanh(x * drive)
+  }
+  return curve
+}
+
 function playTypeClick() {
+  if (!soundEnabled) return
   try {
     const ctx = getAudioCtx()
     const buffer = ctx.createBuffer(1, Math.floor(ctx.sampleRate * 0.03), ctx.sampleRate)
@@ -48,6 +54,7 @@ function playTypeClick() {
 }
 
 function playTireScreech(durationSec: number) {
+  if (!soundEnabled) return
   try {
     const ctx = getAudioCtx()
     const dur = Math.max(0.18, Math.min(durationSec, 2.2))
@@ -79,15 +86,34 @@ function playTireScreech(durationSec: number) {
   } catch {}
 }
 
-type TypewriterProps = {
-  text: string
-  speed?: number
-  delay?: number
-  loop?: boolean
-  holdMs?: number
-  eraseSpeed?: number
+function playExhaustPop() {
+  if (!soundEnabled) return
+  try {
+    const ctx = getAudioCtx()
+    const dur = 0.07
+    const buf = ctx.createBuffer(1, Math.floor(ctx.sampleRate * dur), ctx.sampleRate)
+    const data = buf.getChannelData(0)
+    for (let i = 0; i < data.length; i++) {
+      data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (ctx.sampleRate * 0.013))
+    }
+    const src = ctx.createBufferSource()
+    src.buffer = buf
+    const filt = ctx.createBiquadFilter()
+    filt.type = 'bandpass'
+    filt.frequency.value = 75 + Math.random() * 70
+    filt.Q.value = 4
+    const g = ctx.createGain()
+    g.gain.setValueAtTime(0, ctx.currentTime)
+    g.gain.linearRampToValueAtTime(0.22, ctx.currentTime + 0.003)
+    g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur)
+    src.connect(filt)
+    filt.connect(g)
+    g.connect(ctx.destination)
+    src.start()
+  } catch {}
 }
-type EngineNodes = { master: GainNode; osc: OscillatorNode; sub: OscillatorNode }
+
+type EngineNodes = { master: GainNode }
 let engineNodes: EngineNodes | null = null
 let engineStarted = false
 let engineRevTimer: number | null = null
@@ -97,28 +123,60 @@ function startEngineSound() {
   engineStarted = true
   try {
     const ctx = getAudioCtx()
+
     const master = ctx.createGain()
     master.gain.value = 0
-    master.connect(ctx.destination)
 
-    const osc = ctx.createOscillator()
-    osc.type = 'sawtooth'
-    osc.frequency.value = 55
-    const filter = ctx.createBiquadFilter()
-    filter.type = 'lowpass'
-    filter.frequency.value = 700
-    filter.Q.value = 1
-    osc.connect(filter)
-    filter.connect(master)
+    const limiter = ctx.createDynamicsCompressor()
+    limiter.threshold.value = -8
+    limiter.knee.value = 0
+    limiter.ratio.value = 12
+    limiter.attack.value = 0.003
+    limiter.release.value = 0.25
+    master.connect(limiter)
+    limiter.connect(ctx.destination)
 
+    // Roar bus: oscillators -> waveshaper distortion -> RPM-tracking lowpass -> master
+    const driveBus = ctx.createGain()
+    driveBus.gain.value = 1
+    const shaper = ctx.createWaveShaper()
+    shaper.curve = makeDriveCurve(8)
+    shaper.oversample = '4x'
+    const tone = ctx.createBiquadFilter()
+    tone.type = 'lowpass'
+    tone.frequency.value = 600
+    tone.Q.value = 0.7
+    driveBus.connect(shaper)
+    shaper.connect(tone)
+    tone.connect(master)
+
+    // Fundamental + octave saws — engine note + harmonics
+    const osc1 = ctx.createOscillator()
+    osc1.type = 'sawtooth'
+    osc1.frequency.value = 55
+    const osc2 = ctx.createOscillator()
+    osc2.type = 'sawtooth'
+    osc2.frequency.value = 110
+    osc2.detune.value = 7
+    const osc1Gain = ctx.createGain()
+    osc1Gain.gain.value = 0.6
+    const osc2Gain = ctx.createGain()
+    osc2Gain.gain.value = 0.32
+    osc1.connect(osc1Gain)
+    osc2.connect(osc2Gain)
+    osc1Gain.connect(driveBus)
+    osc2Gain.connect(driveBus)
+
+    // Sub bump for chest-thump
     const sub = ctx.createOscillator()
     sub.type = 'square'
     sub.frequency.value = 28
     const subGain = ctx.createGain()
-    subGain.gain.value = 0.25
+    subGain.gain.value = 0.18
     sub.connect(subGain)
     subGain.connect(master)
 
+    // Engine hiss / road rumble
     const noiseBuf = ctx.createBuffer(1, ctx.sampleRate * 4, ctx.sampleRate)
     const noiseData = noiseBuf.getChannelData(0)
     for (let i = 0; i < noiseData.length; i++) noiseData[i] = Math.random() * 2 - 1
@@ -127,46 +185,66 @@ function startEngineSound() {
     noise.loop = true
     const noiseFilter = ctx.createBiquadFilter()
     noiseFilter.type = 'bandpass'
-    noiseFilter.frequency.value = 220
-    noiseFilter.Q.value = 0.6
+    noiseFilter.frequency.value = 320
+    noiseFilter.Q.value = 1.2
     const noiseGain = ctx.createGain()
-    noiseGain.gain.value = 0.08
+    noiseGain.gain.value = 0.07
     noise.connect(noiseFilter)
     noiseFilter.connect(noiseGain)
     noiseGain.connect(master)
 
-    osc.start()
+    osc1.start()
+    osc2.start()
     sub.start()
     noise.start()
 
     master.gain.setValueAtTime(0, ctx.currentTime)
-    master.gain.linearRampToValueAtTime(0.045, ctx.currentTime + 1.5)
+    master.gain.linearRampToValueAtTime(0.05, ctx.currentTime + 1.2)
 
-    engineNodes = { master, osc, sub }
+    engineNodes = { master }
 
     const revRoutine = () => {
       if (!engineNodes) return
-      const c = ctx.currentTime + 0.2 + Math.random() * 0.4
-      const peak = 200 + Math.random() * 120
+      const c = ctx.currentTime + 0.15 + Math.random() * 0.4
+      const peak = 180 + Math.random() * 130
+      const peakDur = 0.32 + Math.random() * 0.25
+      const total = peakDur + 0.9 + Math.random() * 0.7
 
-      osc.frequency.cancelScheduledValues(c)
-      osc.frequency.setValueAtTime(55, c)
-      osc.frequency.linearRampToValueAtTime(peak, c + 0.4)
-      osc.frequency.exponentialRampToValueAtTime(56, c + 1.7)
+      osc1.frequency.cancelScheduledValues(c)
+      osc1.frequency.setValueAtTime(55, c)
+      osc1.frequency.linearRampToValueAtTime(peak, c + peakDur)
+      osc1.frequency.exponentialRampToValueAtTime(56, c + total)
+
+      osc2.frequency.cancelScheduledValues(c)
+      osc2.frequency.setValueAtTime(110, c)
+      osc2.frequency.linearRampToValueAtTime(peak * 2, c + peakDur)
+      osc2.frequency.exponentialRampToValueAtTime(111, c + total)
 
       sub.frequency.cancelScheduledValues(c)
       sub.frequency.setValueAtTime(28, c)
-      sub.frequency.linearRampToValueAtTime(peak / 2, c + 0.4)
-      sub.frequency.exponentialRampToValueAtTime(29, c + 1.7)
+      sub.frequency.linearRampToValueAtTime(peak / 2, c + peakDur)
+      sub.frequency.exponentialRampToValueAtTime(29, c + total)
+
+      tone.frequency.cancelScheduledValues(c)
+      tone.frequency.setValueAtTime(600, c)
+      tone.frequency.linearRampToValueAtTime(1900, c + peakDur)
+      tone.frequency.linearRampToValueAtTime(600, c + total)
 
       master.gain.cancelScheduledValues(c)
-      master.gain.setValueAtTime(0.045, c)
-      master.gain.linearRampToValueAtTime(0.11, c + 0.4)
-      master.gain.linearRampToValueAtTime(0.045, c + 1.7)
+      master.gain.setValueAtTime(0.05, c)
+      master.gain.linearRampToValueAtTime(0.13, c + peakDur)
+      master.gain.linearRampToValueAtTime(0.05, c + total)
 
-      engineRevTimer = window.setTimeout(revRoutine, 2500 + Math.random() * 4500)
+      const popsCount = 1 + Math.floor(Math.random() * 3)
+      for (let i = 0; i < popsCount; i++) {
+        const popDelayMs = (peakDur + 0.05 + Math.random() * 0.55) * 1000
+        const startInMs = (c - ctx.currentTime) * 1000
+        window.setTimeout(playExhaustPop, Math.max(0, startInMs + popDelayMs))
+      }
+
+      engineRevTimer = window.setTimeout(revRoutine, 2200 + Math.random() * 4200)
     }
-    engineRevTimer = window.setTimeout(revRoutine, 2200)
+    engineRevTimer = window.setTimeout(revRoutine, 1800)
   } catch {
     engineStarted = false
   }
@@ -177,7 +255,7 @@ function setEngineMuted(muted: boolean) {
   try {
     const ctx = getAudioCtx()
     engineNodes.master.gain.cancelScheduledValues(ctx.currentTime)
-    engineNodes.master.gain.linearRampToValueAtTime(muted ? 0 : 0.045, ctx.currentTime + 0.4)
+    engineNodes.master.gain.linearRampToValueAtTime(muted ? 0 : 0.05, ctx.currentTime + 0.4)
   } catch {}
 }
 
@@ -245,37 +323,30 @@ export default function HeroSection() {
   })
   const videoY = useTransform(scrollYProgress, [0, 1], ['0%', '15%'])
 
-  useEffect(() => {
-    const trigger = () => {
-      startEngineSound()
-      document.removeEventListener('click', trigger)
-      document.removeEventListener('touchstart', trigger)
-      document.removeEventListener('keydown', trigger)
-      document.removeEventListener('scroll', trigger)
-    }
-    document.addEventListener('click', trigger, { passive: true } as AddEventListenerOptions)
-    document.addEventListener('touchstart', trigger, { passive: true } as AddEventListenerOptions)
-    document.addEventListener('keydown', trigger)
-    document.addEventListener('scroll', trigger, { passive: true } as AddEventListenerOptions)
+  const [soundOn, setSoundOn] = useState(false)
+  const visibleRef = useRef(true)
 
+  useEffect(() => {
     const node = sectionRef.current
-    let obs: IntersectionObserver | null = null
-    if (node && typeof IntersectionObserver !== 'undefined') {
-      obs = new IntersectionObserver(
-        ([entry]) => setEngineMuted(!entry.isIntersecting),
-        { threshold: 0.05 }
-      )
-      obs.observe(node)
-    }
-    return () => {
-      document.removeEventListener('click', trigger)
-      document.removeEventListener('touchstart', trigger)
-      document.removeEventListener('keydown', trigger)
-      document.removeEventListener('scroll', trigger)
-      obs?.disconnect()
-      setEngineMuted(true)
-    }
-  }, [])
+    if (!node || typeof IntersectionObserver === 'undefined') return
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        visibleRef.current = entry.isIntersecting
+        setEngineMuted(!soundOn || !entry.isIntersecting)
+      },
+      { threshold: 0.05 }
+    )
+    obs.observe(node)
+    return () => obs.disconnect()
+  }, [soundOn])
+
+  const toggleSound = () => {
+    const next = !soundOn
+    if (next && !engineStarted) startEngineSound()
+    setSoundEnabled(next)
+    setEngineMuted(!next || !visibleRef.current)
+    setSoundOn(next)
+  }
 
   const handleCTA = () => {
     confetti({
@@ -299,6 +370,29 @@ export default function HeroSection() {
         @media (min-width: 640px) { .hero-title { font-size: 30px; } }
         @media (min-width: 1024px) { .hero-title { font-size: 36px; } }
       `}</style>
+
+      {/* Sound toggle */}
+      <motion.button
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.4, delay: 0.3 }}
+        onClick={toggleSound}
+        aria-label={soundOn ? 'Выключить звук' : 'Включить звук гонки'}
+        className="absolute top-[78px] sm:top-[92px] lg:top-[100px] left-1/2 -translate-x-1/2 z-30 inline-flex items-center gap-2 px-3.5 py-2 text-white/85 hover:text-white text-xs font-semibold uppercase border-none cursor-pointer"
+        style={{
+          ...rubik,
+          letterSpacing: '0.06em',
+          background: 'rgba(42,22,143,0.45)',
+          backdropFilter: 'blur(20px) saturate(160%)',
+          WebkitBackdropFilter: 'blur(20px) saturate(160%)',
+          border: '1px solid rgba(255,255,255,0.16)',
+          borderRadius: 999,
+          boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.12), 0 8px 24px rgba(20,8,60,0.4)',
+        }}
+      >
+        {soundOn ? <Volume2 size={14} strokeWidth={2.4} /> : <VolumeX size={14} strokeWidth={2.4} />}
+        <span>{soundOn ? 'Звук вкл' : 'Звук выкл'}</span>
+      </motion.button>
 
       {/* Background video — saturated to keep red truck vivid; purple-lilac vignette around the edges */}
       <motion.div className="absolute inset-0 -z-10" style={{ y: videoY }}>
