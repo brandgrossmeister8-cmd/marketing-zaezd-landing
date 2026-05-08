@@ -143,7 +143,7 @@ export default function HeroSection() {
         initial={{ opacity: 0, y: -20, scale: 0.97 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.7, ease: 'easeOut' }}
-        className="absolute right-4 sm:right-8 lg:right-12 top-[88px] sm:top-[104px] lg:top-[120px] w-[calc(100%-2rem)] sm:w-auto sm:max-w-[640px] overflow-hidden z-10"
+        className="absolute left-4 sm:left-8 lg:left-12 top-[88px] sm:top-[104px] lg:top-[120px] w-[calc(100%-2rem)] sm:w-auto sm:max-w-[640px] overflow-hidden z-10"
         style={{
           background: 'rgba(42,22,143,0.32)',
           backdropFilter: 'blur(40px) saturate(180%)',
