@@ -98,7 +98,7 @@ export default function HeroSection() {
   return (
     <section
       ref={sectionRef}
-      className="relative overflow-hidden flex items-center justify-center min-h-[100svh] -mt-[64px] sm:-mt-[72px] lg:-mt-[80px] py-16 px-4 sm:px-8"
+      className="relative overflow-hidden flex flex-col items-center justify-between gap-8 min-h-[100svh] -mt-[64px] sm:-mt-[72px] lg:-mt-[80px] pt-[110px] sm:pt-[130px] lg:pt-[150px] pb-12 sm:pb-16 px-4 sm:px-8"
     >
       <style>{`
         @keyframes heroBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
@@ -138,11 +138,11 @@ export default function HeroSection() {
         />
       </motion.div>
 
-      {/* Centered attention-grabbing glass panel */}
+      {/* TOP PANEL — heading only */}
       <motion.div
-        initial={{ opacity: 0, y: 30, scale: 0.97 }}
+        initial={{ opacity: 0, y: -20, scale: 0.97 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
-        transition={{ duration: 0.8, ease: 'easeOut' }}
+        transition={{ duration: 0.7, ease: 'easeOut' }}
         className="relative w-full max-w-3xl overflow-hidden"
         style={{
           background: 'rgba(42,22,143,0.32)',
@@ -152,10 +152,9 @@ export default function HeroSection() {
           borderRadius: 22,
           boxShadow:
             'inset 0 1px 0 rgba(255,255,255,0.14), inset 0 0 0 1px rgba(255,255,255,0.03), 0 30px 80px rgba(20,8,60,0.55)',
-          padding: 'clamp(24px, 4vw, 48px)',
+          padding: 'clamp(20px, 3.2vw, 36px)',
         }}
       >
-        {/* Diagonal sheen */}
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0"
@@ -165,46 +164,60 @@ export default function HeroSection() {
             mixBlendMode: 'overlay',
           }}
         />
-
-        <div className="relative text-center">
-          {/* Title with flags */}
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.15, duration: 0.6 }}
-            className="flex items-center justify-center gap-3 sm:gap-5 mb-5 sm:mb-7"
+        <div className="relative flex items-center justify-center gap-3 sm:gap-5">
+          <motion.span
+            className="text-3xl sm:text-5xl lg:text-6xl"
+            animate={{ rotate: [0, -10, 10, -5, 0] }}
+            transition={{ delay: 0.7, duration: 0.8 }}
           >
-            <motion.span
-              className="text-3xl sm:text-5xl lg:text-6xl"
-              animate={{ rotate: [0, -10, 10, -5, 0] }}
-              transition={{ delay: 0.7, duration: 0.8 }}
-            >
-              🏁
-            </motion.span>
-            <h1
-              className="hero-title text-white font-extrabold uppercase"
-              style={rubik}
-            >
-              Маркетинговый заезд
-            </h1>
-            <motion.span
-              className="text-3xl sm:text-5xl lg:text-6xl"
-              animate={{ rotate: [0, 10, -10, 5, 0] }}
-              transition={{ delay: 0.7, duration: 0.8 }}
-            >
-              🏁
-            </motion.span>
-          </motion.div>
+            🏁
+          </motion.span>
+          <h1 className="hero-title text-white font-extrabold uppercase text-center" style={rubik}>
+            Маркетинговый заезд
+          </h1>
+          <motion.span
+            className="text-3xl sm:text-5xl lg:text-6xl"
+            animate={{ rotate: [0, 10, -10, 5, 0] }}
+            transition={{ delay: 0.7, duration: 0.8 }}
+          >
+            🏁
+          </motion.span>
+        </div>
+      </motion.div>
 
-          {/* Typewriter attention line */}
+      {/* BOTTOM PANEL — typewriter + subline + gold + CTA */}
+      <motion.div
+        initial={{ opacity: 0, y: 30, scale: 0.97 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 0.8, delay: 0.15, ease: 'easeOut' }}
+        className="relative w-full max-w-3xl overflow-hidden"
+        style={{
+          background: 'rgba(42,22,143,0.32)',
+          backdropFilter: 'blur(40px) saturate(180%)',
+          WebkitBackdropFilter: 'blur(40px) saturate(180%)',
+          border: '1px solid rgba(255,255,255,0.14)',
+          borderRadius: 22,
+          boxShadow:
+            'inset 0 1px 0 rgba(255,255,255,0.14), inset 0 0 0 1px rgba(255,255,255,0.03), 0 30px 80px rgba(20,8,60,0.55)',
+          padding: 'clamp(24px, 4vw, 44px)',
+        }}
+      >
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0"
+          style={{
+            background:
+              'linear-gradient(135deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.05) 35%, rgba(255,255,255,0) 70%)',
+            mixBlendMode: 'overlay',
+          }}
+        />
+        <div className="relative text-center">
           <p
             className="font-bold text-white text-[18px] sm:text-[24px] lg:text-[30px] leading-tight mb-4 sm:mb-5 min-h-[2.4em]"
             style={{ fontFamily: "'Courier New', Courier, monospace" }}
           >
             <Typewriter text="Узнайте, сколько денег теряет ваш бизнес прямо сейчас" speed={45} delay={400} />
           </p>
-
-          {/* Subline */}
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -213,19 +226,15 @@ export default function HeroSection() {
           >
             За 90 минут вы получите диагностику маркетинга с конкретными цифрами
           </motion.p>
-
-          {/* Gold accent line */}
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 1.85, duration: 0.6 }}
-            className="text-xs sm:text-sm font-bold uppercase tracking-[0.18em] mb-7 sm:mb-9"
+            className="text-xs sm:text-sm font-bold uppercase tracking-[0.18em] mb-7 sm:mb-8"
             style={{ color: '#FFD700' }}
           >
             Игра для предпринимателей и самозанятых
           </motion.p>
-
-          {/* CTA — violet/lilac to match ambiance */}
           <motion.button
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
