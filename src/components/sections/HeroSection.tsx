@@ -228,7 +228,7 @@ export default function HeroSection() {
         initial={{ opacity: 0, y: 30, scale: 0.97 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.8, delay: 0.15, ease: 'easeOut' }}
-        className="absolute right-4 sm:right-8 lg:right-12 bottom-6 sm:bottom-8 lg:bottom-10 w-[calc(100%-2rem)] sm:w-auto sm:max-w-[520px] overflow-hidden z-10"
+        className="absolute right-4 sm:right-8 lg:right-12 bottom-6 sm:bottom-8 lg:bottom-10 w-[calc(100%-2rem)] sm:w-auto sm:max-w-[380px] overflow-hidden z-10"
         style={{
           background: 'rgba(42,22,143,0.32)',
           backdropFilter: 'blur(40px) saturate(180%)',
@@ -237,7 +237,7 @@ export default function HeroSection() {
           borderRadius: 18,
           boxShadow:
             'inset 0 1px 0 rgba(255,255,255,0.14), inset 0 0 0 1px rgba(255,255,255,0.03), 0 24px 60px rgba(20,8,60,0.5)',
-          padding: 'clamp(18px, 2.6vw, 26px)',
+          padding: 'clamp(16px, 2vw, 22px)',
         }}
       >
         <div
@@ -251,8 +251,8 @@ export default function HeroSection() {
         />
         <div className="relative text-left">
           <p
-            className="font-extrabold uppercase text-white text-[20px] sm:text-[24px] leading-tight mb-4 min-h-[4.8em]"
-            style={{ fontFamily: "'Courier New', Courier, monospace", letterSpacing: '-0.01em' }}
+            className="font-extrabold uppercase text-white text-[18px] sm:text-[20px] leading-tight mb-3"
+            style={{ fontFamily: "'Courier New', Courier, monospace", letterSpacing: '-0.01em', minHeight: '1.3em' }}
           >
             <Typewriter text="Узнайте, сколько денег теряет ваш бизнес прямо сейчас" speed={45} delay={400} loop holdMs={2200} eraseSpeed={28} />
           </p>
@@ -260,7 +260,7 @@ export default function HeroSection() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 1.6, duration: 0.6 }}
-            className="text-white/75 text-xs sm:text-sm leading-relaxed mb-3"
+            className="text-white/75 text-xs sm:text-[13px] leading-snug mb-3"
           >
             За 90 минут вы получите диагностику маркетинга с конкретными цифрами
           </motion.p>
