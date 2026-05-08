@@ -47,27 +47,55 @@ function playTypeClick() {
   } catch {}
 }
 
-function Typewriter({ text, speed = 50, delay = 0 }: { text: string; speed?: number; delay?: number }) {
+type TypewriterProps = {
+  text: string
+  speed?: number
+  delay?: number
+  loop?: boolean
+  holdMs?: number
+  eraseSpeed?: number
+}
+function Typewriter({ text, speed = 50, delay = 0, loop = false, holdMs = 1800, eraseSpeed = 30 }: TypewriterProps) {
   const [displayed, setDisplayed] = useState('')
-  const [started, setStarted] = useState(false)
+  const [phase, setPhase] = useState<'idle' | 'typing' | 'holding' | 'erasing'>('idle')
+
   useEffect(() => {
-    const t = setTimeout(() => setStarted(true), delay)
+    const t = setTimeout(() => setPhase('typing'), delay)
     return () => clearTimeout(t)
   }, [delay])
+
   useEffect(() => {
-    if (!started) return
-    if (displayed.length >= text.length) return
-    const t = setTimeout(() => {
-      const nextChar = text[displayed.length]
-      setDisplayed(text.slice(0, displayed.length + 1))
-      if (nextChar !== ' ') playTypeClick()
-    }, speed)
-    return () => clearTimeout(t)
-  }, [displayed, started, text, speed])
+    if (phase === 'typing') {
+      if (displayed.length >= text.length) {
+        setPhase(loop ? 'holding' : 'idle')
+        return
+      }
+      const t = setTimeout(() => {
+        const nextChar = text[displayed.length]
+        setDisplayed(text.slice(0, displayed.length + 1))
+        if (nextChar !== ' ') playTypeClick()
+      }, speed)
+      return () => clearTimeout(t)
+    }
+    if (phase === 'holding') {
+      const t = setTimeout(() => setPhase('erasing'), holdMs)
+      return () => clearTimeout(t)
+    }
+    if (phase === 'erasing') {
+      if (displayed.length === 0) {
+        setPhase('typing')
+        return
+      }
+      const t = setTimeout(() => setDisplayed(displayed.slice(0, -1)), eraseSpeed)
+      return () => clearTimeout(t)
+    }
+  }, [phase, displayed, text, speed, loop, holdMs, eraseSpeed])
+
+  const showCursor = loop || displayed.length < text.length
   return (
     <>
       {displayed}
-      {displayed.length < text.length && (
+      {showCursor && (
         <span
           className="inline-block w-[3px] h-[0.95em] bg-white/85 ml-1 align-middle"
           style={{ animation: 'heroBlink 0.75s step-end infinite' }}
@@ -102,9 +130,10 @@ export default function HeroSection() {
     >
       <style>{`
         @keyframes heroBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
-        .hero-title { font-size: 24px; line-height: 0.98; }
-        @media (min-width: 640px) { .hero-title { font-size: 34px; } }
-        @media (min-width: 1024px) { .hero-title { font-size: 44px; } }
+        .hero-title { font-size: 20px; line-height: 1; white-space: nowrap; }
+        @media (min-width: 380px) { .hero-title { font-size: 22px; } }
+        @media (min-width: 640px) { .hero-title { font-size: 32px; } }
+        @media (min-width: 1024px) { .hero-title { font-size: 42px; } }
       `}</style>
 
       {/* Background video — saturated to keep red truck vivid; purple-lilac vignette around the edges */}
@@ -172,7 +201,7 @@ export default function HeroSection() {
           >
             🏁
           </motion.span>
-          <h1 className="hero-title text-white font-extrabold uppercase text-center" style={rubik}>
+          <h1 className="hero-title text-white font-extrabold uppercase text-center whitespace-nowrap" style={rubik}>
             Маркетинговый заезд
           </h1>
           <motion.span
@@ -199,7 +228,7 @@ export default function HeroSection() {
         initial={{ opacity: 0, y: 30, scale: 0.97 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.8, delay: 0.15, ease: 'easeOut' }}
-        className="absolute left-4 sm:left-8 lg:left-12 bottom-6 sm:bottom-8 lg:bottom-10 w-[calc(100%-2rem)] sm:w-auto sm:max-w-[460px] overflow-hidden z-10"
+        className="absolute right-4 sm:right-8 lg:right-12 bottom-6 sm:bottom-8 lg:bottom-10 w-[calc(100%-2rem)] sm:w-auto sm:max-w-[460px] overflow-hidden z-10"
         style={{
           background: 'rgba(42,22,143,0.32)',
           backdropFilter: 'blur(40px) saturate(180%)',
@@ -225,7 +254,7 @@ export default function HeroSection() {
             className="font-bold text-white text-[15px] sm:text-[17px] leading-snug mb-3 min-h-[3.2em]"
             style={{ fontFamily: "'Courier New', Courier, monospace" }}
           >
-            <Typewriter text="Узнайте, сколько денег теряет ваш бизнес прямо сейчас" speed={45} delay={400} />
+            <Typewriter text="Узнайте, сколько денег теряет ваш бизнес прямо сейчас" speed={45} delay={400} loop holdMs={2200} eraseSpeed={28} />
           </p>
           <motion.p
             initial={{ opacity: 0 }}
