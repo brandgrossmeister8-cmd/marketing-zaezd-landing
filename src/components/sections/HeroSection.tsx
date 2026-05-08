@@ -132,8 +132,8 @@ export default function HeroSection() {
         @keyframes heroBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
         .hero-title { font-size: 20px; line-height: 1; white-space: nowrap; }
         @media (min-width: 380px) { .hero-title { font-size: 22px; } }
-        @media (min-width: 640px) { .hero-title { font-size: 32px; } }
-        @media (min-width: 1024px) { .hero-title { font-size: 42px; } }
+        @media (min-width: 640px) { .hero-title { font-size: 30px; } }
+        @media (min-width: 1024px) { .hero-title { font-size: 36px; } }
       `}</style>
 
       {/* Background video — saturated to keep red truck vivid; purple-lilac vignette around the edges */}
@@ -172,7 +172,7 @@ export default function HeroSection() {
         initial={{ opacity: 0, y: -20, scale: 0.97 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.7, ease: 'easeOut' }}
-        className="absolute right-4 sm:right-8 lg:right-12 bottom-6 sm:bottom-8 lg:bottom-10 w-[calc(100%-2rem)] sm:w-auto sm:max-w-[640px] overflow-hidden z-10"
+        className="absolute left-4 sm:left-8 lg:left-12 bottom-6 sm:bottom-8 lg:bottom-10 w-[calc(100%-2rem)] sm:w-auto sm:max-w-[520px] overflow-hidden z-10"
         style={{
           background: 'rgba(42,22,143,0.32)',
           backdropFilter: 'blur(40px) saturate(180%)',
@@ -181,7 +181,7 @@ export default function HeroSection() {
           borderRadius: 22,
           boxShadow:
             'inset 0 1px 0 rgba(255,255,255,0.14), inset 0 0 0 1px rgba(255,255,255,0.03), 0 30px 80px rgba(20,8,60,0.55)',
-          padding: 'clamp(16px, 2.6vw, 28px)',
+          padding: 'clamp(18px, 2.4vw, 26px)',
         }}
       >
         <div
@@ -228,7 +228,7 @@ export default function HeroSection() {
         initial={{ opacity: 0, y: 30, scale: 0.97 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.8, delay: 0.15, ease: 'easeOut' }}
-        className="absolute right-4 sm:right-8 lg:right-12 top-[88px] sm:top-[104px] lg:top-[120px] w-[calc(100%-2rem)] sm:w-auto sm:max-w-[380px] overflow-hidden z-10"
+        className="absolute right-4 sm:right-8 lg:right-12 top-[88px] sm:top-[104px] lg:top-[120px] w-[calc(100%-2rem)] sm:w-auto sm:max-w-[520px] overflow-hidden z-10"
         style={{
           background: 'rgba(42,22,143,0.32)',
           backdropFilter: 'blur(40px) saturate(180%)',
@@ -237,7 +237,7 @@ export default function HeroSection() {
           borderRadius: 18,
           boxShadow:
             'inset 0 1px 0 rgba(255,255,255,0.14), inset 0 0 0 1px rgba(255,255,255,0.03), 0 24px 60px rgba(20,8,60,0.5)',
-          padding: 'clamp(16px, 2vw, 22px)',
+          padding: 'clamp(18px, 2.4vw, 26px)',
         }}
       >
         <div
