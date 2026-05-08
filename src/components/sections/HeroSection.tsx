@@ -199,7 +199,6 @@ function startEngineSound() {
     noise.start()
 
     master.gain.setValueAtTime(0, ctx.currentTime)
-    master.gain.linearRampToValueAtTime(0.05, ctx.currentTime + 1.2)
 
     engineNodes = { master }
 
@@ -254,8 +253,12 @@ function setEngineMuted(muted: boolean) {
   if (!engineNodes) return
   try {
     const ctx = getAudioCtx()
-    engineNodes.master.gain.cancelScheduledValues(ctx.currentTime)
-    engineNodes.master.gain.linearRampToValueAtTime(muted ? 0 : 0.05, ctx.currentTime + 0.4)
+    const now = ctx.currentTime
+    const g = engineNodes.master.gain
+    const cur = g.value
+    g.cancelScheduledValues(now)
+    g.setValueAtTime(cur, now)
+    g.linearRampToValueAtTime(muted ? 0 : 0.05, now + 0.5)
   } catch {}
 }
 
@@ -378,7 +381,7 @@ export default function HeroSection() {
         transition={{ duration: 0.4, delay: 0.3 }}
         onClick={toggleSound}
         aria-label={soundOn ? 'Выключить звук' : 'Включить звук гонки'}
-        className="absolute top-[78px] sm:top-[92px] lg:top-[100px] left-1/2 -translate-x-1/2 z-30 inline-flex items-center gap-2 px-3.5 py-2 text-white/85 hover:text-white text-xs font-semibold uppercase border-none cursor-pointer"
+        className="fixed top-3 right-3 sm:top-4 sm:right-4 z-[60] inline-flex items-center gap-2 px-3.5 py-2 text-white/90 hover:text-white text-xs font-semibold uppercase border-none cursor-pointer"
         style={{
           ...rubik,
           letterSpacing: '0.06em',
@@ -430,7 +433,7 @@ export default function HeroSection() {
         initial={{ opacity: 0, y: -20, scale: 0.97 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.7, ease: 'easeOut' }}
-        className="absolute left-4 sm:left-8 lg:left-12 bottom-6 sm:bottom-8 lg:bottom-10 w-[calc(100%-2rem)] sm:w-auto sm:max-w-[520px] overflow-hidden z-10"
+        className="absolute left-4 sm:left-8 lg:left-12 bottom-6 sm:bottom-8 lg:bottom-10 w-[calc(100%-2rem)] sm:w-auto sm:max-w-[580px] overflow-hidden z-10"
         style={{
           background: 'rgba(42,22,143,0.32)',
           backdropFilter: 'blur(40px) saturate(180%)',
@@ -486,7 +489,7 @@ export default function HeroSection() {
         initial={{ opacity: 0, y: 30, scale: 0.97 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.8, delay: 0.15, ease: 'easeOut' }}
-        className="absolute right-4 sm:right-8 lg:right-12 top-[88px] sm:top-[104px] lg:top-[120px] w-[calc(100%-2rem)] sm:w-auto sm:max-w-[520px] overflow-hidden z-10"
+        className="absolute right-4 sm:right-8 lg:right-12 top-[88px] sm:top-[104px] lg:top-[120px] w-[calc(100%-2rem)] sm:w-auto sm:max-w-[580px] overflow-hidden z-10"
         style={{
           background: 'rgba(42,22,143,0.32)',
           backdropFilter: 'blur(40px) saturate(180%)',
