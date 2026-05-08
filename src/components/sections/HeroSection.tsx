@@ -228,7 +228,7 @@ export default function HeroSection() {
         initial={{ opacity: 0, y: 30, scale: 0.97 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.8, delay: 0.15, ease: 'easeOut' }}
-        className="absolute right-4 sm:right-8 lg:right-12 bottom-6 sm:bottom-8 lg:bottom-10 w-[calc(100%-2rem)] sm:w-auto sm:max-w-[460px] overflow-hidden z-10"
+        className="absolute right-4 sm:right-8 lg:right-12 bottom-6 sm:bottom-8 lg:bottom-10 w-[calc(100%-2rem)] sm:w-auto sm:max-w-[520px] overflow-hidden z-10"
         style={{
           background: 'rgba(42,22,143,0.32)',
           backdropFilter: 'blur(40px) saturate(180%)',
@@ -251,8 +251,8 @@ export default function HeroSection() {
         />
         <div className="relative text-left">
           <p
-            className="font-bold text-white text-[15px] sm:text-[17px] leading-snug mb-3 min-h-[3.2em]"
-            style={{ fontFamily: "'Courier New', Courier, monospace" }}
+            className="font-extrabold uppercase text-white text-[20px] sm:text-[24px] leading-tight mb-4 min-h-[4.8em]"
+            style={{ fontFamily: "'Courier New', Courier, monospace", letterSpacing: '-0.01em' }}
           >
             <Typewriter text="Узнайте, сколько денег теряет ваш бизнес прямо сейчас" speed={45} delay={400} loop holdMs={2200} eraseSpeed={28} />
           </p>
