@@ -183,6 +183,15 @@ export default function HeroSection() {
             🏁
           </motion.span>
         </div>
+        <motion.p
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5, duration: 0.6 }}
+          className="relative mt-3 sm:mt-4 text-center text-[11px] sm:text-xs font-bold uppercase tracking-[0.18em]"
+          style={{ color: '#FFD700' }}
+        >
+          Игра для предпринимателей и самозанятых
+        </motion.p>
       </motion.div>
 
       {/* BOTTOM PANEL — typewriter + subline + gold + CTA, bottom-left compact */}
@@ -225,15 +234,6 @@ export default function HeroSection() {
             className="text-white/75 text-xs sm:text-sm leading-relaxed mb-3"
           >
             За 90 минут вы получите диагностику маркетинга с конкретными цифрами
-          </motion.p>
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1.85, duration: 0.6 }}
-            className="text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.18em] mb-4"
-            style={{ color: '#FFD700' }}
-          >
-            Игра для предпринимателей и самозанятых
           </motion.p>
           <motion.button
             initial={{ opacity: 0, y: 10 }}
