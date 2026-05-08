@@ -47,6 +47,38 @@ function playTypeClick() {
   } catch {}
 }
 
+function playTireScreech(durationSec: number) {
+  try {
+    const ctx = getAudioCtx()
+    const dur = Math.max(0.18, Math.min(durationSec, 2.2))
+    const buffer = ctx.createBuffer(1, Math.floor(ctx.sampleRate * dur), ctx.sampleRate)
+    const data = buffer.getChannelData(0)
+    for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1
+
+    const src = ctx.createBufferSource()
+    src.buffer = buffer
+
+    const filter = ctx.createBiquadFilter()
+    filter.type = 'bandpass'
+    filter.Q.value = 7
+    filter.frequency.setValueAtTime(2800, ctx.currentTime)
+    filter.frequency.exponentialRampToValueAtTime(650, ctx.currentTime + dur * 0.85)
+    filter.frequency.linearRampToValueAtTime(380, ctx.currentTime + dur)
+
+    const gain = ctx.createGain()
+    gain.gain.setValueAtTime(0, ctx.currentTime)
+    gain.gain.linearRampToValueAtTime(0.18, ctx.currentTime + 0.05)
+    gain.gain.linearRampToValueAtTime(0.18, ctx.currentTime + dur * 0.7)
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur)
+
+    src.connect(filter)
+    filter.connect(gain)
+    gain.connect(ctx.destination)
+    src.start()
+    src.stop(ctx.currentTime + dur)
+  } catch {}
+}
+
 type TypewriterProps = {
   text: string
   speed?: number
@@ -55,6 +87,100 @@ type TypewriterProps = {
   holdMs?: number
   eraseSpeed?: number
 }
+type EngineNodes = { master: GainNode; osc: OscillatorNode; sub: OscillatorNode }
+let engineNodes: EngineNodes | null = null
+let engineStarted = false
+let engineRevTimer: number | null = null
+
+function startEngineSound() {
+  if (engineStarted) return
+  engineStarted = true
+  try {
+    const ctx = getAudioCtx()
+    const master = ctx.createGain()
+    master.gain.value = 0
+    master.connect(ctx.destination)
+
+    const osc = ctx.createOscillator()
+    osc.type = 'sawtooth'
+    osc.frequency.value = 55
+    const filter = ctx.createBiquadFilter()
+    filter.type = 'lowpass'
+    filter.frequency.value = 700
+    filter.Q.value = 1
+    osc.connect(filter)
+    filter.connect(master)
+
+    const sub = ctx.createOscillator()
+    sub.type = 'square'
+    sub.frequency.value = 28
+    const subGain = ctx.createGain()
+    subGain.gain.value = 0.25
+    sub.connect(subGain)
+    subGain.connect(master)
+
+    const noiseBuf = ctx.createBuffer(1, ctx.sampleRate * 4, ctx.sampleRate)
+    const noiseData = noiseBuf.getChannelData(0)
+    for (let i = 0; i < noiseData.length; i++) noiseData[i] = Math.random() * 2 - 1
+    const noise = ctx.createBufferSource()
+    noise.buffer = noiseBuf
+    noise.loop = true
+    const noiseFilter = ctx.createBiquadFilter()
+    noiseFilter.type = 'bandpass'
+    noiseFilter.frequency.value = 220
+    noiseFilter.Q.value = 0.6
+    const noiseGain = ctx.createGain()
+    noiseGain.gain.value = 0.08
+    noise.connect(noiseFilter)
+    noiseFilter.connect(noiseGain)
+    noiseGain.connect(master)
+
+    osc.start()
+    sub.start()
+    noise.start()
+
+    master.gain.setValueAtTime(0, ctx.currentTime)
+    master.gain.linearRampToValueAtTime(0.045, ctx.currentTime + 1.5)
+
+    engineNodes = { master, osc, sub }
+
+    const revRoutine = () => {
+      if (!engineNodes) return
+      const c = ctx.currentTime + 0.2 + Math.random() * 0.4
+      const peak = 200 + Math.random() * 120
+
+      osc.frequency.cancelScheduledValues(c)
+      osc.frequency.setValueAtTime(55, c)
+      osc.frequency.linearRampToValueAtTime(peak, c + 0.4)
+      osc.frequency.exponentialRampToValueAtTime(56, c + 1.7)
+
+      sub.frequency.cancelScheduledValues(c)
+      sub.frequency.setValueAtTime(28, c)
+      sub.frequency.linearRampToValueAtTime(peak / 2, c + 0.4)
+      sub.frequency.exponentialRampToValueAtTime(29, c + 1.7)
+
+      master.gain.cancelScheduledValues(c)
+      master.gain.setValueAtTime(0.045, c)
+      master.gain.linearRampToValueAtTime(0.11, c + 0.4)
+      master.gain.linearRampToValueAtTime(0.045, c + 1.7)
+
+      engineRevTimer = window.setTimeout(revRoutine, 2500 + Math.random() * 4500)
+    }
+    engineRevTimer = window.setTimeout(revRoutine, 2200)
+  } catch {
+    engineStarted = false
+  }
+}
+
+function setEngineMuted(muted: boolean) {
+  if (!engineNodes) return
+  try {
+    const ctx = getAudioCtx()
+    engineNodes.master.gain.cancelScheduledValues(ctx.currentTime)
+    engineNodes.master.gain.linearRampToValueAtTime(muted ? 0 : 0.045, ctx.currentTime + 0.4)
+  } catch {}
+}
+
 function Typewriter({ text, speed = 50, delay = 0, loop = false, holdMs = 1800, eraseSpeed = 30 }: TypewriterProps) {
   const [displayed, setDisplayed] = useState('')
   const [phase, setPhase] = useState<'idle' | 'typing' | 'holding' | 'erasing'>('idle')
@@ -63,6 +189,12 @@ function Typewriter({ text, speed = 50, delay = 0, loop = false, holdMs = 1800, 
     const t = setTimeout(() => setPhase('typing'), delay)
     return () => clearTimeout(t)
   }, [delay])
+
+  useEffect(() => {
+    if (phase === 'erasing' && displayed.length === text.length) {
+      playTireScreech((text.length * eraseSpeed) / 1000)
+    }
+  }, [phase, text, eraseSpeed, displayed.length])
 
   useEffect(() => {
     if (phase === 'typing') {
@@ -112,6 +244,38 @@ export default function HeroSection() {
     offset: ['start start', 'end start'],
   })
   const videoY = useTransform(scrollYProgress, [0, 1], ['0%', '15%'])
+
+  useEffect(() => {
+    const trigger = () => {
+      startEngineSound()
+      document.removeEventListener('click', trigger)
+      document.removeEventListener('touchstart', trigger)
+      document.removeEventListener('keydown', trigger)
+      document.removeEventListener('scroll', trigger)
+    }
+    document.addEventListener('click', trigger, { passive: true } as AddEventListenerOptions)
+    document.addEventListener('touchstart', trigger, { passive: true } as AddEventListenerOptions)
+    document.addEventListener('keydown', trigger)
+    document.addEventListener('scroll', trigger, { passive: true } as AddEventListenerOptions)
+
+    const node = sectionRef.current
+    let obs: IntersectionObserver | null = null
+    if (node && typeof IntersectionObserver !== 'undefined') {
+      obs = new IntersectionObserver(
+        ([entry]) => setEngineMuted(!entry.isIntersecting),
+        { threshold: 0.05 }
+      )
+      obs.observe(node)
+    }
+    return () => {
+      document.removeEventListener('click', trigger)
+      document.removeEventListener('touchstart', trigger)
+      document.removeEventListener('keydown', trigger)
+      document.removeEventListener('scroll', trigger)
+      obs?.disconnect()
+      setEngineMuted(true)
+    }
+  }, [])
 
   const handleCTA = () => {
     confetti({
