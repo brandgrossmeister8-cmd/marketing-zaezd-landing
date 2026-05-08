@@ -98,13 +98,13 @@ export default function HeroSection() {
   return (
     <section
       ref={sectionRef}
-      className="relative overflow-hidden flex flex-col items-center justify-between gap-8 min-h-[100svh] -mt-[64px] sm:-mt-[72px] lg:-mt-[80px] pt-[110px] sm:pt-[130px] lg:pt-[150px] pb-12 sm:pb-16 px-4 sm:px-8"
+      className="relative overflow-hidden min-h-[100svh] -mt-[64px] sm:-mt-[72px] lg:-mt-[80px]"
     >
       <style>{`
         @keyframes heroBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
-        .hero-title { font-size: 36px; line-height: 0.98; }
-        @media (min-width: 640px) { .hero-title { font-size: 52px; } }
-        @media (min-width: 1024px) { .hero-title { font-size: 72px; } }
+        .hero-title { font-size: 24px; line-height: 0.98; }
+        @media (min-width: 640px) { .hero-title { font-size: 34px; } }
+        @media (min-width: 1024px) { .hero-title { font-size: 44px; } }
       `}</style>
 
       {/* Background video — saturated to keep red truck vivid; purple-lilac vignette around the edges */}
@@ -138,12 +138,12 @@ export default function HeroSection() {
         />
       </motion.div>
 
-      {/* TOP PANEL — heading only */}
+      {/* TOP PANEL — heading, top-right */}
       <motion.div
         initial={{ opacity: 0, y: -20, scale: 0.97 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.7, ease: 'easeOut' }}
-        className="relative w-full max-w-3xl overflow-hidden"
+        className="absolute right-4 sm:right-8 lg:right-12 top-[88px] sm:top-[104px] lg:top-[120px] w-[calc(100%-2rem)] sm:w-auto sm:max-w-[640px] overflow-hidden z-10"
         style={{
           background: 'rgba(42,22,143,0.32)',
           backdropFilter: 'blur(40px) saturate(180%)',
@@ -152,7 +152,7 @@ export default function HeroSection() {
           borderRadius: 22,
           boxShadow:
             'inset 0 1px 0 rgba(255,255,255,0.14), inset 0 0 0 1px rgba(255,255,255,0.03), 0 30px 80px rgba(20,8,60,0.55)',
-          padding: 'clamp(20px, 3.2vw, 36px)',
+          padding: 'clamp(16px, 2.6vw, 28px)',
         }}
       >
         <div
@@ -164,9 +164,9 @@ export default function HeroSection() {
             mixBlendMode: 'overlay',
           }}
         />
-        <div className="relative flex items-center justify-center gap-3 sm:gap-5">
+        <div className="relative flex items-center justify-center gap-2 sm:gap-3">
           <motion.span
-            className="text-3xl sm:text-5xl lg:text-6xl"
+            className="text-2xl sm:text-3xl lg:text-4xl"
             animate={{ rotate: [0, -10, 10, -5, 0] }}
             transition={{ delay: 0.7, duration: 0.8 }}
           >
@@ -176,7 +176,7 @@ export default function HeroSection() {
             Маркетинговый заезд
           </h1>
           <motion.span
-            className="text-3xl sm:text-5xl lg:text-6xl"
+            className="text-2xl sm:text-3xl lg:text-4xl"
             animate={{ rotate: [0, 10, -10, 5, 0] }}
             transition={{ delay: 0.7, duration: 0.8 }}
           >
@@ -185,21 +185,21 @@ export default function HeroSection() {
         </div>
       </motion.div>
 
-      {/* BOTTOM PANEL — typewriter + subline + gold + CTA */}
+      {/* BOTTOM PANEL — typewriter + subline + gold + CTA, bottom-left compact */}
       <motion.div
         initial={{ opacity: 0, y: 30, scale: 0.97 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.8, delay: 0.15, ease: 'easeOut' }}
-        className="relative w-full max-w-3xl overflow-hidden"
+        className="absolute left-4 sm:left-8 lg:left-12 bottom-6 sm:bottom-8 lg:bottom-10 w-[calc(100%-2rem)] sm:w-auto sm:max-w-[460px] overflow-hidden z-10"
         style={{
           background: 'rgba(42,22,143,0.32)',
           backdropFilter: 'blur(40px) saturate(180%)',
           WebkitBackdropFilter: 'blur(40px) saturate(180%)',
           border: '1px solid rgba(255,255,255,0.14)',
-          borderRadius: 22,
+          borderRadius: 18,
           boxShadow:
-            'inset 0 1px 0 rgba(255,255,255,0.14), inset 0 0 0 1px rgba(255,255,255,0.03), 0 30px 80px rgba(20,8,60,0.55)',
-          padding: 'clamp(24px, 4vw, 44px)',
+            'inset 0 1px 0 rgba(255,255,255,0.14), inset 0 0 0 1px rgba(255,255,255,0.03), 0 24px 60px rgba(20,8,60,0.5)',
+          padding: 'clamp(18px, 2.6vw, 26px)',
         }}
       >
         <div
@@ -211,9 +211,9 @@ export default function HeroSection() {
             mixBlendMode: 'overlay',
           }}
         />
-        <div className="relative text-center">
+        <div className="relative text-left">
           <p
-            className="font-bold text-white text-[18px] sm:text-[24px] lg:text-[30px] leading-tight mb-4 sm:mb-5 min-h-[2.4em]"
+            className="font-bold text-white text-[15px] sm:text-[17px] leading-snug mb-3 min-h-[3.2em]"
             style={{ fontFamily: "'Courier New', Courier, monospace" }}
           >
             <Typewriter text="Узнайте, сколько денег теряет ваш бизнес прямо сейчас" speed={45} delay={400} />
@@ -222,7 +222,7 @@ export default function HeroSection() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 1.6, duration: 0.6 }}
-            className="text-white/80 text-sm sm:text-base lg:text-lg leading-relaxed mb-4 sm:mb-5 max-w-xl mx-auto"
+            className="text-white/75 text-xs sm:text-sm leading-relaxed mb-3"
           >
             За 90 минут вы получите диагностику маркетинга с конкретными цифрами
           </motion.p>
@@ -230,24 +230,24 @@ export default function HeroSection() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 1.85, duration: 0.6 }}
-            className="text-xs sm:text-sm font-bold uppercase tracking-[0.18em] mb-7 sm:mb-8"
+            className="text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.18em] mb-4"
             style={{ color: '#FFD700' }}
           >
             Игра для предпринимателей и самозанятых
           </motion.p>
           <motion.button
-            initial={{ opacity: 0, y: 14 }}
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 2.05, duration: 0.55 }}
-            whileHover={{ scale: 1.05, boxShadow: '0 18px 50px rgba(169,119,250,0.5)' }}
+            whileHover={{ scale: 1.04, boxShadow: '0 14px 40px rgba(169,119,250,0.5)' }}
             whileTap={{ scale: 0.97 }}
             onClick={handleCTA}
-            className="rounded-full px-10 py-3.5 sm:px-14 sm:py-4 text-base sm:text-lg font-bold uppercase text-white border-none cursor-pointer w-full sm:w-auto"
+            className="rounded-full px-7 py-2.5 sm:px-9 sm:py-3 text-sm sm:text-base font-bold uppercase text-white border-none cursor-pointer w-full sm:w-auto"
             style={{
               ...rubik,
               letterSpacing: '-0.02em',
               background: 'linear-gradient(135deg, #A977FA 0%, #6838CE 50%, #4338DF 100%)',
-              boxShadow: '0 14px 40px rgba(104,56,206,0.5)',
+              boxShadow: '0 12px 32px rgba(104,56,206,0.5)',
             }}
           >
             Хочу узнать
