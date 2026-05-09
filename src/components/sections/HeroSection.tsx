@@ -52,7 +52,7 @@ function playTypeClick() {
     const source = ctx.createBufferSource()
     source.buffer = buffer
     const gain = ctx.createGain()
-    gain.gain.value = 0.25
+    gain.gain.value = 0.08
     source.connect(gain)
     gain.connect(ctx.destination)
     source.start()
@@ -539,12 +539,6 @@ export default function HeroSection() {
             >
               🏁
             </motion.span>
-            <span
-              className="text-[10px] sm:text-xs font-extrabold uppercase tracking-[0.22em] text-white/85"
-              style={rubik}
-            >
-              Старт
-            </span>
             <motion.span
               className="text-base sm:text-xl shrink-0"
               animate={{ rotate: [0, 10, -10, 5, 0] }}
@@ -575,7 +569,7 @@ export default function HeroSection() {
             whileHover={{ scale: 1.04, boxShadow: '0 14px 40px rgba(169,119,250,0.5)' }}
             whileTap={{ scale: 0.97 }}
             onClick={handleCTA}
-            className="rounded-full px-7 py-2.5 sm:px-9 sm:py-3 text-sm sm:text-base font-bold uppercase text-white border-none cursor-pointer w-full sm:w-auto"
+            className="inline-flex items-center justify-center gap-2 sm:gap-3 rounded-full px-7 py-2.5 sm:px-9 sm:py-3 text-sm sm:text-base font-bold uppercase text-white border-none cursor-pointer w-full sm:w-auto"
             style={{
               ...rubik,
               letterSpacing: '-0.02em',
@@ -583,7 +577,23 @@ export default function HeroSection() {
               boxShadow: '0 12px 32px rgba(104,56,206,0.5)',
             }}
           >
-            Хочу узнать
+            <motion.span
+              className="text-base sm:text-lg shrink-0"
+              animate={{ rotate: [0, -10, 10, -5, 0] }}
+              transition={{ delay: 2.6, duration: 0.7 }}
+              style={{ display: 'inline-block', lineHeight: 1.25 }}
+            >
+              🏁
+            </motion.span>
+            <span>Хочу узнать</span>
+            <motion.span
+              className="text-base sm:text-lg shrink-0"
+              animate={{ rotate: [0, 10, -10, 5, 0] }}
+              transition={{ delay: 2.6, duration: 0.7 }}
+              style={{ display: 'inline-block', lineHeight: 1.25 }}
+            >
+              🏁
+            </motion.span>
           </motion.button>
         </div>
       </motion.div>
