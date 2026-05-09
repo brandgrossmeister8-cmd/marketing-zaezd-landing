@@ -278,6 +278,7 @@ type TypewriterProps = {
 function Typewriter({ text, speed = 50, delay = 0, loop = false, holdMs = 1800, eraseSpeed = 30 }: TypewriterProps) {
   const [displayed, setDisplayed] = useState('')
   const [phase, setPhase] = useState<'idle' | 'typing' | 'holding' | 'erasing'>('idle')
+  const firstTypingRef = useRef(true)
 
   useEffect(() => {
     const t = setTimeout(() => setPhase('typing'), delay)
@@ -293,13 +294,14 @@ function Typewriter({ text, speed = 50, delay = 0, loop = false, holdMs = 1800, 
   useEffect(() => {
     if (phase === 'typing') {
       if (displayed.length >= text.length) {
+        firstTypingRef.current = false
         setPhase(loop ? 'holding' : 'idle')
         return
       }
       const t = setTimeout(() => {
         const nextChar = text[displayed.length]
         setDisplayed(text.slice(0, displayed.length + 1))
-        if (nextChar !== ' ') playTypeClick()
+        if (nextChar !== ' ' && firstTypingRef.current) playTypeClick()
       }, speed)
       return () => clearTimeout(t)
     }
