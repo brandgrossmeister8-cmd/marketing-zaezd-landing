@@ -38,16 +38,6 @@ function disarmClicks() {
   clicksArmed = false
 }
 
-function makeDriveCurve(drive: number) {
-  const n = 4096
-  const curve = new Float32Array(n)
-  for (let i = 0; i < n; i++) {
-    const x = (i / n) * 2 - 1
-    curve[i] = Math.tanh(x * drive)
-  }
-  return curve
-}
-
 function playTypeClick() {
   if (!soundEnabled || !heroVisible) return
   try {
@@ -100,181 +90,6 @@ function playTireScreech(durationSec: number) {
   } catch {}
 }
 
-function playExhaustPop() {
-  if (!soundEnabled || !heroVisible) return
-  try {
-    const ctx = getAudioCtx()
-    const dur = 0.07
-    const buf = ctx.createBuffer(1, Math.floor(ctx.sampleRate * dur), ctx.sampleRate)
-    const data = buf.getChannelData(0)
-    for (let i = 0; i < data.length; i++) {
-      data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (ctx.sampleRate * 0.013))
-    }
-    const src = ctx.createBufferSource()
-    src.buffer = buf
-    const filt = ctx.createBiquadFilter()
-    filt.type = 'bandpass'
-    filt.frequency.value = 75 + Math.random() * 70
-    filt.Q.value = 4
-    const g = ctx.createGain()
-    g.gain.setValueAtTime(0, ctx.currentTime)
-    g.gain.linearRampToValueAtTime(0.22, ctx.currentTime + 0.003)
-    g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur)
-    src.connect(filt)
-    filt.connect(g)
-    g.connect(ctx.destination)
-    src.start()
-  } catch {}
-}
-
-type EngineNodes = { master: GainNode }
-let engineNodes: EngineNodes | null = null
-let engineStarted = false
-
-function startEngineSound() {
-  if (engineStarted) return
-  engineStarted = true
-  try {
-    const ctx = getAudioCtx()
-
-    const master = ctx.createGain()
-    master.gain.value = 0
-
-    const limiter = ctx.createDynamicsCompressor()
-    limiter.threshold.value = -8
-    limiter.knee.value = 0
-    limiter.ratio.value = 12
-    limiter.attack.value = 0.003
-    limiter.release.value = 0.25
-    master.connect(limiter)
-    limiter.connect(ctx.destination)
-
-    // Roar bus: oscillators -> waveshaper distortion -> RPM-tracking lowpass -> master
-    const driveBus = ctx.createGain()
-    driveBus.gain.value = 1
-    const shaper = ctx.createWaveShaper()
-    shaper.curve = makeDriveCurve(8)
-    shaper.oversample = '4x'
-    const tone = ctx.createBiquadFilter()
-    tone.type = 'lowpass'
-    tone.frequency.value = 600
-    tone.Q.value = 0.7
-    driveBus.connect(shaper)
-    shaper.connect(tone)
-    tone.connect(master)
-
-    // Fundamental + octave saws — engine note + harmonics
-    const osc1 = ctx.createOscillator()
-    osc1.type = 'sawtooth'
-    osc1.frequency.value = 55
-    const osc2 = ctx.createOscillator()
-    osc2.type = 'sawtooth'
-    osc2.frequency.value = 110
-    osc2.detune.value = 7
-    const osc1Gain = ctx.createGain()
-    osc1Gain.gain.value = 0.6
-    const osc2Gain = ctx.createGain()
-    osc2Gain.gain.value = 0.32
-    osc1.connect(osc1Gain)
-    osc2.connect(osc2Gain)
-    osc1Gain.connect(driveBus)
-    osc2Gain.connect(driveBus)
-
-    // Sub bump for chest-thump
-    const sub = ctx.createOscillator()
-    sub.type = 'square'
-    sub.frequency.value = 28
-    const subGain = ctx.createGain()
-    subGain.gain.value = 0.18
-    sub.connect(subGain)
-    subGain.connect(master)
-
-    // Engine hiss / road rumble
-    const noiseBuf = ctx.createBuffer(1, ctx.sampleRate * 4, ctx.sampleRate)
-    const noiseData = noiseBuf.getChannelData(0)
-    for (let i = 0; i < noiseData.length; i++) noiseData[i] = Math.random() * 2 - 1
-    const noise = ctx.createBufferSource()
-    noise.buffer = noiseBuf
-    noise.loop = true
-    const noiseFilter = ctx.createBiquadFilter()
-    noiseFilter.type = 'bandpass'
-    noiseFilter.frequency.value = 320
-    noiseFilter.Q.value = 1.2
-    const noiseGain = ctx.createGain()
-    noiseGain.gain.value = 0.07
-    noise.connect(noiseFilter)
-    noiseFilter.connect(noiseGain)
-    noiseGain.connect(master)
-
-    osc1.start()
-    osc2.start()
-    sub.start()
-    noise.start()
-
-    master.gain.setValueAtTime(0, ctx.currentTime)
-
-    engineNodes = { master }
-
-    const revRoutine = () => {
-      if (!engineNodes) return
-      const c = ctx.currentTime + 0.15 + Math.random() * 0.4
-      const peak = 180 + Math.random() * 130
-      const peakDur = 0.32 + Math.random() * 0.25
-      const total = peakDur + 0.9 + Math.random() * 0.7
-
-      osc1.frequency.cancelScheduledValues(c)
-      osc1.frequency.setValueAtTime(55, c)
-      osc1.frequency.linearRampToValueAtTime(peak, c + peakDur)
-      osc1.frequency.exponentialRampToValueAtTime(56, c + total)
-
-      osc2.frequency.cancelScheduledValues(c)
-      osc2.frequency.setValueAtTime(110, c)
-      osc2.frequency.linearRampToValueAtTime(peak * 2, c + peakDur)
-      osc2.frequency.exponentialRampToValueAtTime(111, c + total)
-
-      sub.frequency.cancelScheduledValues(c)
-      sub.frequency.setValueAtTime(28, c)
-      sub.frequency.linearRampToValueAtTime(peak / 2, c + peakDur)
-      sub.frequency.exponentialRampToValueAtTime(29, c + total)
-
-      tone.frequency.cancelScheduledValues(c)
-      tone.frequency.setValueAtTime(600, c)
-      tone.frequency.linearRampToValueAtTime(1900, c + peakDur)
-      tone.frequency.linearRampToValueAtTime(600, c + total)
-
-      master.gain.cancelScheduledValues(c)
-      master.gain.setValueAtTime(0.05, c)
-      master.gain.linearRampToValueAtTime(0.13, c + peakDur)
-      master.gain.linearRampToValueAtTime(0.05, c + total)
-
-      const popsCount = 1 + Math.floor(Math.random() * 3)
-      for (let i = 0; i < popsCount; i++) {
-        const popDelayMs = (peakDur + 0.05 + Math.random() * 0.55) * 1000
-        const startInMs = (c - ctx.currentTime) * 1000
-        window.setTimeout(playExhaustPop, Math.max(0, startInMs + popDelayMs))
-      }
-
-      window.setTimeout(revRoutine, 2200 + Math.random() * 4200)
-    }
-    window.setTimeout(revRoutine, 1800)
-  } catch {
-    engineStarted = false
-  }
-}
-
-function setEngineMuted(muted: boolean) {
-  if (!engineNodes) return
-  try {
-    const ctx = getAudioCtx()
-    const now = ctx.currentTime
-    const g = engineNodes.master.gain
-    const cur = g.value
-    g.cancelScheduledValues(now)
-    g.setValueAtTime(cur, now)
-    g.linearRampToValueAtTime(muted ? 0 : 0.05, now + 0.5)
-  } catch {}
-}
-
 type TypewriterProps = {
   text: string
   speed?: number
@@ -301,13 +116,7 @@ function Typewriter({ text, speed = 50, delay = 0, loop = false, holdMs = 1800, 
   useEffect(() => {
     if (phase === 'typing') {
       if (displayed.length >= text.length) {
-        if (soundEnabled) {
-          disarmClicks()
-          if (!engineStarted) {
-            startEngineSound()
-            setEngineMuted(!heroVisible)
-          }
-        }
+        if (soundEnabled) disarmClicks()
         setPhase(loop ? 'holding' : 'idle')
         return
       }
@@ -364,27 +173,17 @@ export default function HeroSection() {
       ([entry]) => {
         visibleRef.current = entry.isIntersecting
         setHeroVisible(entry.isIntersecting)
-        setEngineMuted(!soundOn || !entry.isIntersecting)
       },
       { threshold: 0.05 }
     )
     obs.observe(node)
     return () => obs.disconnect()
-  }, [soundOn])
+  }, [])
 
   const toggleSound = () => {
     const next = !soundOn
     setSoundEnabled(next)
-    if (next) {
-      armClicks()
-      if (engineStarted) {
-        // Engine already running from a previous cycle — just unmute
-        setEngineMuted(!visibleRef.current)
-      }
-      // else: engine starts after the next typing cycle completes (see Typewriter)
-    } else {
-      setEngineMuted(true)
-    }
+    if (next) armClicks()
     setSoundOn(next)
   }
 
