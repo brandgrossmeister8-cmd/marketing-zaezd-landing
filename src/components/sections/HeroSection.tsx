@@ -30,6 +30,14 @@ function setHeroVisible(v: boolean) {
   heroVisible = v
 }
 
+let clicksArmed = true
+function armClicks() {
+  clicksArmed = true
+}
+function disarmClicks() {
+  clicksArmed = false
+}
+
 function makeDriveCurve(drive: number) {
   const n = 4096
   const curve = new Float32Array(n)
@@ -278,7 +286,6 @@ type TypewriterProps = {
 function Typewriter({ text, speed = 50, delay = 0, loop = false, holdMs = 1800, eraseSpeed = 30 }: TypewriterProps) {
   const [displayed, setDisplayed] = useState('')
   const [phase, setPhase] = useState<'idle' | 'typing' | 'holding' | 'erasing'>('idle')
-  const firstTypingRef = useRef(true)
 
   useEffect(() => {
     const t = setTimeout(() => setPhase('typing'), delay)
@@ -294,14 +301,14 @@ function Typewriter({ text, speed = 50, delay = 0, loop = false, holdMs = 1800, 
   useEffect(() => {
     if (phase === 'typing') {
       if (displayed.length >= text.length) {
-        firstTypingRef.current = false
+        if (soundEnabled) disarmClicks()
         setPhase(loop ? 'holding' : 'idle')
         return
       }
       const t = setTimeout(() => {
         const nextChar = text[displayed.length]
         setDisplayed(text.slice(0, displayed.length + 1))
-        if (nextChar !== ' ' && firstTypingRef.current) playTypeClick()
+        if (nextChar !== ' ' && clicksArmed) playTypeClick()
       }, speed)
       return () => clearTimeout(t)
     }
@@ -363,6 +370,7 @@ export default function HeroSection() {
     const next = !soundOn
     if (next && !engineStarted) startEngineSound()
     setSoundEnabled(next)
+    if (next) armClicks()
     setEngineMuted(!next || !visibleRef.current)
     setSoundOn(next)
   }
