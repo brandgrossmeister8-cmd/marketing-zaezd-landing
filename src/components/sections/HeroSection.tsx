@@ -530,24 +530,6 @@ export default function HeroSection() {
           }}
         />
         <div className="relative text-left">
-          <div className="flex items-center justify-center gap-2 sm:gap-3 mb-3" style={{ lineHeight: 1.25 }}>
-            <motion.span
-              className="text-base sm:text-xl shrink-0"
-              animate={{ rotate: [0, -10, 10, -5, 0] }}
-              transition={{ delay: 0.7, duration: 0.8 }}
-              style={{ lineHeight: 1.25, display: 'inline-block' }}
-            >
-              🏁
-            </motion.span>
-            <motion.span
-              className="text-base sm:text-xl shrink-0"
-              animate={{ rotate: [0, 10, -10, 5, 0] }}
-              transition={{ delay: 0.7, duration: 0.8 }}
-              style={{ lineHeight: 1.25, display: 'inline-block' }}
-            >
-              🏁
-            </motion.span>
-          </div>
           <p
             className="font-extrabold uppercase text-white text-[18px] sm:text-[20px] leading-tight mb-3"
             style={{ fontFamily: "'Courier New', Courier, monospace", letterSpacing: '-0.01em', minHeight: '1.3em' }}
@@ -569,12 +551,16 @@ export default function HeroSection() {
             whileHover={{ scale: 1.04, boxShadow: '0 14px 40px rgba(169,119,250,0.5)' }}
             whileTap={{ scale: 0.97 }}
             onClick={handleCTA}
-            className="inline-flex items-center justify-center gap-2 sm:gap-3 rounded-full px-7 py-2.5 sm:px-9 sm:py-3 text-sm sm:text-base font-bold uppercase text-white border-none cursor-pointer w-full sm:w-auto"
+            className="inline-flex items-center justify-center gap-2 sm:gap-3 px-7 py-2.5 sm:px-9 sm:py-3 text-sm sm:text-base font-bold uppercase text-white cursor-pointer w-full sm:w-auto"
             style={{
               ...rubik,
               letterSpacing: '-0.02em',
-              background: 'linear-gradient(135deg, #A977FA 0%, #6838CE 50%, #4338DF 100%)',
-              boxShadow: '0 12px 32px rgba(104,56,206,0.5)',
+              background: 'rgba(42,22,143,0.32)',
+              backdropFilter: 'blur(40px) saturate(180%)',
+              WebkitBackdropFilter: 'blur(40px) saturate(180%)',
+              border: '1px solid rgba(255,255,255,0.14)',
+              borderRadius: 999,
+              boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.14), 0 12px 32px rgba(20,8,60,0.45)',
             }}
           >
             <motion.span
