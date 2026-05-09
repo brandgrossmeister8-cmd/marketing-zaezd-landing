@@ -57,39 +57,6 @@ function playTypeClick() {
   } catch {}
 }
 
-function playTireScreech(durationSec: number) {
-  if (!soundEnabled || !heroVisible) return
-  try {
-    const ctx = getAudioCtx()
-    const dur = Math.max(0.18, Math.min(durationSec, 2.2))
-    const buffer = ctx.createBuffer(1, Math.floor(ctx.sampleRate * dur), ctx.sampleRate)
-    const data = buffer.getChannelData(0)
-    for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1
-
-    const src = ctx.createBufferSource()
-    src.buffer = buffer
-
-    const filter = ctx.createBiquadFilter()
-    filter.type = 'bandpass'
-    filter.Q.value = 7
-    filter.frequency.setValueAtTime(2800, ctx.currentTime)
-    filter.frequency.exponentialRampToValueAtTime(650, ctx.currentTime + dur * 0.85)
-    filter.frequency.linearRampToValueAtTime(380, ctx.currentTime + dur)
-
-    const gain = ctx.createGain()
-    gain.gain.setValueAtTime(0, ctx.currentTime)
-    gain.gain.linearRampToValueAtTime(0.18, ctx.currentTime + 0.05)
-    gain.gain.linearRampToValueAtTime(0.18, ctx.currentTime + dur * 0.7)
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur)
-
-    src.connect(filter)
-    filter.connect(gain)
-    gain.connect(ctx.destination)
-    src.start()
-    src.stop(ctx.currentTime + dur)
-  } catch {}
-}
-
 type TypewriterProps = {
   text: string
   speed?: number
@@ -106,12 +73,6 @@ function Typewriter({ text, speed = 50, delay = 0, loop = false, holdMs = 1800, 
     const t = setTimeout(() => setPhase('typing'), delay)
     return () => clearTimeout(t)
   }, [delay])
-
-  useEffect(() => {
-    if (phase === 'erasing' && displayed.length === text.length) {
-      playTireScreech((text.length * eraseSpeed) / 1000)
-    }
-  }, [phase, text, eraseSpeed, displayed.length])
 
   useEffect(() => {
     if (phase === 'typing') {
