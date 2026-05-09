@@ -301,7 +301,13 @@ function Typewriter({ text, speed = 50, delay = 0, loop = false, holdMs = 1800, 
   useEffect(() => {
     if (phase === 'typing') {
       if (displayed.length >= text.length) {
-        if (soundEnabled) disarmClicks()
+        if (soundEnabled) {
+          disarmClicks()
+          if (!engineStarted) {
+            startEngineSound()
+            setEngineMuted(!heroVisible)
+          }
+        }
         setPhase(loop ? 'holding' : 'idle')
         return
       }
@@ -368,10 +374,17 @@ export default function HeroSection() {
 
   const toggleSound = () => {
     const next = !soundOn
-    if (next && !engineStarted) startEngineSound()
     setSoundEnabled(next)
-    if (next) armClicks()
-    setEngineMuted(!next || !visibleRef.current)
+    if (next) {
+      armClicks()
+      if (engineStarted) {
+        // Engine already running from a previous cycle — just unmute
+        setEngineMuted(!visibleRef.current)
+      }
+      // else: engine starts after the next typing cycle completes (see Typewriter)
+    } else {
+      setEngineMuted(true)
+    }
     setSoundOn(next)
   }
 
