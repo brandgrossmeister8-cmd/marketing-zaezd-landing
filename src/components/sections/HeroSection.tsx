@@ -24,6 +24,11 @@ function setSoundEnabled(on: boolean) {
   soundEnabled = on
 }
 
+let heroVisible = true
+function setHeroVisible(v: boolean) {
+  heroVisible = v
+}
+
 function makeDriveCurve(drive: number) {
   const n = 4096
   const curve = new Float32Array(n)
@@ -35,7 +40,7 @@ function makeDriveCurve(drive: number) {
 }
 
 function playTypeClick() {
-  if (!soundEnabled) return
+  if (!soundEnabled || !heroVisible) return
   try {
     const ctx = getAudioCtx()
     const buffer = ctx.createBuffer(1, Math.floor(ctx.sampleRate * 0.03), ctx.sampleRate)
@@ -54,7 +59,7 @@ function playTypeClick() {
 }
 
 function playTireScreech(durationSec: number) {
-  if (!soundEnabled) return
+  if (!soundEnabled || !heroVisible) return
   try {
     const ctx = getAudioCtx()
     const dur = Math.max(0.18, Math.min(durationSec, 2.2))
@@ -87,7 +92,7 @@ function playTireScreech(durationSec: number) {
 }
 
 function playExhaustPop() {
-  if (!soundEnabled) return
+  if (!soundEnabled || !heroVisible) return
   try {
     const ctx = getAudioCtx()
     const dur = 0.07
@@ -335,6 +340,7 @@ export default function HeroSection() {
     const obs = new IntersectionObserver(
       ([entry]) => {
         visibleRef.current = entry.isIntersecting
+        setHeroVisible(entry.isIntersecting)
         setEngineMuted(!soundOn || !entry.isIntersecting)
       },
       { threshold: 0.05 }
@@ -368,8 +374,9 @@ export default function HeroSection() {
     >
       <style>{`
         @keyframes heroBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
-        .hero-title { font-size: 20px; line-height: 1; white-space: nowrap; }
-        @media (min-width: 380px) { .hero-title { font-size: 22px; } }
+        .hero-title { font-size: 16px; line-height: 1; white-space: nowrap; }
+        @media (min-width: 360px) { .hero-title { font-size: 18px; } }
+        @media (min-width: 480px) { .hero-title { font-size: 22px; } }
         @media (min-width: 640px) { .hero-title { font-size: 30px; } }
         @media (min-width: 1024px) { .hero-title { font-size: 36px; } }
       `}</style>
@@ -433,7 +440,7 @@ export default function HeroSection() {
         initial={{ opacity: 0, y: -20, scale: 0.97 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.7, ease: 'easeOut' }}
-        className="absolute left-4 sm:left-8 lg:left-12 bottom-6 sm:bottom-8 lg:bottom-10 w-[calc(100%-2rem)] sm:w-auto sm:max-w-[580px] overflow-hidden z-10"
+        className="absolute left-4 sm:left-8 lg:left-12 bottom-6 sm:bottom-8 lg:bottom-10 w-[calc(100%-2rem)] sm:w-auto sm:max-w-[640px] overflow-hidden z-10"
         style={{
           background: 'rgba(42,22,143,0.32)',
           backdropFilter: 'blur(40px) saturate(180%)',
@@ -442,7 +449,7 @@ export default function HeroSection() {
           borderRadius: 22,
           boxShadow:
             'inset 0 1px 0 rgba(255,255,255,0.14), inset 0 0 0 1px rgba(255,255,255,0.03), 0 30px 80px rgba(20,8,60,0.55)',
-          padding: 'clamp(18px, 2.4vw, 26px)',
+          padding: 'clamp(14px, 2.4vw, 26px)',
         }}
       >
         <div
@@ -454,11 +461,12 @@ export default function HeroSection() {
             mixBlendMode: 'overlay',
           }}
         />
-        <div className="relative flex items-center justify-center gap-2 sm:gap-3">
+        <div className="relative flex flex-nowrap items-center justify-center gap-2 sm:gap-3" style={{ lineHeight: 1.25, paddingTop: 4, paddingBottom: 4 }}>
           <motion.span
-            className="text-2xl sm:text-3xl lg:text-4xl"
+            className="text-lg sm:text-2xl lg:text-3xl shrink-0"
             animate={{ rotate: [0, -10, 10, -5, 0] }}
             transition={{ delay: 0.7, duration: 0.8 }}
+            style={{ lineHeight: 1.25, display: 'inline-block' }}
           >
             🏁
           </motion.span>
@@ -466,9 +474,10 @@ export default function HeroSection() {
             Маркетинговый заезд
           </h1>
           <motion.span
-            className="text-2xl sm:text-3xl lg:text-4xl"
+            className="text-lg sm:text-2xl lg:text-3xl shrink-0"
             animate={{ rotate: [0, 10, -10, 5, 0] }}
             transition={{ delay: 0.7, duration: 0.8 }}
+            style={{ lineHeight: 1.25, display: 'inline-block' }}
           >
             🏁
           </motion.span>
@@ -489,7 +498,7 @@ export default function HeroSection() {
         initial={{ opacity: 0, y: 30, scale: 0.97 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.8, delay: 0.15, ease: 'easeOut' }}
-        className="absolute right-4 sm:right-8 lg:right-12 top-[88px] sm:top-[104px] lg:top-[120px] w-[calc(100%-2rem)] sm:w-auto sm:max-w-[580px] overflow-hidden z-10"
+        className="absolute right-4 sm:right-8 lg:right-12 top-[88px] sm:top-[104px] lg:top-[120px] w-[calc(100%-2rem)] sm:w-auto sm:max-w-[640px] overflow-hidden z-10"
         style={{
           background: 'rgba(42,22,143,0.32)',
           backdropFilter: 'blur(40px) saturate(180%)',
@@ -498,7 +507,7 @@ export default function HeroSection() {
           borderRadius: 18,
           boxShadow:
             'inset 0 1px 0 rgba(255,255,255,0.14), inset 0 0 0 1px rgba(255,255,255,0.03), 0 24px 60px rgba(20,8,60,0.5)',
-          padding: 'clamp(18px, 2.4vw, 26px)',
+          padding: 'clamp(14px, 2.4vw, 26px)',
         }}
       >
         <div
@@ -511,6 +520,30 @@ export default function HeroSection() {
           }}
         />
         <div className="relative text-left">
+          <div className="flex items-center justify-center gap-2 sm:gap-3 mb-3" style={{ lineHeight: 1.25 }}>
+            <motion.span
+              className="text-base sm:text-xl shrink-0"
+              animate={{ rotate: [0, -10, 10, -5, 0] }}
+              transition={{ delay: 0.7, duration: 0.8 }}
+              style={{ lineHeight: 1.25, display: 'inline-block' }}
+            >
+              🏁
+            </motion.span>
+            <span
+              className="text-[10px] sm:text-xs font-extrabold uppercase tracking-[0.22em] text-white/85"
+              style={rubik}
+            >
+              Старт
+            </span>
+            <motion.span
+              className="text-base sm:text-xl shrink-0"
+              animate={{ rotate: [0, 10, -10, 5, 0] }}
+              transition={{ delay: 0.7, duration: 0.8 }}
+              style={{ lineHeight: 1.25, display: 'inline-block' }}
+            >
+              🏁
+            </motion.span>
+          </div>
           <p
             className="font-extrabold uppercase text-white text-[18px] sm:text-[20px] leading-tight mb-3"
             style={{ fontFamily: "'Courier New', Courier, monospace", letterSpacing: '-0.01em', minHeight: '1.3em' }}
