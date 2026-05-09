@@ -1,5 +1,6 @@
 import { motion, useScroll, useTransform } from 'framer-motion'
 import confetti from 'canvas-confetti'
+import { Volume2, VolumeX } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 
 const VIDEO_URL =
@@ -121,7 +122,6 @@ function playExhaustPop() {
 type EngineNodes = { master: GainNode }
 let engineNodes: EngineNodes | null = null
 let engineStarted = false
-let engineRevTimer: number | null = null
 
 function startEngineSound() {
   if (engineStarted) return
@@ -246,9 +246,9 @@ function startEngineSound() {
         window.setTimeout(playExhaustPop, Math.max(0, startInMs + popDelayMs))
       }
 
-      engineRevTimer = window.setTimeout(revRoutine, 2200 + Math.random() * 4200)
+      window.setTimeout(revRoutine, 2200 + Math.random() * 4200)
     }
-    engineRevTimer = window.setTimeout(revRoutine, 1800)
+    window.setTimeout(revRoutine, 1800)
   } catch {
     engineStarted = false
   }
@@ -267,6 +267,14 @@ function setEngineMuted(muted: boolean) {
   } catch {}
 }
 
+type TypewriterProps = {
+  text: string
+  speed?: number
+  delay?: number
+  loop?: boolean
+  holdMs?: number
+  eraseSpeed?: number
+}
 function Typewriter({ text, speed = 50, delay = 0, loop = false, holdMs = 1800, eraseSpeed = 30 }: TypewriterProps) {
   const [displayed, setDisplayed] = useState('')
   const [phase, setPhase] = useState<'idle' | 'typing' | 'holding' | 'erasing'>('idle')
